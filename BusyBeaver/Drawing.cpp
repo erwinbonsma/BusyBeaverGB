@@ -3,11 +3,44 @@
 #include "Drawing.h"
 
 #include "Program.h"
+#include "RunController.h"
 
 const int board_x0 = 17;
 const int board_y0 = 7;
 
-void drawPointer(Program& program) {
+struct SpeedBarSpecs {
+  Color color;
+  int len;
+};
+
+const SpeedBarSpecs speedBarSpecs[5] = {
+  SpeedBarSpecs { .color = RED, .len = 1 },
+  SpeedBarSpecs { .color = ORANGE, .len = 5 },
+  SpeedBarSpecs { .color = YELLOW, .len = 5 },
+  SpeedBarSpecs { .color = GREEN, .len = 5 },
+  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 }
+};
+
+void drawSpeedBar(int speed) {
+  gb.display.setColor(DARKGRAY);
+  gb.display.drawRect(0, 8, 6, (maxRunSpeed + 2) * 2);
+
+  int spec = 0;
+  int num = 0;
+
+  for (int i = 0; i <= speed; i++) {
+    if (num == 0) {
+      gb.display.setColor(speedBarSpecs[spec].color);
+    }
+    gb.display.fillRect(1, 9 + (maxRunSpeed - i) * 2, 4, 2);
+    if (++num == speedBarSpecs[spec].len) {
+      num = 0;
+      spec++;
+    }
+  }
+}
+
+void drawProgramPointer(Program& program) {
   int x0 = board_x0 + 5 * program.getAddressX();
   int y0 = board_y0 + 5 * (8 - program.getAddressY());
 
@@ -87,12 +120,9 @@ void drawProgram(Program& program) {
       }
     }
   }
+}
 
-  drawPointer(program);
-
-  // Memory
-  drawMemory(program);
-
+void drawRunStatus(Program& program) {
   gb.display.setCursorX(56);
   gb.display.setCursorY(0);
   if (program.getStatus() == Status::Running || program.getStatus() == Status::Done) {

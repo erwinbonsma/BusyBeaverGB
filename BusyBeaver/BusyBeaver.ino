@@ -8,16 +8,12 @@
 
 #include "Program.h"
 #include "Drawing.h"
+#include "RunController.h"
 
 Program program(9);
 
-const int maxRunSpeed = 20;
-const int unitRunSpeed = 6;
-
-int runSpeed = 0;
-int stepPeriod = 0;
-int stepsPerTick = 0;
-int ticksSinceLastStep = 0;
+RunController runController;
+Controller *activeController;
 
 int busyBeaver[81] = {
   0,1,1,0,0,0,0,0,0,
@@ -44,88 +40,20 @@ int buggy[81] = {
   2,0,0,0,0,0,2,1,0
 };
 
-void changeRunSpeed(int delta) {
-  runSpeed = min(maxRunSpeed, max(0, runSpeed + delta));
-
-  if (runSpeed == 0) {
-    return;
-  }
-
-  if (runSpeed < unitRunSpeed) {
-    stepPeriod = 1 << (unitRunSpeed - runSpeed);
-    stepsPerTick = 1;
-  } else {
-    stepPeriod = 1;
-    stepsPerTick = 1 << (runSpeed - unitRunSpeed);
-  }
-}
-
-struct SpeedBarSpecs {
-  Color color;
-  int len;
-};
-
-const SpeedBarSpecs speedBarSpecs[5] = {
-  SpeedBarSpecs { .color = RED, .len = 1 },
-  SpeedBarSpecs { .color = ORANGE, .len = 5 },
-  SpeedBarSpecs { .color = YELLOW, .len = 5 },
-  SpeedBarSpecs { .color = GREEN, .len = 5 },
-  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 }
-};
-
-void drawSpeedBar() {
-  gb.display.setColor(DARKGRAY);
-  gb.display.drawRect(0, 8, 6, (maxRunSpeed + 2) * 2);
-
-  int spec = 0;
-  int num = 0;
-
-  for (int i = 0; i <= runSpeed; i++) {
-    if (num == 0) {
-      gb.display.setColor(speedBarSpecs[spec].color);
-    }
-    gb.display.fillRect(1, 9 + (maxRunSpeed - i) * 2, 4, 2);
-    if (++num == speedBarSpecs[spec].len) {
-      num = 0;
-      spec++;
-    }
-  }
-}
-
 void setup() {
   gb.begin();
 
   program.setProgram(busyBeaver);
   //program.setProgram(buggy);
+
+  activeController = &runController;
 }
 
 void loop() {
   while(!gb.update());
   gb.display.clear();
 
-  if (gb.buttons.pressed(BUTTON_UP)) {
-    changeRunSpeed(+1);
-  }
-  else if (gb.buttons.pressed(BUTTON_DOWN)) {
-    changeRunSpeed(-1);
-  }
-  else if (gb.buttons.pressed(BUTTON_A)) {
-    program.step();
-  }
-  else if (gb.buttons.pressed(BUTTON_B)) {
-    program.reset();
-  }
-
-  if (runSpeed > 0) {
-    if (++ticksSinceLastStep >= stepPeriod) {
-      for (int i = 0; i < stepsPerTick; i++) {
-        program.step();
-        ticksSinceLastStep = 0;
-      }
-    }
-  }
-
-  drawProgram(program);
-  drawSpeedBar();
+  activeController->update();
+  activeController->draw();
 }
 
