@@ -26,6 +26,14 @@ void Program::reset() {
   }
 }
 
+void Program::setProgram(int* program) {
+  for (int x = 0; x < _size; x++) {
+    for (int y = 0; y < _size; y++) {
+      _program[x][y] = (Instruction)program[x + (_size - y - 1) * _size];
+    }
+  }
+}
+
 bool Program::step() {
   int x, y;
   Direction oldDir;
