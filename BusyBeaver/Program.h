@@ -13,6 +13,13 @@ enum class Direction : int {
   Left = 3
 };
 
+enum class Status : int {
+  Ready = 0,
+  Running = 1,
+  Done = 2,
+  Error = 3
+};
+
 const int maxProgramSize = 9;
 const int memorySize = 64;
 const int numDirections = 4;
@@ -29,8 +36,8 @@ class Program {
   int _ptr;
   int _memory[memorySize];
 
+  Status _status;
   int _numSteps;
-  bool _done;
 
 public:
   Program(int size);
@@ -51,9 +58,10 @@ public:
   int getMemoryAddress() { return _ptr; }
   int getMemory(int address) { return _memory[address]; }
 
-  // Executes one instruction. Returns "true" when done
+  // Executes one instruction. Returns "true" if the program is still running.
   bool step();
 
+  Status getStatus() { return _status; }
   int getNumSteps() { return _numSteps; }
 };
 

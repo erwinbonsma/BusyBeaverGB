@@ -30,6 +30,19 @@ int busyBeaver[81] = {
   2,2,2,2,2,2,2,1,0
 };
 
+// For testing purposes
+int buggy[81] = {
+  0,1,1,0,0,0,0,0,0,
+  0,2,2,0,0,0,1,1,0,
+  0,2,2,1,2,2,2,0,1,
+  0,2,2,0,0,0,2,0,0,
+  0,2,2,0,0,0,1,0,1,
+  1,2,2,2,2,2,0,0,1,
+  1,2,2,0,1,1,0,0,0,
+  1,1,0,0,0,0,0,0,0,
+  2,0,0,0,0,0,2,1,0
+};
+
 void changeRunSpeed(int delta) {
   runSpeed = max(0, runSpeed + delta);
 
@@ -50,6 +63,7 @@ void setup() {
   gb.begin();
 
   program.setProgram(busyBeaver);
+  //program.setProgram(buggy);
 }
 
 void loop() {

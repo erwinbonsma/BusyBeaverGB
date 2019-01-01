@@ -3,6 +3,10 @@
 int dx[numDirections] = { 0, 1, 0, -1 };
 int dy[numDirections] = { 1, 0, -1, 0 };
 
+bool isAddressValid(int address) {
+  return address >= 0 && address < memorySize;
+}
+
 Program::Program(int size) {
   _size = size;
 
@@ -22,7 +26,7 @@ void Program::reset() {
   _ptr = 0;
 
   _numSteps = 0;
-  _done = false;
+  _status = Status::Ready;
 
   for (int i = 0; i < memorySize; i++) {
     _memory[i] = 0;
@@ -38,9 +42,10 @@ void Program::setProgram(int* program) {
 }
 
 bool Program::step() {
-  if (_done) {
+  if (_status==Status::Done || _status==Status::Error) {
     return true;
   }
+  _status = Status::Running;
 
   int x, y;
   Direction oldDir;
@@ -51,7 +56,7 @@ bool Program::step() {
     oldDir = _dir;
 
     if (x < 0 || y < 0 || x >= _size || y >= _size) {
-      _done = true;
+      _status = Status::Done;
       break;
     }
 
@@ -59,10 +64,18 @@ bool Program::step() {
       case Instruction::Mem:
         switch (_dir) {
           case Direction::Up:
-            _memory[_ptr]++;
+            if (isAddressValid(_ptr)) {
+              _memory[_ptr]++;
+            } else {
+              _status = Status::Error;
+            }
             break;
           case Direction::Down:
-            _memory[_ptr]--;
+            if (isAddressValid(_ptr)) {
+              _memory[_ptr]--;
+            } else {
+              _status = Status::Error;
+            }
             break;
           case Direction::Right:
             _ptr++;
@@ -74,10 +87,14 @@ bool Program::step() {
         break;
 
       case Instruction::Blk:
-        if (_memory[_ptr] != 0) {
-          _dir = (Direction)(((int)_dir + 1) % 4);
+        if (isAddressValid(_ptr)) {
+          if (_memory[_ptr] != 0) {
+            _dir = (Direction)(((int)_dir + 1) % 4);
+          } else {
+            _dir = (Direction)(((int)_dir + 3) % 4);
+          }
         } else {
-          _dir = (Direction)(((int)_dir + 3) % 4);
+          _status = Status::Error;
         }
         break;
 
@@ -90,6 +107,6 @@ bool Program::step() {
   _x = x;
   _y = y;
 
-  return _done;
+  return (_status == Status::Running);
 }
 

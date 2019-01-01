@@ -5,7 +5,7 @@
 #include "Program.h"
 
 const int board_x0 = 17;
-const int board_y0 = 5;
+const int board_y0 = 7;
 
 void drawPointer(Program& program) {
   int x0 = board_x0 + 5 * program.getAddressX();
@@ -32,16 +32,26 @@ void drawPointer(Program& program) {
 }
 
 void drawMemory(Program& program) {
-  int p = 0;
+  int p = min(0, program.getMemoryAddress());
+  int x = 0;
 
-  gb.display.setCursorX(0);
   gb.display.setCursorY(59);
-  while (gb.display.getCursorX() < 80) {
+  while (x < 80) {
+    gb.display.setCursorX(x);
     gb.display.setColor(p == program.getMemoryAddress() ? LIGHTGREEN : GREEN);
 
-    int val = program.getMemory(p++);
-    gb.display.print(val, DEC);
-    gb.display.setCursorX(gb.display.getCursorX() + 4);
+    if (p >= 0 && p < memorySize) {
+      int val = program.getMemory(p);
+      x += gb.display.print(val, DEC) * 4;
+    }
+    else {
+      x += gb.display.print("*") * 4;
+    }
+
+    p++;
+    // Using intermediate x variable instead of setCursorX to avoid termination
+    // problems (due to auto-carriage return?).
+    x += 1;
   }
 }
 
@@ -83,11 +93,15 @@ void drawProgram(Program& program) {
   // Memory
   drawMemory(program);
 
-  if (program.getNumSteps() > 0) {
-    gb.display.setColor(GREEN);
-    gb.display.setCursorX(0);
-    gb.display.setCursorY(52);
+  gb.display.setCursorX(0);
+  gb.display.setCursorY(0);
+  if (program.getStatus() == Status::Running || program.getStatus() == Status::Done) {
+    gb.display.setColor(program.getStatus() == Status::Running ? GREEN : LIGHTGREEN);
     gb.display.printf("%d", program.getNumSteps());
+  }
+  if (program.getStatus() == Status::Error) {
+    gb.display.setColor(RED);
+    gb.display.printf("Error!");
   }
 }
 
