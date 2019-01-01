@@ -93,11 +93,11 @@ void drawProgram(Program& program) {
   // Memory
   drawMemory(program);
 
-  gb.display.setCursorX(0);
+  gb.display.setCursorX(56);
   gb.display.setCursorY(0);
   if (program.getStatus() == Status::Running || program.getStatus() == Status::Done) {
-    gb.display.setColor(program.getStatus() == Status::Running ? GREEN : LIGHTGREEN);
-    gb.display.printf("%d", program.getNumSteps());
+    gb.display.setColor(program.getStatus() == Status::Running ? BLUE : DARKBLUE);
+    gb.display.printf("%6d", program.getNumSteps());
   }
   if (program.getStatus() == Status::Error) {
     gb.display.setColor(RED);

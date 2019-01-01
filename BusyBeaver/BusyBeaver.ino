@@ -11,7 +11,8 @@
 
 Program program(9);
 
-const int unitRunSpeed = 8;
+const int maxRunSpeed = 20;
+const int unitRunSpeed = 6;
 
 int runSpeed = 0;
 int stepPeriod = 0;
@@ -44,7 +45,7 @@ int buggy[81] = {
 };
 
 void changeRunSpeed(int delta) {
-  runSpeed = max(0, runSpeed + delta);
+  runSpeed = min(maxRunSpeed, max(0, runSpeed + delta));
 
   if (runSpeed == 0) {
     return;
@@ -56,6 +57,38 @@ void changeRunSpeed(int delta) {
   } else {
     stepPeriod = 1;
     stepsPerTick = 1 << (runSpeed - unitRunSpeed);
+  }
+}
+
+struct SpeedBarSpecs {
+  Color color;
+  int len;
+};
+
+const SpeedBarSpecs speedBarSpecs[5] = {
+  SpeedBarSpecs { .color = RED, .len = 1 },
+  SpeedBarSpecs { .color = ORANGE, .len = 5 },
+  SpeedBarSpecs { .color = YELLOW, .len = 5 },
+  SpeedBarSpecs { .color = GREEN, .len = 5 },
+  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 }
+};
+
+void drawSpeedBar() {
+  gb.display.setColor(DARKGRAY);
+  gb.display.drawRect(0, 8, 6, (maxRunSpeed + 2) * 2);
+
+  int spec = 0;
+  int num = 0;
+
+  for (int i = 0; i <= runSpeed; i++) {
+    if (num == 0) {
+      gb.display.setColor(speedBarSpecs[spec].color);
+    }
+    gb.display.fillRect(1, 9 + (maxRunSpeed - i) * 2, 4, 2);
+    if (++num == speedBarSpecs[spec].len) {
+      num = 0;
+      spec++;
+    }
   }
 }
 
@@ -93,5 +126,6 @@ void loop() {
   }
 
   drawProgram(program);
+  drawSpeedBar();
 }
 
