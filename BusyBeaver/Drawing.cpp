@@ -40,6 +40,14 @@ void drawSpeedBar(int speed) {
   }
 }
 
+void drawCursor(int x, int y) {
+  int x0 = board_x0 + 5 * x;
+  int y0 = board_y0 + 5 * (8 - y);
+
+  gb.display.setColor(BLUE);
+  gb.display.drawRect(x0, y0, 5, 5);
+}
+
 void drawProgramPointer(Program& program) {
   int x0 = board_x0 + 5 * program.getAddressX();
   int y0 = board_y0 + 5 * (8 - program.getAddressY());

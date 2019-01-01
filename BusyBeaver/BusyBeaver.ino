@@ -8,11 +8,13 @@
 
 #include "Program.h"
 #include "Drawing.h"
+#include "EditController.h"
 #include "RunController.h"
 
 Program program(9);
 
 RunController runController;
+EditController editController;
 Controller *activeController;
 
 int busyBeaver[81] = {
@@ -46,7 +48,8 @@ void setup() {
   program.setProgram(busyBeaver);
   //program.setProgram(buggy);
 
-  activeController = &runController;
+  //activeController = &runController;
+  activeController = &editController;
 }
 
 void loop() {
