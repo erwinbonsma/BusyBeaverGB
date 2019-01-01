@@ -8,6 +8,27 @@
 
 const int unitRunSpeed = 6;
 
+const char* runMenuEntries[] = {
+  "Continue",
+  "Reset",
+  "Edit",
+};
+
+void runMenu() {
+  int entry = gb.gui.menu("Run menu", runMenuEntries);
+
+  switch (entry) {
+    case 0:
+      break;
+    case 1:
+      program.reset();
+      break;
+    case 2:
+      activeController = &editController;
+      break;
+  }
+}
+
 void RunController::changeRunSpeed(int delta) {
   _runSpeed = min(maxRunSpeed, max(0, _runSpeed + delta));
 
@@ -25,6 +46,11 @@ void RunController::changeRunSpeed(int delta) {
 }
 
 void RunController::update() {
+  if (gb.buttons.pressed(BUTTON_MENU)) {
+    runMenu();
+    return;
+  }
+
   if (gb.buttons.pressed(BUTTON_UP)) {
     changeRunSpeed(+1);
   }

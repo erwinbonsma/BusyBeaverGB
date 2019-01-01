@@ -6,7 +6,34 @@
 #include "Program.h"
 #include "Drawing.h"
 
+const char* editMenuEntries[] = {
+  "Continue",
+  "Clear",
+  "Run",
+};
+
+void editMenu() {
+  int entry = gb.gui.menu("Edit menu", editMenuEntries);
+
+  switch (entry) {
+    case 0:
+      break;
+    case 1:
+      program.clear();
+      break;
+    case 2:
+      activeController = &runController;
+      program.reset();
+      break;
+  }
+}
+
 void EditController::update() {
+  if (gb.buttons.pressed(BUTTON_MENU)) {
+    editMenu();
+    return;
+  }
+
   if (gb.buttons.pressed(BUTTON_LEFT)) {
     _x = (_x + maxProgramSize - 1) % maxProgramSize;
   }

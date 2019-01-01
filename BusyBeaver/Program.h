@@ -52,7 +52,10 @@ public:
   int getAddressY() { return _y; }
   Direction getDirection() { return _dir; }
 
-  // Resets the program
+  // Clears the program
+  void clear();
+
+  // Resets the execution state
   void reset();
 
   int getMemoryAddress() { return _ptr; }

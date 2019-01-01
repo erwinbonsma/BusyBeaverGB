@@ -131,11 +131,11 @@ void drawProgram(Program& program) {
 }
 
 void drawRunStatus(Program& program) {
-  gb.display.setCursorX(56);
+  gb.display.setCursorX(48);
   gb.display.setCursorY(0);
   if (program.getStatus() == Status::Running || program.getStatus() == Status::Done) {
     gb.display.setColor(program.getStatus() == Status::Running ? BLUE : DARKBLUE);
-    gb.display.printf("%6d", program.getNumSteps());
+    gb.display.printf("%8d", program.getNumSteps());
   }
   if (program.getStatus() == Status::Error) {
     gb.display.setColor(RED);

@@ -10,13 +10,16 @@ bool isAddressValid(int address) {
 Program::Program(int size) {
   _size = size;
 
-  for (int x = 0; x < size; x++) {
-    for (int y = 0; y < size; y++) {
+  clear();
+  reset();
+}
+
+void Program::clear() {
+  for (int x = 0; x < _size; x++) {
+    for (int y = 0; y < _size; y++) {
       _program[x][y] = Instruction::Nop;
     }
   }
-
-  reset();
 }
 
 void Program::reset() {
