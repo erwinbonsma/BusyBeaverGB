@@ -30,6 +30,7 @@ class Program {
   int _memory[memorySize];
 
   int _numSteps;
+  bool _done;
 
 public:
   Program(int size);
@@ -53,6 +54,6 @@ public:
   // Executes one instruction. Returns "true" when done
   bool step();
 
-  int numSteps() { return _numSteps; }
+  int getNumSteps() { return _numSteps; }
 };
 

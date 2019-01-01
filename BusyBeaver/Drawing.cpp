@@ -5,7 +5,31 @@
 #include "Program.h"
 
 const int board_x0 = 17;
-const int board_y0 = 6;
+const int board_y0 = 5;
+
+void drawPointer(Program& program) {
+  int x0 = board_x0 + 5 * program.getAddressX();
+  int y0 = board_y0 + 5 * (8 - program.getAddressY());
+
+  gb.display.setColor(LIGHTGREEN);
+  gb.display.drawRect(x0, y0, 5, 5);
+
+  gb.display.setColor(YELLOW);
+  switch (program.getDirection()) {
+    case Direction::Up:
+      gb.display.drawLine(x0, y0, x0 + 4, y0);
+      break;
+    case Direction::Down:
+      gb.display.drawLine(x0, y0 + 4, x0 + 4, y0 + 4);
+      break;
+    case Direction::Left:
+      gb.display.drawLine(x0, y0, x0, y0 + 4);
+      break;
+    case Direction::Right:
+      gb.display.drawLine(x0 + 4, y0, x0 + 4, y0 + 4);
+      break;
+  }
+}
 
 void drawMemory(Program& program) {
   int p = 0;
@@ -13,7 +37,7 @@ void drawMemory(Program& program) {
   gb.display.setCursorX(0);
   gb.display.setCursorY(59);
   while (gb.display.getCursorX() < 80) {
-    gb.display.setColor(p == program.getMemoryAddress() ? BEIGE : BROWN);
+    gb.display.setColor(p == program.getMemoryAddress() ? LIGHTGREEN : GREEN);
 
     int val = program.getMemory(p++);
     gb.display.print(val, DEC);
@@ -54,15 +78,16 @@ void drawProgram(Program& program) {
     }
   }
 
-  // Pointer
-  gb.display.setColor(RED);
-  gb.display.drawRect(
-    board_x0 + 5 * program.getAddressX(),
-    board_y0 + 5 * (8 - program.getAddressY()),
-    5, 5
-  );
+  drawPointer(program);
 
   // Memory
   drawMemory(program);
+
+  if (program.getNumSteps() > 0) {
+    gb.display.setColor(GREEN);
+    gb.display.setCursorX(0);
+    gb.display.setCursorY(52);
+    gb.display.printf("%d", program.getNumSteps());
+  }
 }
 

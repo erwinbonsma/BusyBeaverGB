@@ -19,7 +19,10 @@ void Program::reset() {
   _x = 0;
   _y = -1;
   _dir = Direction::Up;
+  _ptr = 0;
+
   _numSteps = 0;
+  _done = false;
 
   for (int i = 0; i < memorySize; i++) {
     _memory[i] = 0;
@@ -35,6 +38,10 @@ void Program::setProgram(int* program) {
 }
 
 bool Program::step() {
+  if (_done) {
+    return true;
+  }
+
   int x, y;
   Direction oldDir;
 
@@ -44,7 +51,8 @@ bool Program::step() {
     oldDir = _dir;
 
     if (x < 0 || y < 0 || x >= _size || y >= _size) {
-      return true;
+      _done = true;
+      break;
     }
 
     switch (_program[x][y]) {
@@ -66,7 +74,7 @@ bool Program::step() {
         break;
 
       case Instruction::Blk:
-        if (_memory[_ptr] > 0) {
+        if (_memory[_ptr] != 0) {
           _dir = (Direction)(((int)_dir + 1) % 4);
         } else {
           _dir = (Direction)(((int)_dir + 3) % 4);
@@ -82,6 +90,6 @@ bool Program::step() {
   _x = x;
   _y = y;
 
-  return false;
+  return _done;
 }
 
