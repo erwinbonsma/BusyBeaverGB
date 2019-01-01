@@ -64,6 +64,9 @@ bool Program::step() {
           _dir = (Direction)(((int)_dir + 3) % 4);
         }
         break;
+
+      case Instruction::Nop: // Do nothing
+        break;
     }
   } while (_dir != oldDir);
 

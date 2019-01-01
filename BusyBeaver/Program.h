@@ -34,6 +34,7 @@ class Program {
 public:
   Program(int size);
 
+  int getSize() { return _size; }
   //void setProgram(int** program);
 
   Instruction getInstruction(int x, int y) { return _program[x][y]; }
@@ -46,7 +47,7 @@ public:
   // Resets the program
   void reset();
 
-  int getMemoryPtr() { return _ptr; }
+  int getMemoryAddress() { return _ptr; }
   int getMemory(int address) { return _memory[address]; }
 
   // Executes one instruction. Returns "true" when done
