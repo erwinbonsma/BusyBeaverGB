@@ -34,6 +34,12 @@ void Program::reset() {
   for (int i = 0; i < memorySize; i++) {
     _memory[i] = 0;
   }
+
+  for (int x = 0; x < _size; x++) {
+    for (int y = 0; y < _size; y++) {
+      _visitCount[x][y] = 0;
+    }
+  }
 }
 
 void Program::setProgram(int* program) {
@@ -62,6 +68,8 @@ bool Program::step() {
       _status = Status::Done;
       break;
     }
+
+    _visitCount[x][y]++;
 
     switch (_program[x][y]) {
       case Instruction::Mem:

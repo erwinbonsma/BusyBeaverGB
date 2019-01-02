@@ -26,6 +26,7 @@ const int numDirections = 4;
 
 class Program {
   Instruction _program[maxProgramSize][maxProgramSize];
+  int _visitCount[maxProgramSize][maxProgramSize];
   int _size;
 
   // Address pointer
@@ -47,6 +48,7 @@ public:
 
   Instruction getInstruction(int x, int y) { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
+  int getVisitCount(int x, int y) { return _visitCount[x][y]; }
 
   int getAddressX() { return _x; }
   int getAddressY() { return _y; }

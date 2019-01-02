@@ -76,6 +76,7 @@ void RunController::update() {
 
 void RunController::draw() {
   drawProgram(program);
+  drawVisitCounts(program);
   drawProgramPointer(program);
   drawMemory(program);
   drawRunStatus(program);
