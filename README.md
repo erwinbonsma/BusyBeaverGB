@@ -16,7 +16,7 @@ All cells of the tape are initially filled with zeros.
 
 The language consist of only two symbols:
 
-*   ***TURN***, visualised by a Black square
+*   **TURN**, visualised by a Black square
 
     When the program pointer would enter a cell with a TURN instruction, it changes
     direction to prevent this.
@@ -26,18 +26,18 @@ The language consist of only two symbols:
     *   When the value is zero, it turns ninety degrees counter-clockwise.
     *   Otherwise, it turns ninety degrees clockwise.
 
-*   ***DATA***, visualised by a White square
+*   **DATA**, visualised by a White square
 
     What happens when the program pointer enters a cell with a DATA instruction
-    depends on the direction the program pointer is moving to:
+    depends on the direction the program pointer is moving in:
 
     *   When it is moving up, it increases the value at the data pointer by one.
     *   When it is moving down, it decreases the value at the data pointer by one.
     *   When it is moving right, it moves the data pointer one position to the right.
     *   When it is moving left, it moves the data pointer one position to the left.
 
-Program cells can also be empty, representing a NOOP instruction.
-The program pointer simply keeps moving in its current direction.
+Program cells can also be empty, representing a NOOP instruction;
+the program pointer simply keeps moving in its current direction.
 
 The program terminates when the program pointer leaves the board,
 It is an error when trying read or write to the tape when the data pointer does not point to a position on the tape.
