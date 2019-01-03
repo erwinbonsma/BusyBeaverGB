@@ -5,9 +5,12 @@
 #include "Globals.h"
 #include "Computer.h"
 #include "Drawing.h"
+#include "Store.h"
 
 const char* editMenuEntries[] = {
   "Continue",
+  "Store",
+  "Load",
   "Clear",
   "Run",
 };
@@ -19,9 +22,15 @@ void editMenu() {
     case 0:
       break;
     case 1:
-      computer.clear();
+      storeProgram(computer);
       break;
     case 2:
+      loadProgram(computer);
+      break;
+    case 3:
+      computer.clear();
+      break;
+    case 4:
       activeController = &runController;
       computer.reset();
       break;
