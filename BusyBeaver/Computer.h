@@ -1,4 +1,4 @@
-
+#include <limits.h>
 
 enum class Instruction : int {
   Noop = 0,
@@ -6,6 +6,7 @@ enum class Instruction : int {
   Data = 2
 };
 
+const int numDirections = 4;
 enum class Direction : int {
   Up = 0,
   Right = 1,
@@ -21,8 +22,21 @@ enum class Status : int {
 };
 
 const int maxProgramSize = 9;
+
+/* The size of the data tape.
+ *
+ * The size should be chosen such that a well-written (terminating) program never exceeds the
+ * data boundaries.
+ */
 const int memorySize = 64;
-const int numDirections = 4;
+
+/* Put explicit bounds on data values.
+ *
+ * This is done to prevent data values from wrapping, which could cause simple non-terminating
+ * programs to terminate after all.
+ */
+const int minDataValue = SHRT_MIN;
+const int maxDataValue = SHRT_MAX;
 
 class Computer {
   Instruction _program[maxProgramSize][maxProgramSize];

@@ -75,14 +75,14 @@ bool Computer::step() {
       case Instruction::Data:
         switch (_dir) {
           case Direction::Up:
-            if (isAddressValid(_ptr)) {
+            if (isAddressValid(_ptr) && _memory[_ptr] < maxDataValue) {
               _memory[_ptr]++;
             } else {
               _status = Status::Error;
             }
             break;
           case Direction::Down:
-            if (isAddressValid(_ptr)) {
+            if (isAddressValid(_ptr) && _memory[_ptr] > minDataValue) {
               _memory[_ptr]--;
             } else {
               _status = Status::Error;
