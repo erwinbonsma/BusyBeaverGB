@@ -26,7 +26,7 @@ void Computer::reset() {
   _x = 0;
   _y = -1;
   _dir = Direction::Up;
-  _ptr = 0;
+  _ptr = memorySize / 2;
 
   _numSteps = 0;
   _status = Status::Ready;

@@ -78,9 +78,22 @@ void drawProgramPointer(Computer& computer) {
 }
 
 void drawMemory(Computer& computer) {
-  int p = min(0, computer.getMemoryAddress());
-  int x = 0;
+  int p = 0;
 
+  // Move to part of the tape containing data and memory address
+  while (
+    p < memorySize &&
+    p < computer.getMemoryAddress() &&
+    computer.getMemory(p) == 0
+  ) {
+    p++;
+  }
+
+  if (computer.getMemoryAddress() - p > 8) {
+    p = computer.getMemoryAddress() - 8;
+  }
+
+  int x = 0;
   gb.display.setCursorY(59);
   while (x < 80) {
     gb.display.setCursorX(x);
