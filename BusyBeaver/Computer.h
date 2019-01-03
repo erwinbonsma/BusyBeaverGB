@@ -24,7 +24,7 @@ const int maxProgramSize = 9;
 const int memorySize = 64;
 const int numDirections = 4;
 
-class Program {
+class Computer {
   Instruction _program[maxProgramSize][maxProgramSize];
   int _size;
 
@@ -43,7 +43,7 @@ class Program {
   int _numSteps;
 
 public:
-  Program(int size);
+  Computer(int size);
 
   int getSize() { return _size; }
   void setProgram(int* program);

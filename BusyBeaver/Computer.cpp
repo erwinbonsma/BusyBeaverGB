@@ -1,4 +1,4 @@
-#include "Program.h"
+#include "Computer.h"
 
 int dx[numDirections] = { 0, 1, 0, -1 };
 int dy[numDirections] = { 1, 0, -1, 0 };
@@ -7,14 +7,14 @@ bool isAddressValid(int address) {
   return address >= 0 && address < memorySize;
 }
 
-Program::Program(int size) {
+Computer::Computer(int size) {
   _size = size;
 
   clear();
   reset();
 }
 
-void Program::clear() {
+void Computer::clear() {
   for (int x = 0; x < _size; x++) {
     for (int y = 0; y < _size; y++) {
       _program[x][y] = Instruction::Noop;
@@ -22,7 +22,7 @@ void Program::clear() {
   }
 }
 
-void Program::reset() {
+void Computer::reset() {
   _x = 0;
   _y = -1;
   _dir = Direction::Up;
@@ -44,7 +44,7 @@ void Program::reset() {
   }
 }
 
-void Program::setProgram(int* program) {
+void Computer::setProgram(int* program) {
   for (int x = 0; x < _size; x++) {
     for (int y = 0; y < _size; y++) {
       _program[x][y] = (Instruction)program[x + (_size - y - 1) * _size];
@@ -52,7 +52,7 @@ void Program::setProgram(int* program) {
   }
 }
 
-bool Program::step() {
+bool Computer::step() {
   if (_status==Status::Done || _status==Status::Error) {
     return true;
   }

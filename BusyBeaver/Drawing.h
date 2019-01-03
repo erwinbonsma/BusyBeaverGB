@@ -1,13 +1,13 @@
 #include <Gamebuino-Meta.h>
 
-class Program;
+class Computer;
 
 void drawProgramSpace();
-void drawProgram(Program& program);
-void drawMemory(Program& program);
-void drawRunStatus(Program& program);
+void drawProgram(Computer& computer);
+void drawMemory(Computer& computer);
+void drawRunStatus(Computer& computer);
 void drawCursor(int x, int y);
-void drawProgramPointer(Program& program);
-void drawVisitCounts(Program& program);
+void drawProgramPointer(Computer& computer);
+void drawVisitCounts(Computer& computer);
 
 void drawSpeedBar(int speed);

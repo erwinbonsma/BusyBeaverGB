@@ -3,7 +3,7 @@
 #include <Gamebuino-Meta.h>
 
 #include "Globals.h"
-#include "Program.h"
+#include "Computer.h"
 #include "Drawing.h"
 
 const int unitRunSpeed = 6;
@@ -21,7 +21,7 @@ void runMenu() {
     case 0:
       break;
     case 1:
-      program.reset();
+      computer.reset();
       break;
     case 2:
       activeController = &editController;
@@ -58,16 +58,16 @@ void RunController::update() {
     changeRunSpeed(-1);
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    program.step();
+    computer.step();
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
-    program.reset();
+    computer.reset();
   }
 
   if (_runSpeed > 0) {
     if (++_ticksSinceLastStep >= _stepPeriod) {
       for (int i = 0; i < _stepsPerTick; i++) {
-        program.step();
+        computer.step();
         _ticksSinceLastStep = 0;
       }
     }
@@ -76,13 +76,13 @@ void RunController::update() {
 
 void RunController::draw() {
   drawProgramSpace();
-  drawVisitCounts(program);
-  drawProgram(program);
-  drawProgramPointer(program);
+  drawVisitCounts(computer);
+  drawProgram(computer);
+  drawProgramPointer(computer);
 
-  drawMemory(program);
+  drawMemory(computer);
 
-  drawRunStatus(program);
+  drawRunStatus(computer);
 
   drawSpeedBar(_runSpeed);
 }

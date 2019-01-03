@@ -6,12 +6,12 @@
 
 #include <Gamebuino-Meta.h>
 
-#include "Program.h"
+#include "Computer.h"
 #include "Drawing.h"
 #include "EditController.h"
 #include "RunController.h"
 
-Program program(9);
+Computer computer(9);
 
 RunController runController;
 EditController editController;
@@ -45,8 +45,8 @@ int buggy[81] = {
 void setup() {
   gb.begin();
 
-  program.setProgram(busyBeaver);
-  //program.setProgram(buggy);
+  computer.setProgram(busyBeaver);
+  //computer.setProgram(buggy);
 
   //activeController = &runController;
   activeController = &editController;

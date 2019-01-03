@@ -2,7 +2,7 @@
 
 #include "Drawing.h"
 
-#include "Program.h"
+#include "Computer.h"
 #include "RunController.h"
 
 const int board_x0 = 17;
@@ -53,15 +53,15 @@ void drawCursor(int x, int y) {
   gb.display.drawRect(getDisplayX(x), getDisplayY(y), 5, 5);
 }
 
-void drawProgramPointer(Program& program) {
-  int x0 = getDisplayX(program.getAddressX());
-  int y0 = getDisplayY(program.getAddressY());
+void drawProgramPointer(Computer& computer) {
+  int x0 = getDisplayX(computer.getAddressX());
+  int y0 = getDisplayY(computer.getAddressY());
 
   gb.display.setColor(LIGHTGREEN);
   gb.display.drawRect(x0, y0, 5, 5);
 
   gb.display.setColor(YELLOW);
-  switch (program.getDirection()) {
+  switch (computer.getDirection()) {
     case Direction::Up:
       gb.display.drawLine(x0, y0, x0 + 4, y0);
       break;
@@ -77,17 +77,17 @@ void drawProgramPointer(Program& program) {
   }
 }
 
-void drawMemory(Program& program) {
-  int p = min(0, program.getMemoryAddress());
+void drawMemory(Computer& computer) {
+  int p = min(0, computer.getMemoryAddress());
   int x = 0;
 
   gb.display.setCursorY(59);
   while (x < 80) {
     gb.display.setCursorX(x);
-    gb.display.setColor(p == program.getMemoryAddress() ? LIGHTGREEN : GREEN);
+    gb.display.setColor(p == computer.getMemoryAddress() ? LIGHTGREEN : GREEN);
 
     if (p >= 0 && p < memorySize) {
-      int val = program.getMemory(p);
+      int val = computer.getMemory(p);
       x += gb.display.print(val, DEC) * 4;
     }
     else {
@@ -120,11 +120,11 @@ void drawProgramSpace() {
   }
 }
 
-void drawProgram(Program& program) {
+void drawProgram(Computer& computer) {
   // Instructions
-  for (int x = 0; x < program.getSize(); x++) {
-    for (int y = 0; y < program.getSize(); y++) {
-      Instruction ins = program.getInstruction(x, y);
+  for (int x = 0; x < computer.getSize(); x++) {
+    for (int y = 0; y < computer.getSize(); y++) {
+      Instruction ins = computer.getInstruction(x, y);
       if (ins != Instruction::Noop) {
         if (ins == Instruction::Turn) {
           gb.display.setColor(BLACK);
@@ -185,16 +185,16 @@ void updateOrCreateBucketForVisit(int visits) {
   }
 }
 
-int getVisitCount(Program& program, int x, int y, bool horizontal) {
+int getVisitCount(Computer& computer, int x, int y, bool horizontal) {
   if (horizontal) {
     return (
-      program.getExitCount(x, y, Direction::Right) +
-      program.getExitCount(x + 1, y, Direction::Left)
+      computer.getExitCount(x, y, Direction::Right) +
+      computer.getExitCount(x + 1, y, Direction::Left)
     );
   } else {
     return (
-      program.getExitCount(x, y, Direction::Up) +
-      program.getExitCount(x, y + 1, Direction::Down)
+      computer.getExitCount(x, y, Direction::Up) +
+      computer.getExitCount(x, y + 1, Direction::Down)
     );
   }
 }
@@ -204,10 +204,10 @@ void emptyBuckets() {
   bucketListHeadIndex = EOL;
 }
 
-void fillVisitBuckets(Program& program, bool horizontal) {
-  for (int x = 0; x < program.getSize() - 1; x++) {
-    for (int y = 0; y < program.getSize() - 1; y++) {
-      int visits = getVisitCount(program, x, y, horizontal);
+void fillVisitBuckets(Computer& computer, bool horizontal) {
+  for (int x = 0; x < computer.getSize() - 1; x++) {
+    for (int y = 0; y < computer.getSize() - 1; y++) {
+      int visits = getVisitCount(computer, x, y, horizontal);
       if (visits > 0) {
         updateOrCreateBucketForVisit(visits);
       }
@@ -272,10 +272,10 @@ void dumpBuckets() {
   SerialUSB.printf("\n");
 }
 
-void drawVisitCounts(Program& program, bool horizontal) {
-  for (int x = 0; x < program.getSize() - 1; x++) {
-    for (int y = 0; y < program.getSize() - 1; y++) {
-      int visits = getVisitCount(program, x, y, horizontal);
+void drawVisitCounts(Computer& computer, bool horizontal) {
+  for (int x = 0; x < computer.getSize() - 1; x++) {
+    for (int y = 0; y < computer.getSize() - 1; y++) {
+      int visits = getVisitCount(computer, x, y, horizontal);
       if (visits > 0) {
         int x0 = getDisplayX(x);
         int y0 = getDisplayY(y);
@@ -290,25 +290,25 @@ void drawVisitCounts(Program& program, bool horizontal) {
   }
 }
 
-void drawVisitCounts(Program& program) {
+void drawVisitCounts(Computer& computer) {
   emptyBuckets();
-  fillVisitBuckets(program, true);
-  fillVisitBuckets(program, false);
+  fillVisitBuckets(computer, true);
+  fillVisitBuckets(computer, false);
 
   collapseVisitBuckets(numVisitColors);
 
-  drawVisitCounts(program, true);
-  drawVisitCounts(program, false);
+  drawVisitCounts(computer, true);
+  drawVisitCounts(computer, false);
 }
 
-void drawRunStatus(Program& program) {
+void drawRunStatus(Computer& computer) {
   gb.display.setCursorX(48);
   gb.display.setCursorY(0);
-  if (program.getStatus() == Status::Running || program.getStatus() == Status::Done) {
-    gb.display.setColor(program.getStatus() == Status::Running ? BLUE : DARKBLUE);
-    gb.display.printf("%8d", program.getNumSteps());
+  if (computer.getStatus() == Status::Running || computer.getStatus() == Status::Done) {
+    gb.display.setColor(computer.getStatus() == Status::Running ? BLUE : DARKBLUE);
+    gb.display.printf("%8d", computer.getNumSteps());
   }
-  if (program.getStatus() == Status::Error) {
+  if (computer.getStatus() == Status::Error) {
     gb.display.setColor(RED);
     gb.display.printf("Error!");
   }

@@ -4,9 +4,9 @@
 #include "EditController.h"
 #include "RunController.h"
 
-class Program;
+class Computer;
 
-extern Program program;
+extern Computer computer;
 
 extern RunController runController;
 extern EditController editController;

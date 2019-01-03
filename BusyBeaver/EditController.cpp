@@ -3,7 +3,7 @@
 #include <Gamebuino-Meta.h>
 
 #include "Globals.h"
-#include "Program.h"
+#include "Computer.h"
 #include "Drawing.h"
 
 const char* editMenuEntries[] = {
@@ -19,11 +19,11 @@ void editMenu() {
     case 0:
       break;
     case 1:
-      program.clear();
+      computer.clear();
       break;
     case 2:
       activeController = &runController;
-      program.reset();
+      computer.reset();
       break;
   }
 }
@@ -47,19 +47,19 @@ void EditController::update() {
     _y = (_y + 1) % maxProgramSize;
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    program.setInstruction(
+    computer.setInstruction(
       _x, _y,
-      (Instruction)(((int)program.getInstruction(_x, _y) + 1) % 3)
+      (Instruction)(((int)computer.getInstruction(_x, _y) + 1) % 3)
     );
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
-    program.setInstruction(_x, _y, Instruction::Noop);
+    computer.setInstruction(_x, _y, Instruction::Noop);
   }
 }
 
 void EditController::draw() {
   drawProgramSpace();
-  drawProgram(program);
+  drawProgram(computer);
   drawCursor(_x, _y);
 }
 
