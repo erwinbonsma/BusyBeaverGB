@@ -125,8 +125,8 @@ void drawProgram(Program& program) {
   for (int x = 0; x < program.getSize(); x++) {
     for (int y = 0; y < program.getSize(); y++) {
       Instruction ins = program.getInstruction(x, y);
-      if (ins != Instruction::Nop) {
-        if (ins == Instruction::Blk) {
+      if (ins != Instruction::Noop) {
+        if (ins == Instruction::Turn) {
           gb.display.setColor(BLACK);
         } else {
           gb.display.setColor(WHITE);

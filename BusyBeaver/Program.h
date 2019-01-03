@@ -1,9 +1,9 @@
 
 
 enum class Instruction : int {
-  Nop = 0,
-  Blk = 1,
-  Mem = 2
+  Noop = 0,
+  Turn = 1,
+  Data = 2
 };
 
 enum class Direction : int {

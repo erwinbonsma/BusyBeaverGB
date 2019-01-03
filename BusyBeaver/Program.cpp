@@ -17,7 +17,7 @@ Program::Program(int size) {
 void Program::clear() {
   for (int x = 0; x < _size; x++) {
     for (int y = 0; y < _size; y++) {
-      _program[x][y] = Instruction::Nop;
+      _program[x][y] = Instruction::Noop;
     }
   }
 }
@@ -72,7 +72,7 @@ bool Program::step() {
     }
 
     switch (_program[x][y]) {
-      case Instruction::Mem:
+      case Instruction::Data:
         switch (_dir) {
           case Direction::Up:
             if (isAddressValid(_ptr)) {
@@ -97,7 +97,7 @@ bool Program::step() {
         }
         break;
 
-      case Instruction::Blk:
+      case Instruction::Turn:
         if (isAddressValid(_ptr)) {
           if (_memory[_ptr] != 0) {
             _dir = (Direction)(((int)_dir + 1) % 4);
@@ -109,7 +109,7 @@ bool Program::step() {
         }
         break;
 
-      case Instruction::Nop: // Do nothing
+      case Instruction::Noop: // Do nothing
         break;
     }
   } while (_dir != oldDir);

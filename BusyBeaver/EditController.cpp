@@ -53,7 +53,7 @@ void EditController::update() {
     );
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
-    program.setInstruction(_x, _y, Instruction::Nop);
+    program.setInstruction(_x, _y, Instruction::Noop);
   }
 }
 
