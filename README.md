@@ -7,40 +7,36 @@ The language is based on [2L](https://esolangs.org/wiki/2L) with some minor modi
 
 The language is two-dimensional.
 The instructions are put on a 2D grid, whose size is limited to 9x9.
-The program pointer moves across this grid, executing instructions as it encounters them.
+The directional program pointer (PP) moves across this grid, executing instructions as it encounters them.
 It starts just below the left-most cell at the bottom of the grid, moving upwards.
 
-There is also a one-dimensional tape that acts as memory.
-The data pointer starts at the left-most cell of the tape.
+There is also a one-dimensional, infinite tape that acts as data.
 All cells of the tape are initially filled with zeros.
+The data pointer (DP) points to one of these cells.
 
 The language consist of only two symbols:
 
 *   **TURN**, visualised by a Black square
 
-    When the program pointer would enter a cell with a TURN instruction, it changes
-    direction to prevent this.
-    The direction it turns to depends on the value of the cell on the tape that the
-    data pointer points to:
+    When PP would enter a cell with a TURN instruction, it changes direction to prevent this.
+    The direction it turns to depends on the value that DP points to:
 
-    *   When the value is zero, it turns ninety degrees counter-clockwise.
-    *   Otherwise, it turns ninety degrees clockwise.
+    *   When the value is zero, PP turns ninety degrees counter-clockwise.
+    *   Otherwise, PP turns ninety degrees clockwise.
 
 *   **DATA**, visualised by a White square
 
-    What happens when the program pointer enters a cell with a DATA instruction
-    depends on the direction the program pointer is moving in:
+    What happens when PP enters a cell with a DATA instruction depends on the direction of PP:
 
-    *   When it is moving up, it increases the value at the data pointer by one.
-    *   When it is moving down, it decreases the value at the data pointer by one.
-    *   When it is moving right, it moves the data pointer one position to the right.
-    *   When it is moving left, it moves the data pointer one position to the left.
+    *   When it is moving up, it increases the value at DP by one.
+    *   When it is moving down, it decreases the value at DP by one.
+    *   When it is moving right, it moves DP one position to the right.
+    *   When it is moving left, it moves DP one position to the left.
 
 Program cells can also be empty, representing a NOOP instruction;
-the program pointer simply keeps moving in its current direction.
+PP simply keeps moving in its current direction.
 
-The program terminates when the program pointer leaves the board,
-It is an error when trying read or write to the tape when the data pointer does not point to a position on the tape.
+The program terminates when PP leaves the board,
 
 ## About the name
 
