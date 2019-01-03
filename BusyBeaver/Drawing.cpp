@@ -294,12 +294,8 @@ void drawVisitCounts(Program& program) {
   emptyBuckets();
   fillVisitBuckets(program, true);
   fillVisitBuckets(program, false);
-  SerialUSB.printf("All: ");
-  dumpBuckets();
 
   collapseVisitBuckets(numVisitColors);
-  SerialUSB.printf("Collapsed: ");
-  dumpBuckets();
 
   drawVisitCounts(program, true);
   drawVisitCounts(program, false);
