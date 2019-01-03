@@ -1,6 +1,8 @@
+#include <Gamebuino-Meta.h>
 
 class Program;
 
+void drawProgramSpace();
 void drawProgram(Program& program);
 void drawMemory(Program& program);
 void drawRunStatus(Program& program);

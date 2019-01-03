@@ -17,8 +17,8 @@ const SpeedBarSpecs speedBarSpecs[5] = {
   SpeedBarSpecs { .color = RED, .len = 1 },
   SpeedBarSpecs { .color = ORANGE, .len = 5 },
   SpeedBarSpecs { .color = YELLOW, .len = 5 },
-  SpeedBarSpecs { .color = GREEN, .len = 5 },
-  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 }
+  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 },
+  SpeedBarSpecs { .color = GREEN, .len = 5 }
 };
 
 int getDisplayX(int addressX) {
@@ -101,7 +101,7 @@ void drawMemory(Program& program) {
   }
 }
 
-void drawProgram(Program& program) {
+void drawProgramSpace() {
   // Board
   gb.display.setColor(BROWN);
   gb.display.fillRect(board_x0, board_y0, 45, 45);
@@ -118,7 +118,9 @@ void drawProgram(Program& program) {
       board_x0 + 41, board_y0 + 2 + 5 * i
     );
   }
+}
 
+void drawProgram(Program& program) {
   // Instructions
   for (int x = 0; x < program.getSize(); x++) {
     for (int y = 0; y < program.getSize(); y++) {
@@ -142,7 +144,7 @@ struct CountBucket {
   uint8_t next;
 };
 
-const uint8_t maxBuckets = 1 + maxProgramSize * maxProgramSize;
+const uint8_t maxBuckets = (maxProgramSize - 1) * (maxProgramSize - 1);
 const uint8_t EOL = maxBuckets; // Signals End of List
 
 uint8_t numBuckets = 0;
@@ -183,13 +185,29 @@ void updateOrCreateBucketForVisit(int visits) {
   }
 }
 
-void fillVisitBuckets(Program& program) {
+int getVisitCount(Program& program, int x, int y, bool horizontal) {
+  if (horizontal) {
+    return (
+      program.getExitCount(x, y, Direction::Right) +
+      program.getExitCount(x + 1, y, Direction::Left)
+    );
+  } else {
+    return (
+      program.getExitCount(x, y, Direction::Up) +
+      program.getExitCount(x, y + 1, Direction::Down)
+    );
+  }
+}
+
+void emptyBuckets() {
   numBuckets = 0;
   bucketListHeadIndex = EOL;
+}
 
-  for (int x = 0; x < program.getSize(); x++) {
-    for (int y = 0; y < program.getSize(); y++) {
-      int visits = program.getVisitCount(x, y);
+void fillVisitBuckets(Program& program, bool horizontal) {
+  for (int x = 0; x < program.getSize() - 1; x++) {
+    for (int y = 0; y < program.getSize() - 1; y++) {
+      int visits = getVisitCount(program, x, y, horizontal);
       if (visits > 0) {
         updateOrCreateBucketForVisit(visits);
       }
@@ -209,7 +227,7 @@ void collapseVisitBuckets(int targetNum) {
       uint32_t collapsedArea = (
         buckets[bucketIndex].count +
         buckets[nextBucketIndex].count
-      ) * (
+      ) * 0 + (
         buckets[nextBucketIndex].maxRange -
         buckets[bucketIndex].minRange
       );
@@ -229,9 +247,9 @@ void collapseVisitBuckets(int targetNum) {
   }
 }
 
-const int numVisitColors = 5;
+const int numVisitColors = 8;
 Color visitColors[numVisitColors] = {
-  LIGHTBLUE, BLUE, PURPLE, PINK, RED
+  LIGHTBLUE, BLUE, DARKBLUE, GREEN, LIGHTGREEN, YELLOW, ORANGE, RED
 };
 
 Color getColorForVisitCount(int count) {
@@ -254,28 +272,37 @@ void dumpBuckets() {
   SerialUSB.printf("\n");
 }
 
-void drawVisitCounts(Program& program) {
-  fillVisitBuckets(program);
-  dumpBuckets();
-  collapseVisitBuckets(numVisitColors);
-  dumpBuckets();
-
-  for (int x = 0; x < program.getSize(); x++) {
-    for (int y = 0; y < program.getSize(); y++) {
-      int visits = program.getVisitCount(x, y);
+void drawVisitCounts(Program& program, bool horizontal) {
+  for (int x = 0; x < program.getSize() - 1; x++) {
+    for (int y = 0; y < program.getSize() - 1; y++) {
+      int visits = getVisitCount(program, x, y, horizontal);
       if (visits > 0) {
         int x0 = getDisplayX(x);
         int y0 = getDisplayY(y);
         gb.display.setColor(getColorForVisitCount(visits));
-        //gb.display.drawPixel(x0 + 1, y0 + 1);
-        //gb.display.drawPixel(x0 + 3, y0 + 1);
-        //gb.display.drawPixel(x0 + 1, y0 + 3);
-        //gb.display.drawPixel(x0 + 3, y0 + 3);
-        gb.display.drawLine(x0 + 1, y0 + 2, x0 + 3, y0 + 2);
-        gb.display.drawLine(x0 + 2, y0 + 1, x0 + 2, y0 + 3);
+        if (horizontal) {
+          gb.display.drawLine(x0 + 2, y0 + 2, x0 + 7, y0 + 2);
+        } else {
+          gb.display.drawLine(x0 + 2, y0 + 2, x0 + 2, y0 - 3);
+        }
       }
     }
   }
+}
+
+void drawVisitCounts(Program& program) {
+  emptyBuckets();
+  fillVisitBuckets(program, true);
+  fillVisitBuckets(program, false);
+  SerialUSB.printf("All: ");
+  dumpBuckets();
+
+  collapseVisitBuckets(numVisitColors);
+  SerialUSB.printf("Collapsed: ");
+  dumpBuckets();
+
+  drawVisitCounts(program, true);
+  drawVisitCounts(program, false);
 }
 
 void drawRunStatus(Program& program) {

@@ -75,10 +75,13 @@ void RunController::update() {
 }
 
 void RunController::draw() {
-  drawProgram(program);
+  drawProgramSpace();
   drawVisitCounts(program);
+  drawProgram(program);
   drawProgramPointer(program);
+
   drawMemory(program);
+
   drawRunStatus(program);
 
   drawSpeedBar(_runSpeed);

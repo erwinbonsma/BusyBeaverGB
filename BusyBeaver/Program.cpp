@@ -37,7 +37,9 @@ void Program::reset() {
 
   for (int x = 0; x < _size; x++) {
     for (int y = 0; y < _size; y++) {
-      _visitCount[x][y] = 0;
+      for (int d = 0; d < numDirections; d++) {
+        _exitCount[x][y][d] = 0;
+      }
     }
   }
 }
@@ -68,8 +70,6 @@ bool Program::step() {
       _status = Status::Done;
       break;
     }
-
-    _visitCount[x][y]++;
 
     switch (_program[x][y]) {
       case Instruction::Mem:
@@ -114,7 +114,10 @@ bool Program::step() {
     }
   } while (_dir != oldDir);
 
-  _numSteps++;
+  if (_numSteps++ > 0) {
+    _exitCount[_x][_y][(int)_dir]++;
+  }
+
   _x = x;
   _y = y;
 

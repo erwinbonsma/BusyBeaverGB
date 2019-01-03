@@ -26,8 +26,10 @@ const int numDirections = 4;
 
 class Program {
   Instruction _program[maxProgramSize][maxProgramSize];
-  int _visitCount[maxProgramSize][maxProgramSize];
   int _size;
+
+  // Tracks how often the program pointer exited in the given direction
+  int _exitCount[maxProgramSize][maxProgramSize][numDirections];
 
   // Address pointer
   int _x, _y;
@@ -48,7 +50,8 @@ public:
 
   Instruction getInstruction(int x, int y) { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
-  int getVisitCount(int x, int y) { return _visitCount[x][y]; }
+
+  int getExitCount(int x, int y, Direction d) { return _exitCount[x][y][(int)d]; }
 
   int getAddressX() { return _x; }
   int getAddressY() { return _y; }

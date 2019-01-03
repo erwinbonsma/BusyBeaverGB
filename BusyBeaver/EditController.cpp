@@ -58,6 +58,7 @@ void EditController::update() {
 }
 
 void EditController::draw() {
+  drawProgramSpace();
   drawProgram(program);
   drawCursor(_x, _y);
 }
