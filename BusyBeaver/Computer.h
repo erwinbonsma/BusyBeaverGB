@@ -1,4 +1,5 @@
-#include <limits.h>
+#include <Gamebuino-Meta.h>
+//#include <limits.h>
 
 enum class Instruction : int {
   Noop = 0,
@@ -21,6 +22,12 @@ enum class Status : int {
   Error = 3
 };
 
+struct ProgramPointer {
+  int8_t x;
+  int8_t y;
+  Direction dir;
+};
+
 const int maxProgramSize = 9;
 
 /* The size of the data tape.
@@ -28,7 +35,7 @@ const int maxProgramSize = 9;
  * The size should be chosen such that a well-written (terminating) program never exceeds the
  * data boundaries.
  */
-const int memorySize = 64;
+const int dataSize = 64;
 
 /* Put explicit bounds on data values.
  *
@@ -39,19 +46,21 @@ const int minDataValue = SHRT_MIN;
 const int maxDataValue = SHRT_MAX;
 
 class Computer {
+  // The program
   Instruction _program[maxProgramSize][maxProgramSize];
   int _size;
 
   // Tracks how often the program pointer exited in the given direction
   int _exitCount[maxProgramSize][maxProgramSize][numDirections];
 
-  // Address pointer
-  int _x, _y;
-  Direction _dir;
+  // Program pointer
+  ProgramPointer _pp;
 
-  // Memory pointer
-  int _ptr;
-  int _memory[memorySize];
+  // The data
+  int _data[dataSize];
+
+  // Data pointer
+  int _dp;
 
   Status _status;
   int _numSteps;
@@ -67,9 +76,7 @@ public:
 
   int getExitCount(int x, int y, Direction d) { return _exitCount[x][y][(int)d]; }
 
-  int getAddressX() { return _x; }
-  int getAddressY() { return _y; }
-  Direction getDirection() { return _dir; }
+  ProgramPointer getProgramPointer() { return _pp; }
 
   // Clears the program
   void clear();
@@ -77,8 +84,8 @@ public:
   // Resets the execution state
   void reset();
 
-  int getMemoryAddress() { return _ptr; }
-  int getMemory(int address) { return _memory[address]; }
+  int getDataPointer() { return _dp; }
+  int getData(int address) { return _data[address]; }
 
   // Executes one instruction. Returns "true" if the program is still running.
   bool step();

@@ -54,14 +54,15 @@ void drawCursor(int x, int y) {
 }
 
 void drawProgramPointer(Computer& computer) {
-  int x0 = getDisplayX(computer.getAddressX());
-  int y0 = getDisplayY(computer.getAddressY());
+  ProgramPointer pp = computer.getProgramPointer();
+  int x0 = getDisplayX(pp.x);
+  int y0 = getDisplayY(pp.y);
 
   gb.display.setColor(LIGHTGREEN);
   gb.display.drawRect(x0, y0, 5, 5);
 
   gb.display.setColor(YELLOW);
-  switch (computer.getDirection()) {
+  switch (pp.dir) {
     case Direction::Up:
       gb.display.drawLine(x0, y0, x0 + 4, y0);
       break;
@@ -80,27 +81,27 @@ void drawProgramPointer(Computer& computer) {
 void drawMemory(Computer& computer) {
   int p = 0;
 
-  // Move to part of the tape containing data and memory address
+  // Move to part of the tape containing non-zero data and/or data pointer
   while (
-    p < memorySize &&
-    p < computer.getMemoryAddress() &&
-    computer.getMemory(p) == 0
+    p < dataSize &&
+    p < computer.getDataPointer() &&
+    computer.getData(p) == 0
   ) {
     p++;
   }
 
-  if (computer.getMemoryAddress() - p > 8) {
-    p = computer.getMemoryAddress() - 8;
+  if (computer.getDataPointer() - p > 8) {
+    p = computer.getDataPointer() - 8;
   }
 
   int x = 0;
   gb.display.setCursorY(59);
   while (x < 80) {
     gb.display.setCursorX(x);
-    gb.display.setColor(p == computer.getMemoryAddress() ? LIGHTGREEN : GREEN);
+    gb.display.setColor(p == computer.getDataPointer() ? LIGHTGREEN : GREEN);
 
-    if (p >= 0 && p < memorySize) {
-      int val = computer.getMemory(p);
+    if (p >= 0 && p < dataSize) {
+      int val = computer.getData(p);
       x += gb.display.print(val, DEC) * 4;
     }
     else {

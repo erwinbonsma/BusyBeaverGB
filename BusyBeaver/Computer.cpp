@@ -3,8 +3,8 @@
 int dx[numDirections] = { 0, 1, 0, -1 };
 int dy[numDirections] = { 1, 0, -1, 0 };
 
-bool isAddressValid(int address) {
-  return address >= 0 && address < memorySize;
+bool isDataAddressValid(int address) {
+  return address >= 0 && address < dataSize;
 }
 
 Computer::Computer(int size) {
@@ -23,16 +23,16 @@ void Computer::clear() {
 }
 
 void Computer::reset() {
-  _x = 0;
-  _y = -1;
-  _dir = Direction::Up;
-  _ptr = memorySize / 2;
+  _pp.x = 0;
+  _pp.y = -1;
+  _pp.dir = Direction::Up;
+  _dp = dataSize / 2;
 
   _numSteps = 0;
   _status = Status::Ready;
 
-  for (int i = 0; i < memorySize; i++) {
-    _memory[i] = 0;
+  for (int i = 0; i < dataSize; i++) {
+    _data[i] = 0;
   }
 
   for (int x = 0; x < _size; x++) {
@@ -58,51 +58,53 @@ bool Computer::step() {
   }
   _status = Status::Running;
 
-  int x, y;
-  Direction oldDir;
+  ProgramPointer pp = _pp;
+  Instruction instruction;
 
   do {
-    x = _x + dx[(int)_dir];
-    y = _y + dy[(int)_dir];
-    oldDir = _dir;
+    pp.x = _pp.x + dx[(int)pp.dir];
+    pp.y = _pp.y + dy[(int)pp.dir];
 
-    if (x < 0 || y < 0 || x >= _size || y >= _size) {
+    if (pp.x < 0 || pp.y < 0 || pp.x >= _size || pp.y >= _size) {
+      instruction = Instruction::Noop;
       _status = Status::Done;
-      break;
+    }
+    else {
+      instruction = _program[pp.x][pp.y];
     }
 
-    switch (_program[x][y]) {
+    switch (instruction) {
       case Instruction::Data:
-        switch (_dir) {
+        switch (pp.dir) {
           case Direction::Up:
-            if (isAddressValid(_ptr) && _memory[_ptr] < maxDataValue) {
-              _memory[_ptr]++;
+            if (isDataAddressValid(_dp) && _data[_dp] < maxDataValue) {
+              _data[_dp]++;
             } else {
               _status = Status::Error;
             }
             break;
           case Direction::Down:
-            if (isAddressValid(_ptr) && _memory[_ptr] > minDataValue) {
-              _memory[_ptr]--;
+            if (isDataAddressValid(_dp) && _data[_dp] > minDataValue) {
+              _data[_dp]--;
             } else {
               _status = Status::Error;
             }
             break;
           case Direction::Right:
-            _ptr++;
+            _dp++;
             break;
           case Direction::Left:
-            _ptr--;
+            _dp--;
             break;
         }
         break;
 
       case Instruction::Turn:
-        if (isAddressValid(_ptr)) {
-          if (_memory[_ptr] != 0) {
-            _dir = (Direction)(((int)_dir + 1) % 4);
+        if (isDataAddressValid(_dp)) {
+          if (_data[_dp] != 0) {
+            pp.dir = (Direction)(((int)pp.dir + 1) % 4);
           } else {
-            _dir = (Direction)(((int)_dir + 3) % 4);
+            pp.dir = (Direction)(((int)pp.dir + 3) % 4);
           }
         } else {
           _status = Status::Error;
@@ -112,14 +114,13 @@ bool Computer::step() {
       case Instruction::Noop: // Do nothing
         break;
     }
-  } while (_dir != oldDir);
+  } while (_status == Status::Running && instruction == Instruction::Turn);
 
   if (_numSteps++ > 0) {
-    _exitCount[_x][_y][(int)_dir]++;
+    _exitCount[_pp.x][_pp.y][(int)_pp.dir]++;
   }
 
-  _x = x;
-  _y = y;
+  _pp = pp;
 
   return (_status == Status::Running);
 }
