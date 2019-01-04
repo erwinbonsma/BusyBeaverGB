@@ -8,25 +8,82 @@
 
 const int unitRunSpeed = 6;
 
+const uint8_t buttonData[] = {
+  7, 7, 4, 0, 1, 0xFF, 1,
+  // Play
+  0x00, 0x70, 0x00, 0x00,
+  0x00, 0x77, 0x00, 0x00,
+  0x00, 0x77, 0x70, 0x00,
+  0x00, 0x77, 0x77, 0x00,
+  0x00, 0x77, 0x70, 0x00,
+  0x00, 0x77, 0x00, 0x00,
+  0x00, 0x70, 0x00, 0x00,
+
+  // Pause
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+  0x07, 0x70, 0x77, 0x00,
+
+  // Step
+  0x77, 0x07, 0x00, 0x00,
+  0x77, 0x07, 0x70, 0x00,
+  0x77, 0x07, 0x77, 0x00,
+  0x77, 0x07, 0x77, 0x70,
+  0x77, 0x07, 0x77, 0x00,
+  0x77, 0x07, 0x70, 0x00,
+  0x77, 0x07, 0x00, 0x00,
+
+  // Rewind
+  0x00, 0x00, 0x00, 0x70,
+  0x00, 0x00, 0x07, 0x70,
+  0x77, 0x00, 0x77, 0x70,
+  0x77, 0x07, 0x77, 0x70,
+  0x77, 0x00, 0x77, 0x70,
+  0x00, 0x00, 0x07, 0x70,
+  0x00, 0x00, 0x00, 0x70
+};
+
+Image buttons(buttonData);
+
 const char* runMenuEntries[] = {
-  "Continue",
   "Reset",
   "Edit",
 };
 
-void runMenu() {
+void RunController::runMenu() {
   int entry = gb.gui.menu("Run menu", runMenuEntries);
 
   switch (entry) {
     case 0:
+      computer.reset();
+      _paused = true;
       break;
     case 1:
-      computer.reset();
-      break;
-    case 2:
       activeController = &editController;
       break;
   }
+}
+
+RunAction RunController::activeActionButtonA() {
+  switch (computer.getStatus()) {
+    case Status::Done:
+    case Status::Error:
+      return RunAction::Rewind;
+
+    case Status::Ready:
+    case Status::Running:
+      if (_runSpeed == 0) {
+        return RunAction::Step;
+      } else {
+        return _paused ? RunAction::Play : RunAction::Pause;
+      }
+  }
+
+  return RunAction::None;
 }
 
 void RunController::changeRunSpeed(int delta) {
@@ -58,13 +115,27 @@ void RunController::update() {
     changeRunSpeed(-1);
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    computer.step();
-  }
-  else if (gb.buttons.pressed(BUTTON_B)) {
-    computer.reset();
+    switch (activeActionButtonA()) {
+      case RunAction::Play:
+        _paused = false;
+        break;
+      case RunAction::Pause:
+        _paused = true;
+        break;
+      case RunAction::Rewind:
+        computer.reset();
+        _paused = true;
+        break;
+      case RunAction::Step:
+        computer.step();
+        break;
+      default:
+        // void
+        break;
+    }
   }
 
-  if (_runSpeed > 0) {
+  if (_runSpeed > 0 && !_paused) {
     if (++_ticksSinceLastStep >= _stepPeriod) {
       for (int i = 0; i < _stepsPerTick; i++) {
         computer.step();
@@ -85,5 +156,8 @@ void RunController::draw() {
   drawRunStatus(computer);
 
   drawSpeedBar(_runSpeed);
+
+  buttons.setFrame((int)activeActionButtonA());
+  gb.display.drawImage(73, 33, buttons);
 }
 
