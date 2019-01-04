@@ -25,6 +25,7 @@ class RunController : public Controller {
   void changeRunSpeed(int delta);
 
 public:
+  void activate();
   void update();
   void draw();
 };

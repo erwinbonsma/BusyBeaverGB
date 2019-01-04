@@ -8,11 +8,10 @@
 #include "Store.h"
 
 const char* editMenuEntries[] = {
-  "Continue",
+  "Run",
   "Store",
   "Load",
   "Clear",
-  "Run",
 };
 
 void editMenu() {
@@ -20,6 +19,8 @@ void editMenu() {
 
   switch (entry) {
     case 0:
+      activeController = &runController;
+      runController.activate();
       break;
     case 1:
       storeProgram(computer);
@@ -29,10 +30,6 @@ void editMenu() {
       break;
     case 3:
       computer.clear();
-      break;
-    case 4:
-      activeController = &runController;
-      computer.reset();
       break;
   }
 }

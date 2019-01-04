@@ -64,6 +64,7 @@ void RunController::runMenu() {
       break;
     case 1:
       activeController = &editController;
+      editController.activate();
       break;
   }
 }
@@ -100,6 +101,11 @@ void RunController::changeRunSpeed(int delta) {
     _stepPeriod = 1;
     _stepsPerTick = 1 << (_runSpeed - unitRunSpeed);
   }
+}
+
+void RunController::activate() {
+  computer.reset();
+  _paused = true;
 }
 
 void RunController::update() {
