@@ -2,35 +2,40 @@
 
 /* Block layout
  *
- * 0: INT, Challenge bitmask
+ * 0: INT, Save file format version
  * 1: INT, Number of stored programs
  * 2: INT, Next program ID
  * 3: Program names index
+ * 4: INT, Challenge bitmask
  *
  * 16 .. 16+N-1: Programs
  *
  * Where N = maxProgramsToStore
  */
-#define BLOCK_CHALLENGE_BITMASK  0
+#define BLOCK_SAVE_FILE_VERSION    0
 #define BLOCK_NUM_STORED_PROGRAMS  1
-#define BLOCK_PROGRAM_AUTO_NUM  2
-#define BLOCK_PROGRAM_NAMES  3
+#define BLOCK_PROGRAM_AUTO_NUM     2
+#define BLOCK_PROGRAM_NAMES        3
+#define BLOCK_CHALLENGE_BITMASK    4
 
 /* Note: The number of program blocks may vary. Therefore it is best to add other blocks before
  * them. By leaving a gap in the indexing we reserve some room for future usage.
  */
 #define BLOCK_FIRST_PROGRAM  16
 
+#define SAVE_FILE_VERSION  1
+
 const int maxProgramsToStore = 8;
 const int maxProgramNameLength = 20; // Includes terminating \0
 const int storedProgramSize = 17;
 const int programIndexSize = maxProgramsToStore * maxProgramNameLength;
 
-const SaveDefault savefileDefaults[4] = {
-  { BLOCK_CHALLENGE_BITMASK, SAVETYPE_INT, 0, 0},
+const SaveDefault savefileDefaults[5] = {
+  { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, 0, 0},
   { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
   { BLOCK_PROGRAM_AUTO_NUM, SAVETYPE_INT, 1, 0},
-  { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 }
+  { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 },
+  { BLOCK_CHALLENGE_BITMASK, SAVETYPE_INT, 0, 0},
 
   // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
 };
@@ -45,6 +50,10 @@ const char* programNames[maxProgramsToStore + 1];
 
 void initSaveFileDefaults() {
   gb.save.config(savefileDefaults);
+  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 0) {
+    // Version not set. Set it to current version to enable detecting future incompatibilities
+    gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
+  }
 }
 
 int selectProgramSlot(bool store) {
