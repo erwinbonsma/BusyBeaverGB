@@ -18,40 +18,11 @@ RunController runController;
 EditController editController;
 Controller *activeController;
 
-int busyBeaver[81] = {
-  0,1,1,0,0,0,0,0,0,
-  0,2,2,0,0,0,1,1,0,
-  0,2,2,1,2,2,2,0,1,
-  0,2,2,0,0,0,2,0,0,
-  0,2,2,0,0,0,2,0,1,
-  1,0,2,0,0,0,2,0,1,
-  1,2,2,0,1,1,2,0,0,
-  1,1,0,0,0,0,0,0,0,
-  2,2,2,2,2,2,2,1,0
-};
-
-// For testing purposes
-int buggy[81] = {
-  0,1,1,0,0,0,0,0,0,
-  0,2,2,0,0,0,1,1,0,
-  0,2,2,1,2,2,2,0,1,
-  0,2,2,0,0,0,2,0,0,
-  0,2,2,0,0,0,1,0,1,
-  1,2,2,2,2,2,0,0,1,
-  1,2,2,0,1,1,0,0,0,
-  1,1,0,0,0,0,0,0,0,
-  2,0,0,0,0,0,2,1,0
-};
-
 void setup() {
   gb.begin();
 
   initSaveFileDefaults();
 
-  computer.setProgram(busyBeaver);
-  //computer.setProgram(buggy);
-
-  //activeController = &runController;
   activeController = &editController;
 }
 
