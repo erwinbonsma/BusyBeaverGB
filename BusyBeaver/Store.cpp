@@ -89,13 +89,60 @@ void updateIndex(int slot, char* name) {
 bool storeProgram(int slot, char* name, Computer& computer) {
   updateIndex(slot, name);
 
-  // TODO: Store program
+  int p_out = 0;
+  int shifts = 0;
+  int p_in = 0;
+  int outval = 0;
+  int numCells = maxProgramSize * maxProgramSize;
+
+  do {
+    int x = p_in % 9;
+    int y = (p_in - x) / 9;
+    int instruction = (int)computer.getInstruction(x, y);
+
+    outval += instruction;
+    if (shifts == 4) {
+      programBuffer[p_out++] = outval;
+      shifts = 0;
+      outval = 0;
+    } else {
+      outval *= 3;
+      shifts++;
+    }
+  } while (++p_in < numCells);
+
+  while (shifts++ < 4) {
+    outval *= 3;
+  }
+
+  gb.save.set(slot + 2, (void*)programBuffer, storedProgramSize);
 
   return true;
 }
 
 bool loadProgram(int slot, Computer& computer) {
-  // TODO: Load program
+  gb.save.get(slot + 2, (void*)programBuffer, storedProgramSize);
+
+  int p_out = 0;
+  int p_in = 0;
+
+  do {
+    int inval = programBuffer[p_in++];
+
+    int p_dst = p_out + 4;
+    do {
+      int x = p_dst % 9;
+      int y = (p_dst - x) / 9;
+      int int_ins = inval % 3;
+      inval = (inval - int_ins) / 3;
+
+      if (y < maxProgramSize) {
+        computer.setInstruction(x, y, (Instruction)int_ins);
+      }
+    } while (--p_dst >= p_out);
+
+    p_out += 5;
+  } while (p_in < storedProgramSize);
 
   return true;
 }
