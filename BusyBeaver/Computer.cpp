@@ -117,7 +117,7 @@ bool Computer::step() {
   } while (_status == Status::Running && instruction == Instruction::Turn);
 
   if (_numSteps++ > 0) {
-    _exitCount[_pp.x][_pp.y][(int)_pp.dir]++;
+    _exitCount[_pp.x][_pp.y][(int)pp.dir]++;
   }
 
   _pp = pp;
