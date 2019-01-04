@@ -14,11 +14,11 @@ struct SpeedBarSpecs {
 };
 
 const SpeedBarSpecs speedBarSpecs[5] = {
-  SpeedBarSpecs { .color = RED, .len = 1 },
-  SpeedBarSpecs { .color = ORANGE, .len = 5 },
+  SpeedBarSpecs { .color = BLUE, .len = 1 },
+  SpeedBarSpecs { .color = GREEN, .len = 5 },
   SpeedBarSpecs { .color = YELLOW, .len = 5 },
-  SpeedBarSpecs { .color = LIGHTGREEN, .len = 5 },
-  SpeedBarSpecs { .color = GREEN, .len = 5 }
+  SpeedBarSpecs { .color = ORANGE, .len = 5 },
+  SpeedBarSpecs { .color = RED, .len = 5 }
 };
 
 int getDisplayX(int addressX) {
@@ -318,10 +318,16 @@ void drawVisitCounts(Computer& computer) {
 void drawRunStatus(Computer& computer) {
   gb.display.setCursorX(48);
   gb.display.setCursorY(0);
-  if (computer.getStatus() == Status::Running || computer.getStatus() == Status::Done) {
-    gb.display.setColor(computer.getStatus() == Status::Running ? BLUE : DARKBLUE);
+  if (computer.getStatus() != Status::Ready) {
+    gb.display.setColor(
+      computer.getStatus() == Status::Running ? BLUE : (
+        computer.getStatus() == Status::Done ? DARKBLUE : RED)
+    );
     gb.display.printf("%8d", computer.getNumSteps());
   }
+
+  gb.display.setCursorX(0);
+  gb.display.setCursorY(0);
   if (computer.getStatus() == Status::Error) {
     gb.display.setColor(RED);
     gb.display.printf("Error!");
