@@ -8,6 +8,8 @@ const int maxProgramsToStore = 8;
 const int programIndexSize = (
   // Number of programs stored
   1 +
+  // Next Auto-number index
+  1 +
   // Names of each program
   maxProgramsToStore * maxProgramNameLength
 );
@@ -16,12 +18,19 @@ char programIndexBuffer[programIndexSize];
 uint8_t programBuffer[storedProgramSize];
 
 char programNameBuffer[maxProgramNameLength];
+char autoNameBuffer[maxProgramNameLength];
 
 const char* programNames[maxProgramsToStore + 1];
 
 int selectProgramSlot(bool store) {
   if ( !gb.save.get(indexBlock, (void*)programIndexBuffer, programIndexSize)) {
-    // Could not read index. So store in first slot
+    // Could not read index
+
+    // Set some defaults
+    programIndexBuffer[0] = 0; // No programs stored yet
+    programIndexBuffer[1] = 0; // Reset auto-number count
+
+    // Select first slot
     return 0;
   }
 
@@ -30,7 +39,7 @@ int selectProgramSlot(bool store) {
   int numEntries = 0;
 
   for (int i = 0; i < numNames; i++) {
-    programNames[i] = (const char*)&programIndexBuffer[1 + i * maxProgramNameLength];
+    programNames[i] = (const char*)&programIndexBuffer[2 + i * maxProgramNameLength];
     numEntries++;
   }
 
@@ -46,20 +55,29 @@ int selectProgramSlot(bool store) {
 }
 
 char* enterName() {
+  // Set default name
+  int autoNum = programIndexBuffer[1] + 1;
+  snprintf(autoNameBuffer, maxProgramNameLength, "Program %d", autoNum);
+  strncpy(programNameBuffer, autoNameBuffer, maxProgramNameLength);
+
   gb.gui.keyboard("Enter name", programNameBuffer, maxProgramNameLength - 1);
+
+  if (strncmp(programNameBuffer, autoNameBuffer, maxProgramNameLength) == 0) {
+    // Auto name was used so bump index to make next name unique
+    programIndexBuffer[1] += 1;
+  }
+
   return programNameBuffer;
 }
 
 void updateIndex(int slot, char* name) {
-  if ( !gb.save.get(indexBlock, (void*)programIndexBuffer, programIndexSize)) {
-    programIndexBuffer[0] = 0;
-  }
+  // Assumes programIndexBuffer already filled by selectSlot
 
   // Update number of programs, if needed
   programIndexBuffer[0] = max(programIndexBuffer[0], slot + 1);
 
   // Copy name
-  char* dst = &programIndexBuffer[1 + slot * maxProgramNameLength];
+  char* dst = &programIndexBuffer[2 + slot * maxProgramNameLength];
   char* src = name;
   do {
     *(dst++) = *(src);
