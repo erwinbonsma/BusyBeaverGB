@@ -1,6 +1,6 @@
 # Busy Beaver
 
-This program for the [Gamebuino](https://gamebuino.com) lets you edit and run an esoteric language.
+This program for the [Gamebuino](https://gamebuino.com) lets you edit and run an esoteric programming language.
 The language is based on [2L](https://esolangs.org/wiki/2L) with some minor modifications.
 
 ## Language
@@ -36,7 +36,7 @@ The language consist of only two symbols:
 Program cells can also be empty, representing a NOOP instruction;
 PP simply keeps moving in its current direction.
 
-The program terminates when PP leaves the board,
+The program terminates when PP leaves the board.
 
 ## About the name
 
