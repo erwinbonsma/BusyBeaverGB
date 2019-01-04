@@ -72,7 +72,7 @@ int selectProgramSlot(bool store) {
     numEntries++;
   }
 
-  if (store && numEntries < maxProgramsToStore) {
+  if (store && numPrograms < maxProgramsToStore) {
     programNames[numEntries++] = "<Empty>";
   }
 
