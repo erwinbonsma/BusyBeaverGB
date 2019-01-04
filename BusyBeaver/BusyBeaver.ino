@@ -8,6 +8,7 @@
 
 #include "Computer.h"
 #include "Drawing.h"
+#include "Store.h"
 #include "EditController.h"
 #include "RunController.h"
 
@@ -44,6 +45,8 @@ int buggy[81] = {
 
 void setup() {
   gb.begin();
+
+  initSaveFileDefaults();
 
   computer.setProgram(busyBeaver);
   //computer.setProgram(buggy);

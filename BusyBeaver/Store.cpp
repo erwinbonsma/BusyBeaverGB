@@ -1,18 +1,39 @@
 #include "Computer.h"
 
-const int indexBlock = 1;
+/* Block layout
+ *
+ * 0: INT, Challenge bitmask
+ * 1: INT, Number of stored programs
+ * 2: INT, Next program ID
+ * 3: Program names index
+ *
+ * 16 .. 16+N-1: Programs
+ *
+ * Where N = maxProgramsToStore
+ */
+#define BLOCK_CHALLENGE_BITMASK  0
+#define BLOCK_NUM_STORED_PROGRAMS  1
+#define BLOCK_PROGRAM_AUTO_NUM  2
+#define BLOCK_PROGRAM_NAMES  3
 
+/* Note: The number of program blocks may vary. Therefore it is best to add other blocks before
+ * them. By leaving a gap in the indexing we reserve some room for future usage.
+ */
+#define BLOCK_FIRST_PROGRAM  16
+
+const int maxProgramsToStore = 8;
 const int maxProgramNameLength = 20; // Includes terminating \0
 const int storedProgramSize = 17;
-const int maxProgramsToStore = 8;
-const int programIndexSize = (
-  // Number of programs stored
-  1 +
-  // Next Auto-number index
-  1 +
-  // Names of each program
-  maxProgramsToStore * maxProgramNameLength
-);
+const int programIndexSize = maxProgramsToStore * maxProgramNameLength;
+
+const SaveDefault savefileDefaults[4] = {
+  { BLOCK_CHALLENGE_BITMASK, SAVETYPE_INT, 0, 0},
+  { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
+  { BLOCK_PROGRAM_AUTO_NUM, SAVETYPE_INT, 1, 0},
+  { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 }
+
+  // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
+};
 
 char programIndexBuffer[programIndexSize];
 uint8_t programBuffer[storedProgramSize];
@@ -22,24 +43,23 @@ char autoNameBuffer[maxProgramNameLength];
 
 const char* programNames[maxProgramsToStore + 1];
 
+void initSaveFileDefaults() {
+  gb.save.config(savefileDefaults);
+}
+
 int selectProgramSlot(bool store) {
-  if ( !gb.save.get(indexBlock, (void*)programIndexBuffer, programIndexSize)) {
-    // Could not read index
-
-    // Set some defaults
-    programIndexBuffer[0] = 0; // No programs stored yet
-    programIndexBuffer[1] = 0; // Reset auto-number count
-
-    // Select first slot
+  int numPrograms = gb.save.get(BLOCK_NUM_STORED_PROGRAMS);
+  if (numPrograms == 0) {
+    // No programs stored yet. Use first block
     return 0;
   }
 
   // Fill menu entries
-  int numNames = programIndexBuffer[0];
+  gb.save.get(BLOCK_PROGRAM_NAMES, (void*)programIndexBuffer, programIndexSize);
   int numEntries = 0;
 
-  for (int i = 0; i < numNames; i++) {
-    programNames[i] = (const char*)&programIndexBuffer[2 + i * maxProgramNameLength];
+  for (int i = 0; i < numPrograms; i++) {
+    programNames[i] = (const char*)&programIndexBuffer[i * maxProgramNameLength];
     numEntries++;
   }
 
@@ -56,7 +76,7 @@ int selectProgramSlot(bool store) {
 
 char* enterName() {
   // Set default name
-  int autoNum = programIndexBuffer[1] + 1;
+  int autoNum = gb.save.get(BLOCK_PROGRAM_AUTO_NUM);
   snprintf(autoNameBuffer, maxProgramNameLength, "Program %d", autoNum);
   strncpy(programNameBuffer, autoNameBuffer, maxProgramNameLength);
 
@@ -64,26 +84,26 @@ char* enterName() {
 
   if (strncmp(programNameBuffer, autoNameBuffer, maxProgramNameLength) == 0) {
     // Auto name was used so bump index to make next name unique
-    programIndexBuffer[1] += 1;
+    gb.save.set(BLOCK_PROGRAM_AUTO_NUM, autoNum + 1);
   }
 
   return programNameBuffer;
 }
 
 void updateIndex(int slot, char* name) {
-  // Assumes programIndexBuffer already filled by selectSlot
-
   // Update number of programs, if needed
-  programIndexBuffer[0] = max(programIndexBuffer[0], slot + 1);
+  if ((slot + 1) > gb.save.get(BLOCK_NUM_STORED_PROGRAMS)) {
+    gb.save.set(BLOCK_NUM_STORED_PROGRAMS, slot + 1);
+  }
 
-  // Copy name
-  char* dst = &programIndexBuffer[2 + slot * maxProgramNameLength];
+  // Copy name (assuming that programIndexBuffer is already filled by selectSlot)
+  char* dst = &programIndexBuffer[slot * maxProgramNameLength];
   char* src = name;
   do {
     *(dst++) = *(src);
   } while (*(src++));
 
-  gb.save.set(indexBlock, (void*)programIndexBuffer, programIndexSize);
+  gb.save.set(BLOCK_PROGRAM_NAMES, (void*)programIndexBuffer, programIndexSize);
 }
 
 bool storeProgram(int slot, char* name, Computer& computer) {
@@ -115,13 +135,13 @@ bool storeProgram(int slot, char* name, Computer& computer) {
     outval *= 3;
   }
 
-  gb.save.set(slot + 2, (void*)programBuffer, storedProgramSize);
+  gb.save.set(BLOCK_FIRST_PROGRAM + slot, (void*)programBuffer, storedProgramSize);
 
   return true;
 }
 
 bool loadProgram(int slot, Computer& computer) {
-  gb.save.get(slot + 2, (void*)programBuffer, storedProgramSize);
+  gb.save.get(BLOCK_FIRST_PROGRAM + slot, (void*)programBuffer, storedProgramSize);
 
   int p_out = 0;
   int p_in = 0;
