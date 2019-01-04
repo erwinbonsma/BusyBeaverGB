@@ -84,6 +84,7 @@ public:
   // Resets the execution state
   void reset();
 
+  bool isDataAddressValid(int address) { return address >= 0 && address < dataSize; }
   int getDataPointer() { return _dp; }
   int getData(int address) { return _data[address]; }
 

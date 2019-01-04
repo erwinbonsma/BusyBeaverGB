@@ -2,6 +2,9 @@
 
 class Computer;
 
+int getDisplayX(int addressX);
+int getDisplayY(int addressY);
+
 void drawProgramSpace();
 void drawProgram(Computer& computer);
 void drawMemory(Computer& computer);

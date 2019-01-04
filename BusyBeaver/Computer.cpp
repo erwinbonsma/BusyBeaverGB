@@ -3,10 +3,6 @@
 int dx[numDirections] = { 0, 1, 0, -1 };
 int dy[numDirections] = { 1, 0, -1, 0 };
 
-bool isDataAddressValid(int address) {
-  return address >= 0 && address < dataSize;
-}
-
 Computer::Computer(int size) {
   _size = size;
 
