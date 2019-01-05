@@ -62,7 +62,10 @@ public:
 
 #define TURN 0
 #define DATA 128
-const uint8_t fixedInstructionsLevel1[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
+const uint8_t fixedLevel2[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
+const uint8_t fixedLevel6[9] = {
+  3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
+};
 
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
@@ -76,7 +79,7 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .name = "Count to 12",
     .goal = new OutputChallenge(12, Comparison::Equals),
     .numFixed = 4,
-    .fixed = fixedInstructionsLevel1,
+    .fixed = fixedLevel2,
     .numTurn = 0,
     .numData = 12
   },{
@@ -93,6 +96,34 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = nullptr,
     .numTurn = 6,
     .numData = 1
+  },{
+    .name = "Exit 3",
+    .goal = new ExitChallenge(1, 9),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 2,
+    .numData = 2
+  },{
+    .name = "Exit 4",
+    .goal = new ExitChallenge(2, 9),
+    .numFixed = 9,
+    .fixed = fixedLevel6,
+    .numTurn = 0,
+    .numData = 6
+  },{
+    .name = "Count to 16",
+    .goal = new OutputChallenge(16, Comparison::Equals),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 8,
+    .numData = 16
+  },{
+    .name = "Countdown to -8",
+    .goal = new OutputChallenge(-8, Comparison::Equals),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 8,
+    .numData = 10
   }
 };
 
@@ -100,7 +131,11 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[0]),
   Challenge(challengeSpecs[1]),
   Challenge(challengeSpecs[2]),
-  Challenge(challengeSpecs[3])
+  Challenge(challengeSpecs[3]),
+  Challenge(challengeSpecs[4]),
+  Challenge(challengeSpecs[5]),
+  Challenge(challengeSpecs[6]),
+  Challenge(challengeSpecs[7]),
 };
 
 //--------------------------------------------------------------------------------------------------
