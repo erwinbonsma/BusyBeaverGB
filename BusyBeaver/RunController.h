@@ -15,8 +15,8 @@ enum class RunAction : int {
 
 class RunController : public Controller {
   int _runSpeed = 0;
-  int _stepPeriod = 0;
-  int _stepsPerTick = 0;
+  int _stepPeriod;
+  int _stepsPerTick;
   int _ticksSinceLastStep = 0;
   bool _paused;
 
@@ -25,6 +25,8 @@ class RunController : public Controller {
   void changeRunSpeed(int delta);
 
 public:
+  RunController();
+
   void activate();
   void update();
   void draw();

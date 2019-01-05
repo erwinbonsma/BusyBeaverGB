@@ -104,6 +104,10 @@ void RunController::changeRunSpeed(int delta) {
   }
 }
 
+RunController::RunController() {
+  changeRunSpeed(4); // Set default speed
+}
+
 void RunController::activate() {
   computer.reset();
   _paused = true;
