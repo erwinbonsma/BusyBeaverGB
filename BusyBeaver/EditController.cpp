@@ -8,15 +8,43 @@
 #include "Store.h"
 #include "Challenges.h"
 
-const char* editMenuEntries[] = {
+const int maxEditMenuEntries = 5;
+const char* availableEditMenuEntries[maxEditMenuEntries] = {
   "Run",
   "Store",
   "Load",
   "Clear",
+  "Back to main menu"
 };
+const char* editMenuEntries[maxEditMenuEntries];
+
+int populateEditMenu() {
+  int entry = 0;
+  editMenuEntries[entry++] = availableEditMenuEntries[0];
+
+  if (activeChallenge == NO_CHALLENGE) {
+    // Only support Store and Load in Experiment mode
+    editMenuEntries[entry++] = availableEditMenuEntries[1];
+    editMenuEntries[entry++] = availableEditMenuEntries[2];
+  }
+
+  editMenuEntries[entry++] = availableEditMenuEntries[3];
+  editMenuEntries[entry++] = availableEditMenuEntries[4];
+
+  return entry; // Returns number of entries
+}
 
 void editMenu() {
-  int entry = gb.gui.menu("Edit menu", editMenuEntries);
+  // Populate menu with entries, which may vary depending on state
+  int numEntries = populateEditMenu();
+  int menuOption = gb.gui.menu("Edit menu", editMenuEntries, numEntries);
+
+  // Map selected option to index in availableEditMenuEntries array
+  const char* selectedEntry = editMenuEntries[menuOption];
+  int entry = 0;
+  while (strncmp(selectedEntry, availableEditMenuEntries[entry], 20) != 0) {
+    entry++;
+  }
 
   switch (entry) {
     case 0:
@@ -30,6 +58,9 @@ void editMenu() {
       break;
     case 3:
       computer.clear();
+      break;
+    case 4:
+      setController(&mainMenuController);
       break;
   }
 }
