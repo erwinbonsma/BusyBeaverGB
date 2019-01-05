@@ -161,7 +161,7 @@ void RunController::update() {
         gb.gui.popup("Challenge done!",   50);
 
         // Record progress
-        setMaxCompletedChallenge(max(activeChallenge, getMaxCompletedChallenge()));
+        setMaxCompletedChallenge(max(activeChallenge + 1, getMaxCompletedChallenge()));
 
         if (activeChallenge + 1 < numChallenges) {
           // Go to next challenge
