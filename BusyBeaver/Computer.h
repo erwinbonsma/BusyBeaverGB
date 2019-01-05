@@ -1,5 +1,7 @@
+#ifndef __COMPUTER_INCLUDED
+#define __COMPUTER_INCLUDED
+
 #include <Gamebuino-Meta.h>
-//#include <limits.h>
 
 enum class Instruction : int {
   Noop = 0,
@@ -94,4 +96,6 @@ public:
   Status getStatus() { return _status; }
   int getNumSteps() { return _numSteps; }
 };
+
+#endif
 

@@ -16,7 +16,7 @@
 #define BLOCK_NUM_STORED_PROGRAMS  1
 #define BLOCK_PROGRAM_AUTO_NUM     2
 #define BLOCK_PROGRAM_NAMES        3
-#define BLOCK_CHALLENGE_BITMASK    4
+#define BLOCK_CHALLENGE_TRACKER    4
 
 /* Note: The number of program blocks may vary. Therefore it is best to add other blocks before
  * them. By leaving a gap in the indexing we reserve some room for future usage.
@@ -35,7 +35,7 @@ const SaveDefault savefileDefaults[5] = {
   { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
   { BLOCK_PROGRAM_AUTO_NUM, SAVETYPE_INT, 1, 0},
   { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 },
-  { BLOCK_CHALLENGE_BITMASK, SAVETYPE_INT, 0, 0},
+  { BLOCK_CHALLENGE_TRACKER, SAVETYPE_INT, 0, 0},
 
   // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
 };
@@ -54,6 +54,14 @@ void initSaveFileDefaults() {
     // Version not set. Set it to current version to enable detecting future incompatibilities
     gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
   }
+}
+
+int getMaxCompletedChallenge() {
+  return gb.save.get(BLOCK_CHALLENGE_TRACKER);
+}
+
+void setMaxCompletedChallenge(int index) {
+  gb.save.set(BLOCK_CHALLENGE_TRACKER, index);
 }
 
 int selectProgramSlot(bool store) {

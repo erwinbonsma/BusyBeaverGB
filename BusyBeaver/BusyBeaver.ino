@@ -11,11 +11,14 @@
 #include "Store.h"
 #include "EditController.h"
 #include "RunController.h"
+#include "MainMenuController.h"
 
 Computer computer(9);
 
 RunController runController;
 EditController editController;
+MainMenuController mainMenuController;
+
 Controller *activeController;
 
 void setup() {
@@ -23,7 +26,7 @@ void setup() {
 
   initSaveFileDefaults();
 
-  activeController = &editController;
+  setController(&mainMenuController);
 }
 
 void loop() {

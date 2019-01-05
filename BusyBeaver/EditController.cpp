@@ -6,6 +6,7 @@
 #include "Computer.h"
 #include "Drawing.h"
 #include "Store.h"
+#include "Challenges.h"
 
 const char* editMenuEntries[] = {
   "Run",
@@ -19,8 +20,7 @@ void editMenu() {
 
   switch (entry) {
     case 0:
-      activeController = &runController;
-      runController.activate();
+      setController(&runController);
       break;
     case 1:
       storeProgram(computer);
@@ -31,6 +31,16 @@ void editMenu() {
     case 3:
       computer.clear();
       break;
+  }
+}
+
+void EditController::trySetInstruction(Instruction instruction) {
+  if (
+    activeChallenge == NO_CHALLENGE ||
+    !challenges[activeChallenge].isFixed(_x, _y)
+  ) {
+    // Only set the instruction if the challenge, if any, allows it
+    computer.setInstruction(_x, _y, instruction);
   }
 }
 
@@ -53,13 +63,12 @@ void EditController::update() {
     _y = (_y + 1) % maxProgramSize;
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    computer.setInstruction(
-      _x, _y,
+    trySetInstruction(
       (Instruction)(((int)computer.getInstruction(_x, _y) + 1) % 3)
     );
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
-    computer.setInstruction(_x, _y, Instruction::Noop);
+    trySetInstruction(Instruction::Noop);
   }
 }
 
@@ -67,5 +76,9 @@ void EditController::draw() {
   drawProgramSpace();
   drawProgram(computer);
   drawCursor(_x, _y);
+
+  if (activeChallenge != NO_CHALLENGE) {
+    challenges[activeChallenge].draw();
+  }
 }
 

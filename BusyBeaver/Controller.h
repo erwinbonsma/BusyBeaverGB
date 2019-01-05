@@ -9,4 +9,6 @@ public:
   virtual void draw() = 0;
 };
 
+void setController(Controller* controller);
+
 #endif

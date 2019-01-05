@@ -5,6 +5,8 @@
 #include "Globals.h"
 #include "Computer.h"
 #include "Drawing.h"
+#include "Challenges.h"
+#include "Store.h"
 
 const int unitRunSpeed = 6;
 
@@ -63,8 +65,7 @@ void RunController::runMenu() {
       _paused = true;
       break;
     case 1:
-      activeController = &editController;
-      editController.activate();
+      setController(&editController);
       break;
   }
 }
@@ -149,6 +150,31 @@ void RunController::update() {
       }
     }
   }
+
+  if (activeChallenge != NO_CHALLENGE) {
+    if (computer.getStatus() == Status::Done) {
+      if (challenges[activeChallenge].isAchieved(computer)) {
+        gb.gui.popup("Challenge done!",   50);
+
+        // Record progress
+        setMaxCompletedChallenge(max(activeChallenge, getMaxCompletedChallenge()));
+
+        if (activeChallenge + 1 < numChallenges) {
+          // Go to next challenge
+          activeChallenge++;
+          challenges[activeChallenge].setFixedInstructions(computer);
+          setController(&editController);
+        } else {
+          // No more challenges
+          setController(&mainMenuController);
+        }
+      } else {
+        gb.gui.popup("Challenge failed", 50);
+
+        setController(&editController);
+      }
+    }
+  }
 }
 
 void RunController::draw() {
@@ -158,6 +184,10 @@ void RunController::draw() {
   drawProgramPointer(computer);
 
   drawMemory(computer);
+
+  if (activeChallenge != NO_CHALLENGE) {
+    challenges[activeChallenge].draw();
+  }
 
   drawRunStatus(computer);
 
