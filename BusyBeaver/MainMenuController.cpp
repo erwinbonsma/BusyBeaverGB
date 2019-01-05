@@ -44,6 +44,7 @@ void MainMenuController::update() {
       case 1:
         activeChallenge = NO_CHALLENGE;
         setController(&editController);
+        break;
       case 2:
         // TO DO
         gb.gui.popup("Help!", 40);
