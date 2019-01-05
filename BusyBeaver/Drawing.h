@@ -7,7 +7,7 @@ int getDisplayY(int addressY);
 
 void drawProgramSpace();
 void drawProgram(Computer& computer);
-void drawMemory(Computer& computer);
+void drawData(Computer& computer);
 void drawRunStatus(Computer& computer);
 void drawCursor(int x, int y);
 void drawProgramPointer(Computer& computer);

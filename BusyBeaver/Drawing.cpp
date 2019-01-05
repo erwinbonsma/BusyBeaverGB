@@ -8,19 +8,6 @@
 const int board_x0 = 17;
 const int board_y0 = 7;
 
-struct SpeedBarSpecs {
-  Color color;
-  int len;
-};
-
-const SpeedBarSpecs speedBarSpecs[5] = {
-  SpeedBarSpecs { .color = BLUE, .len = 1 },
-  SpeedBarSpecs { .color = GREEN, .len = 5 },
-  SpeedBarSpecs { .color = YELLOW, .len = 5 },
-  SpeedBarSpecs { .color = ORANGE, .len = 5 },
-  SpeedBarSpecs { .color = RED, .len = 5 }
-};
-
 int getDisplayX(int addressX) {
   return board_x0 + 5 * addressX;
 }
@@ -31,21 +18,10 @@ int getDisplayY(int addressY) {
 
 void drawSpeedBar(int speed) {
   gb.display.setColor(DARKGRAY);
-  gb.display.drawRect(0, 8, 6, (maxRunSpeed + 2) * 2);
+  gb.display.drawRect(0, 8, 5, (maxRunSpeed + 2) * 2);
 
-  int spec = 0;
-  int num = 0;
-
-  for (int i = 0; i <= speed; i++) {
-    if (num == 0) {
-      gb.display.setColor(speedBarSpecs[spec].color);
-    }
-    gb.display.fillRect(1, 9 + (maxRunSpeed - i) * 2, 4, 2);
-    if (++num == speedBarSpecs[spec].len) {
-      num = 0;
-      spec++;
-    }
-  }
+  gb.display.setColor(GRAY);
+  gb.display.fillRect(1, 9 + (maxRunSpeed - speed) * 2, 3, (speed + 1) * 2);
 }
 
 void drawCursor(int x, int y) {
@@ -78,7 +54,7 @@ void drawProgramPointer(Computer& computer) {
   }
 }
 
-void drawMemory(Computer& computer) {
+void drawData(Computer& computer) {
   int p = 0;
 
   // Move to part of the tape containing non-zero data and/or data pointer
