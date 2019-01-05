@@ -103,12 +103,12 @@ void EditController::drawAvailable(Instruction instruction, Color color, int y) 
 
   if (num > 0) {
     gb.display.setColor(BLUE);
-    gb.display.fillRect(0, y, 13, 7);
+    gb.display.fillRect(0, y, 14, 7);
 
     gb.display.setColor(color);
     gb.display.fillRect(1, y + 2, 3, 3);
 
-    gb.display.setCursor(5, y + 1);
+    gb.display.setCursor(6, y + 1);
     gb.display.printf("%2d", num);
   }
 }
