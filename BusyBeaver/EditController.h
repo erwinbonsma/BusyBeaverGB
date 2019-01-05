@@ -7,12 +7,19 @@
 class EditController : public Controller {
   int _x = 0;
   int _y = 0;
+  int _numAvailable[numInstructions];
 
+  Instruction nextAvailableInstruction();
   void trySetInstruction(Instruction instruction);
+
+  void drawAvailable(Instruction instruction, Color color, int y);
 
 public:
   void update();
   void draw();
+
+  // Resets the controller
+  void reset();
 };
 
 #endif

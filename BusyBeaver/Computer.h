@@ -3,6 +3,7 @@
 
 #include <Gamebuino-Meta.h>
 
+const int numInstructions = 3;
 enum class Instruction : int {
   Noop = 0,
   Turn = 1,

@@ -213,8 +213,6 @@ bool RunLengthChallenge::isAchieved(Computer& computer) {
 Challenge::Challenge(const ChallengeSpec& spec) : _spec(spec) {}
 
 void Challenge::setFixedInstructions(Computer& computer) const {
-  computer.clear();
-
   for (int i = 0; i < _spec.numFixed; i++) {
     int insCode = _spec.fixed[i];
     Instruction instruction = (insCode & DATA) ? Instruction::Data : Instruction::Turn;
@@ -235,6 +233,17 @@ bool Challenge::isFixed(int x, int y) const {
     }
   }
   return false;
+}
+
+int Challenge::numAvailable(Instruction instruction) const {
+  switch (instruction) {
+    case Instruction::Turn:
+      return _spec.numTurn;
+    case Instruction::Data:
+      return _spec.numData;
+    default:
+      return 0;
+  }
 }
 
 void Challenge::draw() const {

@@ -1,8 +1,8 @@
 #include <Gamebuino-Meta.h>
 
-class Computer;
-class ChallengeGoal;
+#include "Computer.h"
 
+class ChallengeGoal;
 
 struct ChallengeSpec {
   const char* name;
@@ -26,6 +26,8 @@ public:
 
   void setFixedInstructions(Computer& computer) const;
   bool isFixed(int x, int y) const;
+
+  int numAvailable(Instruction instruction) const;
 
   void draw() const;
   bool isAchieved(Computer& computer) const;

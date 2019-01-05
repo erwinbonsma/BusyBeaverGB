@@ -65,13 +65,72 @@ void editMenu() {
   }
 }
 
+// Returns the next available instruction for the current position
+Instruction EditController::nextAvailableInstruction() {
+  int i = (int)computer.getInstruction(_x, _y);
+
+  // Iterate over all instructions that are not NOOP, starting at the next instruction.
+  // This way, if the current instruction is the only option, it is still returned.
+  int cnt = 0;
+  do {
+    int instructionIndex = (1 + (i + cnt) % (numInstructions - 1));
+    if (_numAvailable[instructionIndex] > 0) {
+      return (Instruction)instructionIndex;
+    }
+  } while (++cnt < numInstructions);
+
+  return Instruction::Noop;
+}
+
 void EditController::trySetInstruction(Instruction instruction) {
+  if (instruction == computer.getInstruction(_x, _y)) {
+    return; // Ignore, no change
+  }
+
   if (
     activeChallenge == NO_CHALLENGE ||
     !challenges[activeChallenge].isFixed(_x, _y)
   ) {
     // Only set the instruction if the challenge, if any, allows it
+    _numAvailable[ (int)computer.getInstruction(_x, _y) ]++;
     computer.setInstruction(_x, _y, instruction);
+    _numAvailable[ (int)computer.getInstruction(_x, _y) ]--;
+  }
+}
+
+void EditController::drawAvailable(Instruction instruction, Color color, int y) {
+  int num = _numAvailable[ (int)instruction ];
+
+  if (num > 0) {
+    gb.display.setColor(BLUE);
+    gb.display.fillRect(0, y, 13, 7);
+
+    gb.display.setColor(color);
+    gb.display.fillRect(1, y + 2, 3, 3);
+
+    gb.display.setCursor(5, y + 1);
+    gb.display.printf("%2d", num);
+  }
+}
+
+void EditController::reset() {
+  _x = 0;
+  _y = 0;
+  computer.clear();
+  _numAvailable[0] = 99; // Always "infinite" NOOPs
+
+  if (activeChallenge == NO_CHALLENGE) {
+    for (int i = 1; i < numInstructions; i++) {
+      _numAvailable[i] = 99;
+    }
+    return;
+  }
+
+  const Challenge& challenge = challenges[activeChallenge];
+
+  challenge.setFixedInstructions(computer);
+  for (int i = 1; i < numInstructions; i++) {
+    _numAvailable[i] = challenge.numAvailable( (Instruction)i );
   }
 }
 
@@ -94,9 +153,7 @@ void EditController::update() {
     _y = (_y + 1) % maxProgramSize;
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    trySetInstruction(
-      (Instruction)(((int)computer.getInstruction(_x, _y) + 1) % 3)
-    );
+    trySetInstruction(nextAvailableInstruction());
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
     trySetInstruction(Instruction::Noop);
@@ -110,6 +167,9 @@ void EditController::draw() {
 
   if (activeChallenge != NO_CHALLENGE) {
     challenges[activeChallenge].draw();
+
+    drawAvailable(Instruction::Turn, BLACK, 8);
+    drawAvailable(Instruction::Data, WHITE, _numAvailable[1] ? 15 : 8);
   }
 }
 

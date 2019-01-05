@@ -24,9 +24,8 @@ void challengesMenu() {
   int selected = gb.gui.menu("Select challenge", challengeEntries, numOptions);
 
   activeChallenge = selected;
-  challenges[activeChallenge].setFixedInstructions(computer);
-
   setController(&editController);
+  editController.reset();
 }
 
 void MainMenuController::update() {
@@ -44,6 +43,7 @@ void MainMenuController::update() {
       case 1:
         activeChallenge = NO_CHALLENGE;
         setController(&editController);
+        editController.reset();
         break;
       case 2:
         // TO DO

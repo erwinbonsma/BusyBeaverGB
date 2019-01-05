@@ -162,8 +162,8 @@ void RunController::update() {
         if (activeChallenge + 1 < numChallenges) {
           // Go to next challenge
           activeChallenge++;
-          challenges[activeChallenge].setFixedInstructions(computer);
           setController(&editController);
+          editController.reset();
         } else {
           // No more challenges
           setController(&mainMenuController);
