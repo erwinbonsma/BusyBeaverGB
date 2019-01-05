@@ -33,7 +33,7 @@ public:
   bool isAchieved(Computer& computer) const;
 };
 
-const int numChallenges = 8;
+const int numChallenges = 11;
 extern const Challenge challenges[numChallenges];
 
 #define NO_CHALLENGE  -1

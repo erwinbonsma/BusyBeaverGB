@@ -22,38 +22,41 @@ public:
   virtual bool isAchieved(Computer& computer) = 0;
 };
 
-class ExitChallenge : public ChallengeGoal {
+class ExitGoal : public ChallengeGoal {
   int _exitX, _exitY;
 public:
-  ExitChallenge(int exitX, int exitY);
+  ExitGoal(int exitX, int exitY);
 
   void draw();
   bool isAchieved(Computer& computer);
 };
 
-class ComparisonBasedChallenge : public ChallengeGoal {
-  int _target;
+class ComparisonBasedGoal : public ChallengeGoal {
+  char _targetVar;
+  int _targetVal;
   Comparison _comparison;
 
 protected:
   bool isAchieved(int value);
 
 public:
-  ComparisonBasedChallenge(int target, Comparison comparison);
+  ComparisonBasedGoal(char targetVar, int targetVal, Comparison comparison);
 
   void draw();
 };
 
-class OutputChallenge : public ComparisonBasedChallenge {
+class OutputValueGoal : public ComparisonBasedGoal {
 public:
-  OutputChallenge(int target, Comparison comparison);
+  OutputValueGoal(int target, Comparison comparison);
 
   void draw();
   bool isAchieved(Computer& computer);
 };
 
-class RunLengthChallenge : public ComparisonBasedChallenge {
+class RunLengthGoal : public ComparisonBasedGoal {
 public:
+  RunLengthGoal(int target, Comparison comparison);
+
   void draw();
   bool isAchieved(Computer& computer);
 };
@@ -62,68 +65,91 @@ public:
 
 #define TURN 0
 #define DATA 128
-const uint8_t fixedLevel2[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
-const uint8_t fixedLevel6[9] = {
+
+const uint8_t fixedLevelCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
+const uint8_t fixedLevelExit4[9] = {
   3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
 };
+const uint8_t fixedLevelRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
 
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 8",
-    .goal = new OutputChallenge(8, Comparison::Equals),
+    .goal = new OutputValueGoal(8, Comparison::Equals),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 0,
     .numData = 8
   },{
     .name = "Count to 12",
-    .goal = new OutputChallenge(12, Comparison::Equals),
+    .goal = new OutputValueGoal(12, Comparison::Equals),
     .numFixed = 4,
-    .fixed = fixedLevel2,
+    .fixed = fixedLevelCountTo12,
     .numTurn = 0,
     .numData = 12
   },{
     .name = "Exit 1",
-    .goal = new ExitChallenge(4, 9),
+    .goal = new ExitGoal(4, 9),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 4,
     .numData = 1
   },{
     .name = "Exit 2",
-    .goal = new ExitChallenge(1, 9),
+    .goal = new ExitGoal(1, 9),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 6,
     .numData = 1
   },{
     .name = "Exit 3",
-    .goal = new ExitChallenge(1, 9),
+    .goal = new ExitGoal(1, 9),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 2,
     .numData = 2
   },{
     .name = "Exit 4",
-    .goal = new ExitChallenge(2, 9),
+    .goal = new ExitGoal(2, 9),
     .numFixed = 9,
-    .fixed = fixedLevel6,
+    .fixed = fixedLevelExit4,
     .numTurn = 0,
     .numData = 6
   },{
     .name = "Count to 16",
-    .goal = new OutputChallenge(16, Comparison::Equals),
+    .goal = new OutputValueGoal(16, Comparison::Equals),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
     .numData = 16
   },{
     .name = "Countdown to -8",
-    .goal = new OutputChallenge(-8, Comparison::Equals),
+    .goal = new OutputValueGoal(-8, Comparison::Equals),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
     .numData = 10
+  },{
+    .name = "Run 100",
+    .goal = new RunLengthGoal(100, Comparison::GreaterThan),
+    .numFixed = 6,
+    .fixed = fixedLevelRun100,
+    .numTurn = 0,
+    .numData = 6
+  },{
+    .name = "Count to 32",
+    .goal = new OutputValueGoal(32, Comparison::Equals),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 99,
+    .numData = 99
+  },{
+    .name = "Run 1000",
+    .goal = new RunLengthGoal(1000, Comparison::GreaterThan),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 99,
+    .numData = 99
   }
 };
 
@@ -136,17 +162,20 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[5]),
   Challenge(challengeSpecs[6]),
   Challenge(challengeSpecs[7]),
+  Challenge(challengeSpecs[8]),
+  Challenge(challengeSpecs[9]),
+  Challenge(challengeSpecs[10]),
 };
 
 //--------------------------------------------------------------------------------------------------
-// ExitChallenge
+// ExitGoal
 
-ExitChallenge::ExitChallenge(int exitX, int exitY) {
+ExitGoal::ExitGoal(int exitX, int exitY) {
   _exitX = exitX;
   _exitY = exitY;
 }
 
-void ExitChallenge::draw() {
+void ExitGoal::draw() {
   int x = getDisplayX(_exitX);
   int y = getDisplayY(_exitY);
 
@@ -177,70 +206,74 @@ void ExitChallenge::draw() {
   }
 }
 
-bool ExitChallenge::isAchieved(Computer& computer) {
+bool ExitGoal::isAchieved(Computer& computer) {
   ProgramPointer pp = computer.getProgramPointer();
 
   return (pp.x == _exitX && pp.y == _exitY);
 }
 
 //--------------------------------------------------------------------------------------------------
-// ComparisonBasedChallenge
+// ComparisonBasedGoal
 
-ComparisonBasedChallenge::ComparisonBasedChallenge(int target, Comparison comparison) {
-  _target = target;
+ComparisonBasedGoal::ComparisonBasedGoal(char targetVar, int targetVal, Comparison comparison) {
+  _targetVar = targetVar;
+  _targetVal = targetVal;
   _comparison = comparison;
 }
 
-void ComparisonBasedChallenge::draw() {
+void ComparisonBasedGoal::draw() {
   gb.display.setCursor(0, 0);
-  gb.display.printf("#%c%d", comparisonChars[(int)_comparison], _target);
+  gb.display.printf("%c%c%d", _targetVar, comparisonChars[(int)_comparison], _targetVal);
 }
 
-bool ComparisonBasedChallenge::isAchieved(int value) {
+bool ComparisonBasedGoal::isAchieved(int value) {
   switch (_comparison) {
     case Comparison::Equals:
-      return value == _target;
+      return value == _targetVal;
     case Comparison::GreaterThan:
-      return value > _target;
+      return value > _targetVal;
     case Comparison::LessThan:
-      return value < _target;
+      return value < _targetVal;
     default:
       return false;
   }
 }
 
 //--------------------------------------------------------------------------------------------------
-// OutputChallenge
+// OutputValueGoal
 
-OutputChallenge::OutputChallenge(int target, Comparison comparison)
-  : ComparisonBasedChallenge(target, comparison) {}
+OutputValueGoal::OutputValueGoal(int target, Comparison comparison)
+  : ComparisonBasedGoal('D', target, comparison) {}
 
-void OutputChallenge::draw() {
-  gb.display.setColor(GREEN);
-  ComparisonBasedChallenge::draw();
+void OutputValueGoal::draw() {
+  gb.display.setColor(LIGHTGREEN);
+  ComparisonBasedGoal::draw();
 }
 
-bool OutputChallenge::isAchieved(Computer& computer) {
+bool OutputValueGoal::isAchieved(Computer& computer) {
   int dp = computer.getDataPointer();
 
   if (!computer.isDataAddressValid(dp)) {
     return false;
   }
   else {
-    return ComparisonBasedChallenge::isAchieved(computer.getData(dp));
+    return ComparisonBasedGoal::isAchieved(computer.getData(dp));
   }
 }
 
 //--------------------------------------------------------------------------------------------------
-// RunLengthChallenge
+// RunLengthGoal
 
-void RunLengthChallenge::draw() {
+RunLengthGoal::RunLengthGoal(int target, Comparison comparison)
+  : ComparisonBasedGoal('R', target, comparison) {}
+
+void RunLengthGoal::draw() {
   gb.display.setColor(BLUE);
-  ComparisonBasedChallenge::draw();
+  ComparisonBasedGoal::draw();
 }
 
-bool RunLengthChallenge::isAchieved(Computer& computer) {
-  return ComparisonBasedChallenge::isAchieved(computer.getNumSteps());
+bool RunLengthGoal::isAchieved(Computer& computer) {
+  return ComparisonBasedGoal::isAchieved(computer.getNumSteps());
 }
 
 //--------------------------------------------------------------------------------------------------
