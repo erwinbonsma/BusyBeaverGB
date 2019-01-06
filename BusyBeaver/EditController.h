@@ -9,6 +9,8 @@ class EditController : public Controller {
   int _y = 0;
   int _numAvailable[numInstructions];
 
+  void editMenu();
+
   Instruction nextAvailableInstruction();
   void trySetInstruction(Instruction instruction);
 

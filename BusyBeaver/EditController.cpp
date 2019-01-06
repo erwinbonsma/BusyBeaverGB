@@ -34,7 +34,7 @@ int populateEditMenu() {
   return entry; // Returns number of entries
 }
 
-void editMenu() {
+void EditController::editMenu() {
   // Populate menu with entries, which may vary depending on state
   int numEntries = populateEditMenu();
   int menuOption = gb.gui.menu("Edit menu", editMenuEntries, numEntries);
@@ -57,7 +57,7 @@ void editMenu() {
       loadProgram(computer);
       break;
     case 3:
-      computer.clear();
+      reset();
       break;
     case 4:
       setController(&mainMenuController);
@@ -67,14 +67,14 @@ void editMenu() {
 
 // Returns the next available instruction for the current position
 Instruction EditController::nextAvailableInstruction() {
-  int i = (int)computer.getInstruction(_x, _y);
+  int origIndex = (int)computer.getInstruction(_x, _y);
 
   // Iterate over all instructions that are not NOOP, starting at the next instruction.
   // This way, if the current instruction is the only option, it is still returned.
   int cnt = 0;
   do {
-    int instructionIndex = (1 + (i + cnt) % (numInstructions - 1));
-    if (_numAvailable[instructionIndex] > 0) {
+    int instructionIndex = (1 + (origIndex + cnt) % (numInstructions - 1));
+    if (_numAvailable[instructionIndex] > 0 || instructionIndex == origIndex) {
       return (Instruction)instructionIndex;
     }
   } while (++cnt < numInstructions);
