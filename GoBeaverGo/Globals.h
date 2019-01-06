@@ -5,16 +5,16 @@
 #include "RunController.h"
 #include "MainMenuController.h"
 #include "IntroController.h"
+#include "HelpController.h"
 
 class Computer;
-class ChallengeSpec;
-
 extern Computer computer;
 
 extern RunController runController;
 extern EditController editController;
 extern MainMenuController mainMenuController;
 extern IntroController introController;
+extern HelpController helpController;
 
 extern Controller* activeController;
 

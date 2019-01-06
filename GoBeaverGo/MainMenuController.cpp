@@ -1,7 +1,5 @@
 #include "MainMenuController.h"
 
-#include <Gamebuino-Meta.h>
-
 #include "Globals.h"
 #include "Challenges.h"
 #include "Store.h"
@@ -92,8 +90,7 @@ void MainMenuController::update() {
         editController.reset();
         break;
       case 2:
-        // TO DO
-        gb.gui.popup("Help!", 40);
+        setController(&helpController);
         break;
       default:
         break;
