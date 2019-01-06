@@ -100,11 +100,11 @@ void drawProgramSpace() {
   for (int i = 0; i < 9; i++) {
     gb.display.drawLine(
       board_x0 + 2 + 5 * i, board_y0 +  2,
-      board_x0 + 2 + 5 * i, board_y0 + 41
+      board_x0 + 2 + 5 * i, board_y0 + 42
     );
     gb.display.drawLine(
       board_x0 +  2, board_y0 + 2 + 5 * i,
-      board_x0 + 41, board_y0 + 2 + 5 * i
+      board_x0 + 42, board_y0 + 2 + 5 * i
     );
   }
 }
