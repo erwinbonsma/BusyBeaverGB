@@ -70,6 +70,12 @@ const uint8_t fixedLevelCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
 const uint8_t fixedLevelExit4[9] = {
   3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
 };
+const uint8_t fixedLevelFogBank[9] = {
+  54|DATA, 55|DATA, 56|DATA, 57|DATA, 58|DATA, 59|DATA, 60|DATA, 61|DATA, 62|DATA
+};
+const uint8_t fixedLevelDottedLine[9] = {
+  54|TURN, 55|DATA, 56|TURN, 57|DATA, 58|TURN, 59|DATA, 60|TURN, 61|DATA, 62|TURN
+};
 const uint8_t fixedLevelRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
 
 const ChallengeSpec challengeSpecs[numChallenges] = {
@@ -130,6 +136,20 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 8,
     .numData = 10
   },{
+    .name = "Fog bank",
+    .goal = new ExitGoal(-1, 7),
+    .numFixed = 9,
+    .fixed = fixedLevelFogBank,
+    .numTurn = 5,
+    .numData = 1
+  },{
+    .name = "Dotted line",
+    .goal = new ExitGoal(-1, 7),
+    .numFixed = 9,
+    .fixed = fixedLevelDottedLine,
+    .numTurn = 6,
+    .numData = 2
+  },{
     .name = "Run 100",
     .goal = new RunLengthGoal(100, Comparison::GreaterThan),
     .numFixed = 6,
@@ -154,17 +174,19 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
 };
 
 const Challenge challenges[numChallenges] = {
-  Challenge(challengeSpecs[0]),
-  Challenge(challengeSpecs[1]),
-  Challenge(challengeSpecs[2]),
-  Challenge(challengeSpecs[3]),
-  Challenge(challengeSpecs[4]),
-  Challenge(challengeSpecs[5]),
-  Challenge(challengeSpecs[6]),
-  Challenge(challengeSpecs[7]),
-  Challenge(challengeSpecs[8]),
-  Challenge(challengeSpecs[9]),
+  Challenge(challengeSpecs[ 0]),
+  Challenge(challengeSpecs[ 1]),
+  Challenge(challengeSpecs[ 2]),
+  Challenge(challengeSpecs[ 3]),
+  Challenge(challengeSpecs[ 4]),
+  Challenge(challengeSpecs[ 5]),
+  Challenge(challengeSpecs[ 6]),
+  Challenge(challengeSpecs[ 7]),
+  Challenge(challengeSpecs[ 8]),
+  Challenge(challengeSpecs[ 9]),
   Challenge(challengeSpecs[10]),
+  Challenge(challengeSpecs[11]),
+  Challenge(challengeSpecs[12]),
 };
 
 //--------------------------------------------------------------------------------------------------
