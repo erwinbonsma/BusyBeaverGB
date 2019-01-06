@@ -361,10 +361,10 @@ SequenceGoal::SequenceGoal(int len, const int8_t* sequence) {
 }
 
 int SequenceGoal::drawDots(int x) {
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 2; i++) {
     gb.display.drawPixel(x + i * 2, 4);
   }
-  return 6;
+  return 4;
 }
 
 int SequenceGoal::drawNumber(int num, int x) {
