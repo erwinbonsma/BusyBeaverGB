@@ -52,8 +52,9 @@ const uint8_t buttonData[] = {
 Image buttons(buttonData);
 
 const char* runMenuEntries[] = {
-  "Reset",
   "Edit",
+  "Reset",
+  "Back to main menu"
 };
 
 void RunController::runMenu() {
@@ -61,11 +62,14 @@ void RunController::runMenu() {
 
   switch (entry) {
     case 0:
+      setController(&editController);
+      break;
+    case 1:
       computer.reset();
       _paused = true;
       break;
-    case 1:
-      setController(&editController);
+    case 2:
+      setController(&mainMenuController);
       break;
   }
 }
