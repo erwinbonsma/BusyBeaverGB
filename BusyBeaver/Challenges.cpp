@@ -61,22 +61,44 @@ public:
   bool isAchieved(Computer& computer);
 };
 
+class SequenceGoal : public ChallengeGoal {
+  int _len;
+  const int8_t* _sequence;
+
+  int drawDots(int x);
+  int drawNumber(int num, int x);
+
+public:
+  SequenceGoal(int len, const int8_t* sequence);
+
+  void draw();
+  bool isAchieved(Computer& computer);
+};
+
 //--------------------------------------------------------------------------------------------------
 
 #define TURN 0
 #define DATA 128
 
-const uint8_t fixedLevelCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
-const uint8_t fixedLevelExit4[9] = {
+const uint8_t fixedCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
+const uint8_t fixedLadder[4] = { 0|DATA, 1|DATA, 2|TURN, 9|TURN };
+const uint8_t fixedExit4[9] = {
   3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
 };
-const uint8_t fixedLevelFogBank[9] = {
+const uint8_t fixedFogBank[9] = {
   54|DATA, 55|DATA, 56|DATA, 57|DATA, 58|DATA, 59|DATA, 60|DATA, 61|DATA, 62|DATA
 };
-const uint8_t fixedLevelDottedLine[9] = {
+const uint8_t fixedDottedLine[9] = {
   54|TURN, 55|DATA, 56|TURN, 57|DATA, 58|TURN, 59|DATA, 60|TURN, 61|DATA, 62|TURN
 };
-const uint8_t fixedLevelRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
+const uint8_t fixedSevenAteNine[4] = {
+  7|TURN, 9|TURN, 71|TURN, 78|TURN
+};
+const uint8_t fixedRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
+
+const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
+const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
+const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
@@ -90,7 +112,7 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .name = "Count to 12",
     .goal = new OutputValueGoal(12, Comparison::Equals),
     .numFixed = 4,
-    .fixed = fixedLevelCountTo12,
+    .fixed = fixedCountTo12,
     .numTurn = 0,
     .numData = 12
   },{
@@ -108,6 +130,13 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 6,
     .numData = 1
   },{
+    .name = "Ladder",
+    .goal = new SequenceGoal(8, sequenceLadder),
+    .numFixed = 4,
+    .fixed = fixedLadder,
+    .numTurn = 13,
+    .numData = 13
+  },{
     .name = "Exit 3",
     .goal = new ExitGoal(1, 9),
     .numFixed = 0,
@@ -118,7 +147,7 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .name = "Exit 4",
     .goal = new ExitGoal(2, 9),
     .numFixed = 9,
-    .fixed = fixedLevelExit4,
+    .fixed = fixedExit4,
     .numTurn = 0,
     .numData = 6
   },{
@@ -139,21 +168,35 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .name = "Fog bank",
     .goal = new ExitGoal(-1, 7),
     .numFixed = 9,
-    .fixed = fixedLevelFogBank,
+    .fixed = fixedFogBank,
     .numTurn = 5,
     .numData = 1
   },{
     .name = "Dotted line",
     .goal = new ExitGoal(-1, 7),
     .numFixed = 9,
-    .fixed = fixedLevelDottedLine,
+    .fixed = fixedDottedLine,
     .numTurn = 6,
     .numData = 2
   },{
-    .name = "Run 100",
+    .name = "One to Five",
+    .goal = new SequenceGoal(5, sequenceOneToFive),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 99,
+    .numData = 99
+  },{
+    .name = "Seven Ate Nine",
+    .goal = new SequenceGoal(7, sequenceSevenAteNine),
+    .numFixed = 4,
+    .fixed = fixedSevenAteNine,
+    .numTurn = 0,
+    .numData = 26
+  },{
+    .name = "Busy Beaver 100",
     .goal = new RunLengthGoal(100, Comparison::GreaterThan),
     .numFixed = 6,
-    .fixed = fixedLevelRun100,
+    .fixed = fixedRun100,
     .numTurn = 0,
     .numData = 6
   },{
@@ -164,8 +207,15 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 99,
     .numData = 99
   },{
-    .name = "Run 1000",
+    .name = "Busy Beaver 1000",
     .goal = new RunLengthGoal(1000, Comparison::GreaterThan),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 99,
+    .numData = 99
+  },{
+    .name = "Busy Beaver 10k",
+    .goal = new RunLengthGoal(10000, Comparison::GreaterThan),
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
@@ -187,6 +237,10 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[10]),
   Challenge(challengeSpecs[11]),
   Challenge(challengeSpecs[12]),
+  Challenge(challengeSpecs[13]),
+  Challenge(challengeSpecs[14]),
+  Challenge(challengeSpecs[15]),
+  Challenge(challengeSpecs[16]),
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -299,6 +353,64 @@ bool RunLengthGoal::isAchieved(Computer& computer) {
 }
 
 //--------------------------------------------------------------------------------------------------
+// SequenceGoal
+
+SequenceGoal::SequenceGoal(int len, const int8_t* sequence) {
+  _len = len;
+  _sequence = sequence;
+}
+
+int SequenceGoal::drawDots(int x) {
+  for (int i = 0; i < 3; i++) {
+    gb.display.drawPixel(x + i * 2, 4);
+  }
+  return 6;
+}
+
+int SequenceGoal::drawNumber(int num, int x) {
+  gb.display.setCursor(x, 0);
+  return gb.display.print(num, DEC) * 4;
+}
+
+void SequenceGoal::draw() {
+  gb.display.setColor(GREEN);
+  gb.display.setCursor(0,0);
+  gb.display.print("D=");
+
+  int x = 9;
+  x += drawDots(x) + 1;
+  x += drawNumber(0, x) + 1;
+  for (int i = 0; i < _len; i++) {
+    x += drawNumber(_sequence[i], x) + 1;
+  }
+  x += drawNumber(0, x) + 1;
+  drawDots(x);
+}
+
+bool SequenceGoal::isAchieved(Computer& computer) {
+  int p = 0, q = 0;
+
+  // Find first non-zero cell
+  while (p < dataSize && computer.getData(p) == 0) {
+    p++;
+  }
+
+  // Try to match with sequence
+  while (p < dataSize && q < _len && computer.getData(p) == _sequence[q]) {
+    p++;
+    q++;
+  }
+
+  // Check remaining zeros
+  while (p < dataSize && computer.getData(p) == 0) {
+    p++;
+  }
+
+  return (p == dataSize) && (q == _len);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Challenge
 
 Challenge::Challenge(const ChallengeSpec& spec) : _spec(spec) {}
 
