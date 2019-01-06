@@ -17,11 +17,14 @@ int getDisplayY(int addressY) {
 }
 
 void drawSpeedBar(int speed) {
-  gb.display.setColor(DARKGRAY);
-  gb.display.drawRect(0, 8, 5, (maxRunSpeed + 2) * 2);
+  int emptyLen = (maxRunSpeed - speed) * 2;
+  if (emptyLen > 0) {
+    gb.display.setColor(DARKBLUE);
+    gb.display.fillRect(1, 9, 3, emptyLen);
+  }
 
-  gb.display.setColor(GRAY);
-  gb.display.fillRect(1, 9 + (maxRunSpeed - speed) * 2, 3, (speed + 1) * 2);
+  gb.display.setColor(BLUE);
+  gb.display.fillRect(1, 9 + emptyLen, 3, (speed + 1) * 2);
 }
 
 void drawCursor(int x, int y) {
@@ -92,12 +95,8 @@ void drawData(Computer& computer) {
 }
 
 void drawProgramSpace() {
-  // Board
-  gb.display.setColor(BROWN);
-  gb.display.fillRect(board_x0, board_y0, 45, 45);
-
   // Grid lines
-  gb.display.setColor(DARKGRAY);
+  gb.display.setColor(DARKBLUE);
   for (int i = 0; i < 9; i++) {
     gb.display.drawLine(
       board_x0 + 2 + 5 * i, board_y0 +  2,
@@ -110,19 +109,26 @@ void drawProgramSpace() {
   }
 }
 
+void drawInstruction(int displayX, int displayY, Instruction instruction) {
+  if (instruction != Instruction::Noop) {
+    gb.display.setColor(instruction == Instruction::Turn ? BROWN: GRAY);
+    gb.display.fillRect(displayX, displayY, 3, 3);
+
+    gb.display.setColor(instruction == Instruction::Turn ? BEIGE : WHITE);
+    if (instruction ==  Instruction::Turn) {
+      gb.display.drawPixel(displayX, displayY);
+    } else {
+      gb.display.fillRect(displayX, displayY, 2, 2);
+    }
+  }
+}
+
 void drawProgram(Computer& computer) {
-  // Instructions
   for (int x = 0; x < computer.getSize(); x++) {
+    int x0 = getDisplayX(x) + 1;
     for (int y = 0; y < computer.getSize(); y++) {
-      Instruction ins = computer.getInstruction(x, y);
-      if (ins != Instruction::Noop) {
-        if (ins == Instruction::Turn) {
-          gb.display.setColor(BLACK);
-        } else {
-          gb.display.setColor(WHITE);
-        }
-        gb.display.fillRect(board_x0 + 1 + 5 * x, board_y0 + 1 + 5 * (8 - y), 3, 3);
-      }
+      int y0 = getDisplayY(y) + 1;
+      drawInstruction(x0, y0, computer.getInstruction(x, y));
     }
   }
 }
@@ -237,9 +243,9 @@ void collapseVisitBuckets(int targetNum) {
   }
 }
 
-const int numVisitColors = 8;
+const int numVisitColors = 5;
 Color visitColors[numVisitColors] = {
-  LIGHTBLUE, BLUE, DARKBLUE, GREEN, LIGHTGREEN, YELLOW, ORANGE, RED
+  BLUE, GREEN, LIGHTBLUE, LIGHTGREEN, YELLOW
 };
 
 Color getColorForVisitCount(int count) {
@@ -249,7 +255,6 @@ Color getColorForVisitCount(int count) {
     colorIndex++;
     nextBucketIndex = buckets[nextBucketIndex].next;
   }
-  //SerialUSB.printf("%d => %d, ", count, colorIndex);
   return visitColors[colorIndex];
 }
 

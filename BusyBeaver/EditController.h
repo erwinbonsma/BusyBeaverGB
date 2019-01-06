@@ -12,7 +12,7 @@ class EditController : public Controller {
   Instruction nextAvailableInstruction();
   void trySetInstruction(Instruction instruction);
 
-  void drawAvailable(Instruction instruction, Color color, int y);
+  void drawAvailable(Instruction instruction, int y);
 
 public:
   void update();

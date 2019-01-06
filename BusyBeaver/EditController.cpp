@@ -98,17 +98,16 @@ void EditController::trySetInstruction(Instruction instruction) {
   }
 }
 
-void EditController::drawAvailable(Instruction instruction, Color color, int y) {
+void EditController::drawAvailable(Instruction instruction, int y) {
   int num = _numAvailable[ (int)instruction ];
 
   if (num > 0) {
-    gb.display.setColor(BLUE);
-    gb.display.fillRect(66, y, 14, 7);
+    gb.display.setColor(DARKBLUE);
+    gb.display.fillRect(64, y, 16, 9);
 
-    gb.display.setColor(color);
-    gb.display.fillRect(67, y + 2, 3, 3);
+    drawInstruction(66, y + 3, instruction);
 
-    gb.display.setCursor(72, y + 1);
+    gb.display.setCursor(71, y + 2);
     gb.display.printf("%2d", num);
   }
 }
@@ -168,8 +167,8 @@ void EditController::draw() {
   if (activeChallenge != NO_CHALLENGE) {
     challenges[activeChallenge].draw();
 
-    drawAvailable(Instruction::Turn, BLACK, 8);
-    drawAvailable(Instruction::Data, WHITE, _numAvailable[1] ? 15 : 8);
+    drawAvailable(Instruction::Turn, 9);
+    drawAvailable(Instruction::Data, _numAvailable[1] ? 17 : 9);
   }
 }
 

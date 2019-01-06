@@ -1,9 +1,11 @@
 #include <Gamebuino-Meta.h>
 
-class Computer;
+#include "Computer.h"
 
 int getDisplayX(int addressX);
 int getDisplayY(int addressY);
+
+void drawInstruction(int displayX, int displayY, Instruction instruction);
 
 void drawProgramSpace();
 void drawProgram(Computer& computer);
