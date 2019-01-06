@@ -95,6 +95,8 @@ void EditController::trySetInstruction(Instruction instruction) {
     _numAvailable[ (int)computer.getInstruction(_x, _y) ]++;
     computer.setInstruction(_x, _y, instruction);
     _numAvailable[ (int)computer.getInstruction(_x, _y) ]--;
+  } else {
+    gb.sound.playTick();
   }
 }
 
