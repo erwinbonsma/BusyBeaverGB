@@ -18,6 +18,7 @@ int activeChallenge = NO_CHALLENGE;
 
 class ChallengeGoal {
 public:
+  virtual const char* typeDescription() = 0;
   virtual void draw() = 0;
   virtual bool isAchieved(Computer& computer) = 0;
 };
@@ -27,6 +28,7 @@ class ExitGoal : public ChallengeGoal {
 public:
   ExitGoal(int exitX, int exitY);
 
+  const char* typeDescription() { return "Reach the Exit"; }
   void draw();
   bool isAchieved(Computer& computer);
 };
@@ -49,6 +51,7 @@ class OutputValueGoal : public ComparisonBasedGoal {
 public:
   OutputValueGoal(int target, Comparison comparison);
 
+  const char* typeDescription()  { return "Output Value"; }
   void draw();
   bool isAchieved(Computer& computer);
 };
@@ -57,6 +60,7 @@ class RunLengthGoal : public ComparisonBasedGoal {
 public:
   RunLengthGoal(int target, Comparison comparison);
 
+  const char* typeDescription() { return "Run Length"; }
   void draw();
   bool isAchieved(Computer& computer);
 };
@@ -71,6 +75,7 @@ class SequenceGoal : public ChallengeGoal {
 public:
   SequenceGoal(int len, const int8_t* sequence);
 
+  const char* typeDescription() { return "Create Sequence"; }
   void draw();
   bool isAchieved(Computer& computer);
 };
@@ -259,9 +264,6 @@ void ExitGoal::draw() {
   gb.display.setColor(GREEN);
   gb.display.fillRect(x - 1, y - 1, 7, 7);
 
-  gb.display.setCursor(0, 0);
-  gb.display.print("EXIT");
-
   // Draw core shape of arrow
   gb.display.setColor(WHITE);
   gb.display.drawLine(x, y + 2, x + 4, y + 2);
@@ -319,7 +321,7 @@ bool ComparisonBasedGoal::isAchieved(int value) {
 // OutputValueGoal
 
 OutputValueGoal::OutputValueGoal(int target, Comparison comparison)
-  : ComparisonBasedGoal('D', target, comparison) {}
+  : ComparisonBasedGoal('V', target, comparison) {}
 
 void OutputValueGoal::draw() {
   gb.display.setColor(LIGHTGREEN);
@@ -375,7 +377,7 @@ int SequenceGoal::drawNumber(int num, int x) {
 void SequenceGoal::draw() {
   gb.display.setColor(GREEN);
   gb.display.setCursor(0,0);
-  gb.display.print("D=");
+  gb.display.print("S=");
 
   int x = 9;
   x += drawDots(x) + 1;
@@ -413,6 +415,10 @@ bool SequenceGoal::isAchieved(Computer& computer) {
 // Challenge
 
 Challenge::Challenge(const ChallengeSpec& spec) : _spec(spec) {}
+
+const char* Challenge::typeDescription() const {
+  return _spec.goal->typeDescription();
+}
 
 void Challenge::setFixedInstructions(Computer& computer) const {
   for (int i = 0; i < _spec.numFixed; i++) {

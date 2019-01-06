@@ -23,6 +23,7 @@ public:
   Challenge(const ChallengeSpec& spec);
 
   const char* name() const { return _spec.name; }
+  const char* typeDescription() const;
 
   void setFixedInstructions(Computer& computer) const;
   bool isFixed(int x, int y) const;

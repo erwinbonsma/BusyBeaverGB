@@ -71,8 +71,7 @@ void challengesMenu() {
   int selected = gb.gui.menu("Select challenge", challengeEntries, numOptions);
 
   activeChallenge = selected;
-  setController(&editController);
-  editController.reset();
+  setController(&introController);
 }
 
 void MainMenuController::update() {

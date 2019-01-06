@@ -6,20 +6,10 @@
 
 #include <Gamebuino-Meta.h>
 
-#include "Computer.h"
-#include "Drawing.h"
 #include "Store.h"
-#include "EditController.h"
-#include "RunController.h"
-#include "MainMenuController.h"
+#include "Globals.h"
 
 Computer computer(9);
-
-RunController runController;
-EditController editController;
-MainMenuController mainMenuController;
-
-Controller *activeController;
 
 void setup() {
   gb.begin();

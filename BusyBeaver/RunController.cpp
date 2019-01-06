@@ -108,9 +108,18 @@ RunController::RunController() {
   changeRunSpeed(4); // Set default speed
 }
 
-void RunController::activate() {
+void RunController::reset() {
   computer.reset();
   _paused = true;
+  _challengeStatus = (
+    activeChallenge != NO_CHALLENGE ?
+    ChallengeStatus::Undecided :
+    ChallengeStatus::None
+  );
+}
+
+void RunController::activate() {
+  reset();
 }
 
 void RunController::update() {
@@ -134,8 +143,7 @@ void RunController::update() {
         _paused = true;
         break;
       case RunAction::Rewind:
-        computer.reset();
-        _paused = true;
+        reset();
         break;
       case RunAction::Step:
         computer.step();
@@ -155,28 +163,28 @@ void RunController::update() {
     }
   }
 
-  if (activeChallenge != NO_CHALLENGE) {
-    if (computer.getStatus() == Status::Done) {
-      if (challenges[activeChallenge].isAchieved(computer)) {
-        gb.gui.popup("Challenge done!",   50);
+  if (
+    computer.getStatus() == Status::Done &&
+    _challengeStatus == ChallengeStatus::Undecided
+  ) {
+    if (challenges[activeChallenge].isAchieved(computer)) {
+      _challengeStatus = ChallengeStatus::Completed;
+      gb.gui.popup("Challenge done!", 40);
 
-        // Record progress
-        setMaxCompletedChallenge(max(activeChallenge + 1, getMaxCompletedChallenge()));
+      // Record progress
+      setMaxCompletedChallenge(max(activeChallenge + 1, getMaxCompletedChallenge()));
 
-        if (activeChallenge + 1 < numChallenges) {
-          // Go to next challenge
-          activeChallenge++;
-          setController(&editController);
-          editController.reset();
-        } else {
-          // No more challenges
-          setController(&mainMenuController);
-        }
+      if (activeChallenge + 1 < numChallenges) {
+        // Go to next challenge
+        activeChallenge++;
+        setController(&introController);
       } else {
-        gb.gui.popup("Challenge failed", 50);
-
-        setController(&editController);
+        // No more challenges
+        setController(&mainMenuController);
       }
+    } else {
+      _challengeStatus = ChallengeStatus::Failed;
+      gb.gui.popup("Challenge failed", 40);
     }
   }
 }

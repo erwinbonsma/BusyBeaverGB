@@ -13,16 +13,26 @@ enum class RunAction : int {
   None = 8
 };
 
+enum class ChallengeStatus : int {
+  None,
+  Undecided,
+  Completed,
+  Failed
+};
+
 class RunController : public Controller {
   int _runSpeed = 0;
   int _stepPeriod;
   int _stepsPerTick;
   int _ticksSinceLastStep = 0;
   bool _paused;
+  ChallengeStatus _challengeStatus;
 
   void runMenu();
   RunAction activeActionButtonA();
   void changeRunSpeed(int delta);
+
+  void reset();
 
 public:
   RunController();
