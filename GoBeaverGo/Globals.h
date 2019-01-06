@@ -1,3 +1,9 @@
+/*
+ * Go Beaver Go, a puzzle game based on a variant of the 2L programming language
+ *
+ * Copyright 2019, Erwin Bonsma
+ */
+
 #ifndef __GLOBALS_INCLUDED
 #define __GLOBALS_INCLUDED
 

@@ -1,5 +1,5 @@
 /*
- * Busy Beaver, a 2L-based programming language and puzzle game
+ * Go Beaver Go, a puzzle game based on a variant of the 2L programming language
  *
  * Copyright 2019, Erwin Bonsma
  */

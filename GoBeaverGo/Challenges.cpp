@@ -1,4 +1,10 @@
-#include "Challenges.h"
+/*
+ * Go Beaver Go, a puzzle game based on a variant of the 2L programming language
+ *
+ * Copyright 2019, Erwin Bonsma
+ */
+
+ #include "Challenges.h"
 
 #include "Computer.h"
 #include "Drawing.h"
