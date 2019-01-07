@@ -17,7 +17,7 @@
 const int maxEditMenuEntries = 5;
 const char* availableEditMenuEntries[maxEditMenuEntries] = {
   "Run",
-  "Store",
+  "Save",
   "Load",
   "Clear",
   "Back to main menu"
@@ -57,7 +57,7 @@ void EditController::editMenu() {
       setController(&runController);
       break;
     case 1:
-      storeProgram(computer);
+      saveProgram(computer);
       break;
     case 2:
       loadProgram(computer);

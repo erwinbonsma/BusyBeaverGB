@@ -11,6 +11,6 @@ void initSaveFileDefaults();
 int getMaxCompletedChallenge();
 void setMaxCompletedChallenge(int index);
 
-bool storeProgram(Computer& computer);
+bool saveProgram(Computer& computer);
 bool loadProgram(Computer& computer);
 

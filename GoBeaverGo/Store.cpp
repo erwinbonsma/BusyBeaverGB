@@ -16,7 +16,7 @@
  *
  * 16 .. 16+N-1: Programs
  *
- * Where N = maxProgramsToStore
+ * Where N = programStorageSize
  */
 #define BLOCK_SAVE_FILE_VERSION    0
 #define BLOCK_NUM_STORED_PROGRAMS  1
@@ -31,10 +31,10 @@
 
 #define SAVE_FILE_VERSION  1
 
-const int maxProgramsToStore = 8;
+const int programStorageSize = 8;
 const int maxProgramNameLength = 20; // Includes terminating \0
 const int storedProgramSize = 17;
-const int programIndexSize = maxProgramsToStore * maxProgramNameLength;
+const int programIndexSize = programStorageSize * maxProgramNameLength;
 
 const SaveDefault savefileDefaults[5] = {
   { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, 0, 0},
@@ -52,7 +52,7 @@ uint8_t programBuffer[storedProgramSize];
 char programNameBuffer[maxProgramNameLength];
 char autoNameBuffer[maxProgramNameLength];
 
-const char* programNames[maxProgramsToStore + 1];
+const char* programNames[programStorageSize + 1];
 
 void initSaveFileDefaults() {
   gb.save.config(savefileDefaults);
@@ -86,7 +86,7 @@ int selectProgramSlot(bool store) {
     numEntries++;
   }
 
-  if (store && numPrograms < maxProgramsToStore) {
+  if (store && numPrograms < programStorageSize) {
     programNames[numEntries++] = "<Empty>";
   }
 
@@ -129,7 +129,7 @@ void updateIndex(int slot, char* name) {
   gb.save.set(BLOCK_PROGRAM_NAMES, (void*)programIndexBuffer, programIndexSize);
 }
 
-bool storeProgram(int slot, char* name, Computer& computer) {
+bool saveProgram(int slot, char* name, Computer& computer) {
   updateIndex(slot, name);
 
   int p_out = 0;
@@ -190,7 +190,7 @@ bool loadProgram(int slot, Computer& computer) {
   return true;
 }
 
-bool storeProgram(Computer& computer) {
+bool saveProgram(Computer& computer) {
   int slot = selectProgramSlot(true);
 
   if (slot < 0) {
@@ -200,7 +200,7 @@ bool storeProgram(Computer& computer) {
 
   char* name = enterName();
 
-  if (!storeProgram(slot, name, computer)) {
+  if (!saveProgram(slot, name, computer)) {
     gb.gui.popup("Save failed!", 40);
     return false;
   }
