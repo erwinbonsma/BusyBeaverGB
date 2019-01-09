@@ -23,6 +23,7 @@ class EditController : public Controller {
   void drawAvailable(Instruction instruction, int y);
 
 public:
+  void activate();
   void update();
   void draw();
 

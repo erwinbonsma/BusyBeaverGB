@@ -136,6 +136,11 @@ void EditController::reset() {
   }
 }
 
+void EditController::activate() {
+  _x = 0;
+  _y = 0;
+}
+
 void EditController::update() {
   if (gb.buttons.pressed(BUTTON_MENU)) {
     editMenu();
