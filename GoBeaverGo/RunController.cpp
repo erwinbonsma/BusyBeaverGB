@@ -190,6 +190,9 @@ void RunController::update() {
         break;
     }
   }
+  else if (gb.buttons.pressed(BUTTON_B)) {
+    setController(&editController);
+  }
 
   if (computer.getStatus() != Status::Done) {
     if (_runSpeed > 0 && !_paused) {
