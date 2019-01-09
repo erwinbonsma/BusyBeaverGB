@@ -63,6 +63,14 @@ const char* runMenuEntries[] = {
   "Back to main menu"
 };
 
+void signalChallengeCompleted() {
+  if (activeChallengeSet == &challengesSet) {
+    int activeIndex = challengesSet.indexOfChallenge(activeChallenge);
+
+    setMaxCompletedChallenge(max(getMaxCompletedChallenge(), activeIndex + 1));
+  }
+}
+
 void nextChallenge() {
   activeChallenge = activeChallengeSet->nextChallenge(activeChallenge);
   if (activeChallenge != nullptr) {
@@ -209,9 +217,7 @@ void RunController::update() {
       snprintf(popupBuf, sizeof(popupBuf), "%s done!", activeChallengeSet->challengeType());
       gb.gui.popup(popupBuf, 40);
 
-      // Record progress
-      // TODO
-
+      signalChallengeCompleted();
     } else {
       _challengeStatus = ChallengeStatus::Failed;
 

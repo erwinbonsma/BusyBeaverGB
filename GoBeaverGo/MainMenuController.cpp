@@ -72,7 +72,14 @@ Image iconImage = Image(iconData);
 char challengesMenuTitleBuf[20];
 
 void selectChallenge() {
-  int numOptions = activeChallengeSet->size();
+  int numOptions;
+
+  if (activeChallengeSet == &challengesSet) {
+    numOptions = getMaxCompletedChallenge() + 1;
+  } else {
+    numOptions = activeChallengeSet->size();
+  }
+
   for (int i = 0; i < numOptions; i++) {
     challengeMenuEntries[i] = activeChallengeSet->challengeAt(i)->name();
   }
