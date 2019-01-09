@@ -314,10 +314,10 @@ void ExitGoal::draw() {
   else if (_exitY < 0) {
     gb.display.drawLine(x + 1, y + 3, x + 3, y + 3);
   }
-  else if (_exitX == maxProgramSize) {
+  else if (_exitX > _exitY) {
     gb.display.drawLine(x + 3, y + 1, x + 3, y + 3);
   }
-  else if (_exitY == maxProgramSize) {
+  else {
     gb.display.drawLine(x + 1, y + 1, x + 3, y + 1);
   }
 }
