@@ -9,8 +9,8 @@
 int dx[numDirections] = { 0, 1, 0, -1 };
 int dy[numDirections] = { 1, 0, -1, 0 };
 
-Computer::Computer(int size) {
-  _size = size;
+Computer::Computer() {
+  _size = maxProgramSize; // Default
 
   clear();
   reset();
@@ -46,12 +46,11 @@ void Computer::reset() {
   }
 }
 
-void Computer::setProgram(int* program) {
-  for (int x = 0; x < _size; x++) {
-    for (int y = 0; y < _size; y++) {
-      _program[x][y] = (Instruction)program[x + (_size - y - 1) * _size];
-    }
-  }
+void Computer::setSize(int size) {
+  _size = size;
+
+  clear();
+  reset();
 }
 
 bool Computer::step() {

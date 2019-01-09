@@ -4,7 +4,7 @@
  * Copyright 2019, Erwin Bonsma
  */
 
- #include "Challenges.h"
+#include "Challenges.h"
 
 #include "Computer.h"
 #include "Drawing.h"
@@ -17,7 +17,8 @@ enum class Comparison : int {
 
 char comparisonChars[3] = { '=', '>', '<' };
 
-int activeChallenge = NO_CHALLENGE;
+const Challenge* activeChallenge = nullptr;
+const ChallengeSet* activeChallengeSet = nullptr;
 
 //--------------------------------------------------------------------------------------------------
 // ChallengeGoal definitions
@@ -91,6 +92,7 @@ public:
 #define TURN 0
 #define DATA 128
 
+const uint8_t fixedTurnRight[1] = { 20|TURN };
 const uint8_t fixedCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
 const uint8_t fixedLadder[4] = { 0|DATA, 1|DATA, 2|TURN, 9|TURN };
 const uint8_t fixedExit4[9] = {
@@ -111,15 +113,9 @@ const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
+const int numChallenges = 16;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
-    .name = "Count to 8",
-    .goal = new OutputValueGoal(8, Comparison::Equals),
-    .numFixed = 0,
-    .fixed = nullptr,
-    .numTurn = 0,
-    .numData = 8
-  },{
     .name = "Count to 12",
     .goal = new OutputValueGoal(12, Comparison::Equals),
     .numFixed = 4,
@@ -251,8 +247,44 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[13]),
   Challenge(challengeSpecs[14]),
   Challenge(challengeSpecs[15]),
-  Challenge(challengeSpecs[16]),
 };
+
+const ChallengeSet challengesSet("Challenge", 9, challenges, numChallenges);
+
+const int numTutorials = 3;
+const ChallengeSpec tutorialSpecs[numTutorials] = {
+  {
+    .name = "Increment",
+    .goal = new OutputValueGoal(1, Comparison::Equals),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 0,
+    .numData = 1
+  },{
+    .name = "Turn Left",
+    .goal = new ExitGoal(-1, 3),
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 1,
+    .numData = 0
+  },{
+    .name = "Turn Right",
+    .goal = new ExitGoal(5, 3),
+    .numFixed = 1,
+    .fixed = fixedTurnRight,
+    .numTurn = 0,
+    .numData = 1
+  }
+};
+
+const Challenge tutorials[numTutorials] = {
+  Challenge(tutorialSpecs[ 0]),
+  Challenge(tutorialSpecs[ 1]),
+  Challenge(tutorialSpecs[ 2]),
+};
+
+const ChallengeSet tutorialsSet("Tutorial", 5, tutorials, numTutorials);
+
 
 //--------------------------------------------------------------------------------------------------
 // ExitGoal
@@ -431,17 +463,17 @@ void Challenge::setFixedInstructions(Computer& computer) const {
     int insCode = _spec.fixed[i];
     Instruction instruction = (insCode & DATA) ? Instruction::Data : Instruction::Turn;
     insCode &= 127; // Clear instruction bit
-    int fixX = insCode % 9;
-    int fixY = (insCode - fixX) / 9;
+    int fixX = insCode % computer.getSize();
+    int fixY = (insCode - fixX) / computer.getSize();
     computer.setInstruction(fixX, fixY, instruction);
   }
 }
 
-bool Challenge::isFixed(int x, int y) const {
+bool Challenge::isFixed(int x, int y, int programSize) const {
   for (int i = 0; i < _spec.numFixed; i++) {
     int insCode = (_spec.fixed[i] & 127);
-    int fixX = insCode % 9;
-    int fixY = (insCode - fixX) / 9;
+    int fixX = insCode % programSize;
+    int fixY = (insCode - fixX) / programSize;
     if (x == fixX && y == fixY) {
       return true;
     }
@@ -466,5 +498,31 @@ void Challenge::draw() const {
 
 bool Challenge::isAchieved(Computer& computer) const {
   return _spec.goal->isAchieved(computer);
+}
+
+//--------------------------------------------------------------------------------------------------
+// ChallengeSet implementation
+
+ChallengeSet::ChallengeSet(const char* type, int programSize, const Challenge* challenges, int num) {
+  _challengeType = type;
+  _programSize = programSize;
+  _challenges = challenges;
+  _numChallenges = num;
+}
+
+int ChallengeSet::indexOfChallenge(const Challenge* challenge) const {
+  int i = 0;
+  do {
+    if (&_challenges[i] == challenge) {
+      return i;
+    }
+  } while (++i < _numChallenges);
+
+  return -1;
+}
+
+const Challenge* ChallengeSet::nextChallenge(const Challenge* challenge) const {
+  int index = indexOfChallenge(challenge) + 1;
+  return (index < _numChallenges) ? &_challenges[index] : nullptr;
 }
 

@@ -8,16 +8,19 @@
 
 #include "Globals.h"
 #include "Challenges.h"
+#include "Drawing.h"
 #include "Store.h"
 
-const int numMainMenuEntries = 3;
+const int numMainMenuEntries = 4;
 const char* mainMenuEntries[numMainMenuEntries] = {
+  "Tutorial",
   "Challenges",
   "Experiment",
   "Help"
 };
 
-const char* challengeEntries[numChallenges];
+const int maxChallengeMenuEntries = 32;
+const char* challengeMenuEntries[maxChallengeMenuEntries];
 
 const uint8_t goBeaverGoData[] = {
   64, 5, 1, 0, 1, 0xFF, 1,
@@ -66,16 +69,30 @@ const uint8_t iconData[] = {
 };
 Image iconImage = Image(iconData);
 
-void challengesMenu() {
-  int numOptions = min(getMaxCompletedChallenge() + 1, numChallenges);
+char challengesMenuTitleBuf[20];
+
+void selectChallenge() {
+  int numOptions = activeChallengeSet->size();
   for (int i = 0; i < numOptions; i++) {
-    challengeEntries[i] = challenges[i].name();
+    challengeMenuEntries[i] = activeChallengeSet->challengeAt(i)->name();
   }
 
-  int selected = gb.gui.menu("Select challenge", challengeEntries, numOptions);
+  snprintf(
+    challengesMenuTitleBuf, sizeof(challengesMenuTitleBuf),
+    "Select %s", activeChallengeSet->challengeType()
+  );
+  int selected = gb.gui.menu(challengesMenuTitleBuf, challengeMenuEntries, numOptions);
 
-  activeChallenge = selected;
-  setController(&introController);
+  activeChallenge = activeChallengeSet->challengeAt(selected);
+}
+
+void updateProgramSize() {
+  computer.setSize(
+    activeChallengeSet != nullptr ?
+    activeChallengeSet->programSize() :
+    challengesSet.programSize()
+  );
+  programSizeChanged();
 }
 
 void MainMenuController::update() {
@@ -88,14 +105,27 @@ void MainMenuController::update() {
   else if (gb.buttons.pressed(BUTTON_A)) {
     switch (_selectedEntry) {
       case 0:
-        challengesMenu();
+        activeChallengeSet = &tutorialsSet;
+        runController.setRunSpeed(2);
+        selectChallenge();
+        updateProgramSize();
+        setController(&introController);
         break;
       case 1:
-        activeChallenge = NO_CHALLENGE;
+        activeChallengeSet = &challengesSet;
+        runController.setRunSpeed(4);
+        selectChallenge();
+        updateProgramSize();
+        setController(&introController);
+        break;
+      case 2:
+        activeChallengeSet = nullptr;
+        activeChallenge = nullptr;
+        updateProgramSize();
         setController(&editController);
         editController.reset();
         break;
-      case 2:
+      case 3:
         setController(&helpController);
         break;
       default:
@@ -109,7 +139,7 @@ void MainMenuController::draw() {
 
   for (int i = 0; i < numMainMenuEntries; i++) {
     gb.display.setColor(i == _selectedEntry ? LIGHTBLUE : BLUE);
-    gb.display.setCursor(22, 12 + i * 8);
+    gb.display.setCursor(22, 9 + i * 8);
     gb.display.print(mainMenuEntries[i]);
   }
 

@@ -8,18 +8,25 @@
 
 #include "Drawing.h"
 
+#include "Globals.h"
 #include "Computer.h"
 #include "RunController.h"
 
-const int board_x0 = 17;
-const int board_y0 = 7;
+int board_x0;
+int board_y0;
+
+void programSizeChanged() {
+  int pixelSize = computer.getSize() * 5;
+  board_x0 = (80 - pixelSize) / 2;
+  board_y0 = (64 - pixelSize) / 2 - 2;
+}
 
 int getDisplayX(int addressX) {
   return board_x0 + 5 * addressX;
 }
 
 int getDisplayY(int addressY) {
-  return board_y0 + 5 * (8 - addressY);
+  return board_y0 + 5 * (computer.getSize() - addressY - 1);
 }
 
 void drawSpeedBar(int speed) {
@@ -103,14 +110,15 @@ void drawData(Computer& computer) {
 void drawProgramSpace() {
   // Grid lines
   gb.display.setColor(DARKBLUE);
-  for (int i = 0; i < 9; i++) {
+  int lineLen = (computer.getSize() - 1) * 5;
+  for (int i = 0; i < computer.getSize(); i++) {
     gb.display.drawLine(
-      board_x0 + 2 + 5 * i, board_y0 +  2,
-      board_x0 + 2 + 5 * i, board_y0 + 42
+      board_x0 + 2 + 5 * i, board_y0 + 2,
+      board_x0 + 2 + 5 * i, board_y0 + 2 + lineLen
     );
     gb.display.drawLine(
-      board_x0 +  2, board_y0 + 2 + 5 * i,
-      board_x0 + 42, board_y0 + 2 + 5 * i
+      board_x0 + 2,           board_y0 + 2 + 5 * i,
+      board_x0 + 2 + lineLen, board_y0 + 2 + 5 * i
     );
   }
 }

@@ -75,10 +75,10 @@ class Computer {
   int _numSteps;
 
 public:
-  Computer(int size);
+  Computer();
 
+  void setSize(int size);
   int getSize() { return _size; }
-  void setProgram(int* program);
 
   Instruction getInstruction(int x, int y) { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }

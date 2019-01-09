@@ -30,24 +30,28 @@ void IntroController::update() {
   }
 }
 
+char challengeTitleBuf[16];
 void IntroController::draw() {
-  const Challenge& challenge = challenges[activeChallenge];
-
   gb.display.setColor(DARKBLUE);
   gb.display.fillRect(0, 0, 80, 22);
   gb.display.setColor(BLUE);
   gb.display.drawRect(0, 0, 80, 22);
 
   gb.display.setColor(LIGHTBLUE);
-  gb.display.setCursor(16, 4);
-  gb.display.printf("Challenge %02d", (activeChallenge + 1));
+  snprintf(
+    challengeTitleBuf, sizeof(challengeTitleBuf),
+    "%s %d",
+    activeChallengeSet->challengeType(),
+    activeChallengeSet->indexOfChallenge(activeChallenge) + 1
+  );
+  printCenter(challengeTitleBuf, 4);
 
   gb.display.setColor(WHITE);
-  printCenter(challenge.name(), 12);
+  printCenter(activeChallenge->name(), 12);
 
   gb.display.setColor(BLUE);
   printCenter("Goal:", 30);
-  printCenter(challenge.typeDescription(), 38);
+  printCenter(activeChallenge->typeDescription(), 38);
 
   if (_updateCount > 50) {
     gb.display.setColor(DARKBLUE);

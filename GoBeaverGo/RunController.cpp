@@ -99,7 +99,11 @@ RunAction RunController::activeActionButtonA() {
 }
 
 void RunController::changeRunSpeed(int delta) {
-  _runSpeed = min(maxRunSpeed, max(0, _runSpeed + delta));
+  setRunSpeed( min(maxRunSpeed, max(0, _runSpeed + delta)) );
+}
+
+void RunController::setRunSpeed(int speed) {
+  _runSpeed = speed;
 
   if (_runSpeed == 0) {
     return;
@@ -115,14 +119,14 @@ void RunController::changeRunSpeed(int delta) {
 }
 
 RunController::RunController() {
-  changeRunSpeed(4); // Set default speed
+  setRunSpeed(4); // Set default speed
 }
 
 void RunController::reset() {
   computer.reset();
   _paused = true;
   _challengeStatus = (
-    activeChallenge != NO_CHALLENGE ?
+    activeChallenge != nullptr ?
     ChallengeStatus::Undecided :
     ChallengeStatus::None
   );
@@ -131,6 +135,8 @@ void RunController::reset() {
 void RunController::activate() {
   reset();
 }
+
+char popupBuf[20];
 
 void RunController::update() {
   if (gb.buttons.pressed(BUTTON_MENU)) {
@@ -177,16 +183,18 @@ void RunController::update() {
     computer.getStatus() == Status::Done &&
     _challengeStatus == ChallengeStatus::Undecided
   ) {
-    if (challenges[activeChallenge].isAchieved(computer)) {
+    if (activeChallenge->isAchieved(computer)) {
       _challengeStatus = ChallengeStatus::Completed;
-      gb.gui.popup("Challenge done!", 40);
+
+      snprintf(popupBuf, sizeof(popupBuf), "%s done!", activeChallengeSet->challengeType());
+      gb.gui.popup(popupBuf, 40);
 
       // Record progress
-      setMaxCompletedChallenge(max(activeChallenge + 1, getMaxCompletedChallenge()));
+      // TODO
 
-      if (activeChallenge + 1 < numChallenges) {
+      activeChallenge = activeChallengeSet->nextChallenge(activeChallenge);
+      if (activeChallenge != nullptr) {
         // Go to next challenge
-        activeChallenge++;
         setController(&introController);
       } else {
         // No more challenges
@@ -194,7 +202,9 @@ void RunController::update() {
       }
     } else {
       _challengeStatus = ChallengeStatus::Failed;
-      gb.gui.popup("Challenge failed", 40);
+
+      snprintf(popupBuf, sizeof(popupBuf), "%s failed", activeChallengeSet->challengeType());
+      gb.gui.popup(popupBuf, 40);
     }
   }
 }
@@ -207,8 +217,8 @@ void RunController::draw() {
 
   drawData(computer);
 
-  if (activeChallenge != NO_CHALLENGE) {
-    challenges[activeChallenge].draw();
+  if (activeChallenge != nullptr) {
+    activeChallenge->draw();
   }
 
   drawRunStatus(computer);

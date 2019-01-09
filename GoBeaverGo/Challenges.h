@@ -32,7 +32,7 @@ public:
   const char* typeDescription() const;
 
   void setFixedInstructions(Computer& computer) const;
-  bool isFixed(int x, int y) const;
+  bool isFixed(int x, int y, int programSize) const;
 
   int numAvailable(Instruction instruction) const;
 
@@ -40,9 +40,28 @@ public:
   bool isAchieved(Computer& computer) const;
 };
 
-const int numChallenges = 17;
-extern const Challenge challenges[numChallenges];
+class ChallengeSet {
+  int _programSize;
+  int _numChallenges;
+  const Challenge* _challenges;
+  const char* _challengeType;
 
-#define NO_CHALLENGE  -1
-extern int activeChallenge;
+public:
+  ChallengeSet(const char* type, int programSize, const Challenge* challenges, int num);
+
+  const char* challengeType() const { return _challengeType; }
+
+  int programSize() const { return _programSize; }
+
+  int size() const { return _numChallenges; }
+  int indexOfChallenge(const Challenge* challenge) const;
+  const Challenge* nextChallenge(const Challenge* challenge) const;
+  const Challenge* challengeAt(int index) const { return &_challenges[index]; }
+};
+
+extern const ChallengeSet tutorialsSet;
+extern const ChallengeSet challengesSet;
+
+extern const Challenge* activeChallenge;
+extern const ChallengeSet* activeChallengeSet;
 

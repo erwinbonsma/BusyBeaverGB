@@ -28,8 +28,8 @@ int populateEditMenu() {
   int entry = 0;
   editMenuEntries[entry++] = availableEditMenuEntries[0];
 
-  if (activeChallenge == NO_CHALLENGE) {
-    // Only support Store and Load in Experiment mode
+  if (activeChallenge == nullptr) {
+    // Only enable Save and Load when experimenting
     editMenuEntries[entry++] = availableEditMenuEntries[1];
     editMenuEntries[entry++] = availableEditMenuEntries[2];
   }
@@ -93,10 +93,7 @@ void EditController::trySetInstruction(Instruction instruction) {
     return; // Ignore, no change
   }
 
-  if (
-    activeChallenge == NO_CHALLENGE ||
-    !challenges[activeChallenge].isFixed(_x, _y)
-  ) {
+  if (activeChallenge == nullptr || !activeChallenge->isFixed(_x, _y, computer.getSize())) {
     // Only set the instruction if the challenge, if any, allows it
     _numAvailable[ (int)computer.getInstruction(_x, _y) ]++;
     computer.setInstruction(_x, _y, instruction);
@@ -126,18 +123,16 @@ void EditController::reset() {
   computer.clear();
   _numAvailable[0] = 99; // Always "infinite" NOOPs
 
-  if (activeChallenge == NO_CHALLENGE) {
+  if (activeChallenge == nullptr) {
     for (int i = 1; i < numInstructions; i++) {
       _numAvailable[i] = 99;
     }
     return;
   }
 
-  const Challenge& challenge = challenges[activeChallenge];
-
-  challenge.setFixedInstructions(computer);
+  activeChallenge->setFixedInstructions(computer);
   for (int i = 1; i < numInstructions; i++) {
-    _numAvailable[i] = challenge.numAvailable( (Instruction)i );
+    _numAvailable[i] = activeChallenge->numAvailable( (Instruction)i );
   }
 }
 
@@ -148,16 +143,16 @@ void EditController::update() {
   }
 
   if (gb.buttons.pressed(BUTTON_LEFT)) {
-    _x = (_x + maxProgramSize - 1) % maxProgramSize;
+    _x = (_x + computer.getSize() - 1) % computer.getSize();
   }
   else if (gb.buttons.pressed(BUTTON_RIGHT)) {
-    _x = (_x + 1) % maxProgramSize;
+    _x = (_x + 1) % computer.getSize();
   }
   else if (gb.buttons.pressed(BUTTON_DOWN)) {
-    _y = (_y + maxProgramSize - 1) % maxProgramSize;
+    _y = (_y + computer.getSize() - 1) % computer.getSize();
   }
   else if (gb.buttons.pressed(BUTTON_UP)) {
-    _y = (_y + 1) % maxProgramSize;
+    _y = (_y + 1) % computer.getSize();
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
     trySetInstruction(nextAvailableInstruction());
@@ -172,8 +167,8 @@ void EditController::draw() {
   drawProgram(computer);
   drawCursor(_x, _y);
 
-  if (activeChallenge != NO_CHALLENGE) {
-    challenges[activeChallenge].draw();
+  if (activeChallenge != nullptr) {
+    activeChallenge->draw();
 
     drawAvailable(Instruction::Turn, 9);
     drawAvailable(Instruction::Data, _numAvailable[1] ? 17 : 9);

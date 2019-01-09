@@ -13,6 +13,8 @@ int getDisplayY(int addressY);
 
 void drawInstruction(int displayX, int displayY, Instruction instruction);
 
+void programSizeChanged();
+
 void drawProgramSpace();
 void drawProgram(Computer& computer);
 void drawData(Computer& computer);

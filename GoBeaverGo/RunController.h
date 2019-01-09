@@ -43,6 +43,8 @@ class RunController : public Controller {
 public:
   RunController();
 
+  void setRunSpeed(int speed);
+
   void activate();
   void update();
   void draw();

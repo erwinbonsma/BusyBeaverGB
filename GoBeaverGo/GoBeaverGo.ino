@@ -9,7 +9,7 @@
 #include "Store.h"
 #include "Globals.h"
 
-Computer computer(9);
+Computer computer;
 
 void setup() {
   gb.begin();
