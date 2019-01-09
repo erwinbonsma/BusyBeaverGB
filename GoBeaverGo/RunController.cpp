@@ -63,6 +63,17 @@ const char* runMenuEntries[] = {
   "Back to main menu"
 };
 
+void nextChallenge() {
+  activeChallenge = activeChallengeSet->nextChallenge(activeChallenge);
+  if (activeChallenge != nullptr) {
+    // Go to next challenge
+    setController(&introController);
+  } else {
+    // No more challenges
+    setController(&mainMenuController);
+  }
+}
+
 void RunController::runMenu() {
   int entry = gb.gui.menu("Run menu", runMenuEntries);
 
@@ -163,6 +174,7 @@ void RunController::update() {
         break;
       case RunAction::Step:
         computer.step();
+        _ticksSinceLastStep = 0;
         break;
       default:
         // void
@@ -170,11 +182,19 @@ void RunController::update() {
     }
   }
 
-  if (_runSpeed > 0 && !_paused) {
-    if (++_ticksSinceLastStep >= _stepPeriod) {
-      for (int i = 0; i < _stepsPerTick; i++) {
-        computer.step();
-        _ticksSinceLastStep = 0;
+  if (computer.getStatus() != Status::Done) {
+    if (_runSpeed > 0 && !_paused) {
+      if (++_ticksSinceLastStep >= _stepPeriod) {
+        for (int i = 0; i < _stepsPerTick; i++) {
+          computer.step();
+          _ticksSinceLastStep = 0;
+        }
+      }
+    }
+  } else {
+    if (_challengeStatus == ChallengeStatus::Completed) {
+      if (++_ticksSinceLastStep > 50) {
+        nextChallenge();
       }
     }
   }
@@ -192,14 +212,6 @@ void RunController::update() {
       // Record progress
       // TODO
 
-      activeChallenge = activeChallengeSet->nextChallenge(activeChallenge);
-      if (activeChallenge != nullptr) {
-        // Go to next challenge
-        setController(&introController);
-      } else {
-        // No more challenges
-        setController(&mainMenuController);
-      }
     } else {
       _challengeStatus = ChallengeStatus::Failed;
 
@@ -213,13 +225,15 @@ void RunController::draw() {
   drawProgramSpace();
   drawVisitCounts(computer);
   drawProgram(computer);
-  drawProgramPointer(computer);
 
   drawData(computer);
 
   if (activeChallenge != nullptr) {
     activeChallenge->draw();
   }
+
+  // Draw after challenge (as pointer may be above exit)
+  drawProgramPointer(computer);
 
   drawRunStatus(computer);
 
