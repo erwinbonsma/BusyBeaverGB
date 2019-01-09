@@ -149,23 +149,32 @@ void EditController::update() {
     _x = (_x + 1) % computer.getSize();
   }
   else if (gb.buttons.pressed(BUTTON_DOWN)) {
-    _y = (_y + computer.getSize() - 1) % computer.getSize();
+    _y = (_y + computer.getSize() + 1) % (computer.getSize() + 1) - 1;
   }
   else if (gb.buttons.pressed(BUTTON_UP)) {
-    _y = (_y + 1) % computer.getSize();
+    _y = (_y + 2) % (computer.getSize() + 1) - 1;
   }
   else if (gb.buttons.pressed(BUTTON_A)) {
-    trySetInstruction(nextAvailableInstruction());
+    if (_y >= 0) {
+      trySetInstruction(nextAvailableInstruction());
+    } else {
+      setController(&runController);
+    }
   }
   else if (gb.buttons.pressed(BUTTON_B)) {
-    trySetInstruction(Instruction::Noop);
+    if (_y >= 0) {
+      trySetInstruction(Instruction::Noop);
+    }
   }
 }
 
 void EditController::draw() {
   drawProgramSpace();
   drawProgram(computer);
-  drawCursor(_x, _y);
+  if (_y >= 0) {
+    drawCursor(_x, _y);
+  }
+  drawButton("Run", _y == -1);
 
   if (activeChallenge != nullptr) {
     activeChallenge->draw();

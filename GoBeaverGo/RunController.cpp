@@ -143,7 +143,7 @@ RunController::RunController() {
 
 void RunController::reset() {
   computer.reset();
-  _paused = true;
+  _paused = false;
   _challengeStatus = (
     activeChallenge != nullptr ?
     ChallengeStatus::Undecided :

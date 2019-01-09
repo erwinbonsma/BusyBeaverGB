@@ -21,6 +21,7 @@ void drawData(Computer& computer);
 void drawRunStatus(Computer& computer);
 void drawCursor(int x, int y);
 void drawProgramPointer(Computer& computer);
+void drawButton(const char* label, bool selected);
 void drawVisitCounts(Computer& computer);
 
 void drawSpeedBar(int speed);

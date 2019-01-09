@@ -147,6 +147,19 @@ void drawProgram(Computer& computer) {
   }
 }
 
+void drawButton(const char* label, bool selected) {
+  int x = board_x0 + 2;
+  int y = board_y0 + computer.getSize() * 5 + 2;
+  int w = computer.getSize() * 5 - 4;
+
+  gb.display.setColor(selected ? BLUE : DARKBLUE);
+  gb.display.fillRoundRect(x, y, w, 7, 2);
+
+  gb.display.setColor(BLACK);
+  gb.display.setCursor(40 - strlen(label) * 2, y + 1);
+  gb.display.print(label);
+}
+
 struct CountBucket {
   int minRange;
   int maxRange;
