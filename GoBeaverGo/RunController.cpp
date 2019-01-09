@@ -179,6 +179,7 @@ void RunController::update() {
         break;
       case RunAction::Rewind:
         reset();
+        _paused = true;
         break;
       case RunAction::Step:
         computer.step();
