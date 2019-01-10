@@ -93,6 +93,11 @@ public:
 #define DATA 128
 
 const uint8_t fixedTurnRight[1] = { 20|TURN };
+const uint8_t fixedSharpTurn[2] = { 16|TURN, 20|TURN };
+const uint8_t fixedShiftRight[4] = { 15|DATA, 19|TURN, 20|TURN, 23|DATA };
+const uint8_t* fixedDecrement = fixedShiftRight;
+const uint8_t fixedShiftLeft[6] = { 2|DATA, 3|TURN, 6|TURN, 15|DATA, 19|TURN, 20|TURN };
+
 const uint8_t fixedCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
 const uint8_t fixedLadder[4] = { 0|DATA, 1|DATA, 2|TURN, 9|TURN };
 const uint8_t fixedExit4[9] = {
@@ -109,6 +114,8 @@ const uint8_t fixedSevenAteNine[4] = {
 };
 const uint8_t fixedRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
 
+const int8_t sequenceTwoOnes[2] = { 1, 1 };
+const int8_t sequenceShiftLeft[2] = { -1, 1 };
 const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
@@ -251,7 +258,7 @@ const Challenge challenges[numChallenges] = {
 
 const ChallengeSet challengesSet("Challenge", 9, challenges, numChallenges);
 
-const int numTutorials = 3;
+const int numTutorials = 7;
 const ChallengeSpec tutorialSpecs[numTutorials] = {
   {
     .name = "Increment",
@@ -274,6 +281,34 @@ const ChallengeSpec tutorialSpecs[numTutorials] = {
     .fixed = fixedTurnRight,
     .numTurn = 0,
     .numData = 1
+  },{
+    .name = "Sharp Turn",
+    .goal = new OutputValueGoal(1, Comparison::Equals),
+    .numFixed = 2,
+    .fixed = fixedSharpTurn,
+    .numTurn = 0,
+    .numData = 1
+  },{
+    .name = "Shift Right",
+    .goal = new SequenceGoal(2, sequenceTwoOnes),
+    .numFixed = 4,
+    .fixed = fixedShiftRight,
+    .numTurn = 0,
+    .numData = 1
+  },{
+    .name = "Decrement",
+    .goal = new OutputValueGoal(0, Comparison::Equals),
+    .numFixed = 4,
+    .fixed = fixedDecrement,
+    .numTurn = 0,
+    .numData = 1
+  },{
+    .name = "Shift Left",
+    .goal = new SequenceGoal(2, sequenceShiftLeft),
+    .numFixed = 6,
+    .fixed = fixedShiftLeft,
+    .numTurn = 0,
+    .numData = 1
   }
 };
 
@@ -281,6 +316,10 @@ const Challenge tutorials[numTutorials] = {
   Challenge(tutorialSpecs[ 0]),
   Challenge(tutorialSpecs[ 1]),
   Challenge(tutorialSpecs[ 2]),
+  Challenge(tutorialSpecs[ 3]),
+  Challenge(tutorialSpecs[ 4]),
+  Challenge(tutorialSpecs[ 5]),
+  Challenge(tutorialSpecs[ 6]),
 };
 
 const ChallengeSet tutorialsSet("Tutorial", 5, tutorials, numTutorials);
