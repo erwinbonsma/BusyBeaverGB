@@ -398,7 +398,7 @@ bool ComparisonBasedGoal::isAchieved(int value) {
 // OutputValueGoal
 
 OutputValueGoal::OutputValueGoal(int target, Comparison comparison)
-  : ComparisonBasedGoal('V', target, comparison) {}
+  : ComparisonBasedGoal('X', target, comparison) {}
 
 void OutputValueGoal::draw() {
   gb.display.setColor(LIGHTGREEN);

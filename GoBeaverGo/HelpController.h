@@ -10,8 +10,10 @@
 #include "Controller.h"
 
 class HelpController : public Controller {
+  int _page;
 
 public:
+  void activate();
   void update();
   void draw();
 };
