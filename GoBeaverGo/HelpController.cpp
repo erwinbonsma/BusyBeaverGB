@@ -26,26 +26,21 @@ void HelpController::draw() {
   gb.display.setCursor(0, 11);
   gb.display.print("Edit: Use A and B to");
   gb.display.setCursor(0, 18);
-  gb.display.print("place   and   stones");
+  gb.display.print("program with   and");
+  gb.display.setCursor(0, 25);
+  gb.display.print("Select Run when done");
 
-  gb.display.setCursor(0, 31);
-  gb.display.print("Run: Use A to Step,");
-  gb.display.setCursor(0, 38);
-  gb.display.print("Play, Pause & Reset");
-
-  gb.display.setCursor(0, 51);
-  gb.display.print("Use Menu to switch");
-  gb.display.setCursor(0, 58);
-  gb.display.print("between Edit and Run");
+  gb.display.setCursor(0, 41);
+  gb.display.print("Run: Use A to pause,");
+  gb.display.setCursor(0, 48);
+  gb.display.print("play and step. Use B");
+  gb.display.setCursor(0, 55);
+  gb.display.print("to return to editing");
 
   gb.display.setColor(LIGHTBLUE);
   gb.display.setCursor(0, 11);
   gb.display.print("Edit");
-  gb.display.setCursor(0, 31);
-  gb.display.print("Run");
-  gb.display.setCursor(32, 58);
-  gb.display.print("Edit");
-  gb.display.setCursor(68, 58);
+  gb.display.setCursor(0, 41);
   gb.display.print("Run");
 
   gb.display.setColor(WHITE);
@@ -53,12 +48,14 @@ void HelpController::draw() {
   gb.display.print("A");
   gb.display.setCursor(64, 11);
   gb.display.print("B");
-  gb.display.setCursor(36, 31);
+  gb.display.setCursor(28, 25);
+  gb.display.print("Run");
+  gb.display.setCursor(36, 41);
   gb.display.print("A");
-  gb.display.setCursor(16, 51);
-  gb.display.print("Menu");
+  gb.display.setCursor(76, 48);
+  gb.display.print("B");
 
-  drawInstruction(24, 19, Instruction::Turn);
-  drawInstruction(48, 19, Instruction::Data);
+  drawInstruction(52, 19, Instruction::Turn);
+  drawInstruction(76, 19, Instruction::Data);
 }
 
