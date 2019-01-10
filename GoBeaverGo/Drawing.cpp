@@ -49,23 +49,30 @@ void drawProgramPointer(Computer& computer) {
   ProgramPointer pp = computer.getProgramPointer();
   int x0 = getDisplayX(pp.x);
   int y0 = getDisplayY(pp.y);
+  int w = 4;
 
-  gb.display.setColor(LIGHTGREEN);
-  gb.display.drawRect(x0, y0, 5, 5);
+  if (computer.getStatus() == Status::Done) {
+    x0--;
+    y0--;
+    w += 2;
+  }
+
+  gb.display.setColor(ORANGE);
+  gb.display.drawRect(x0, y0, w + 1, w + 1);
 
   gb.display.setColor(YELLOW);
   switch (pp.dir) {
     case Direction::Up:
-      gb.display.drawLine(x0, y0, x0 + 4, y0);
+      gb.display.drawLine(x0, y0, x0 + w, y0);
       break;
     case Direction::Down:
-      gb.display.drawLine(x0, y0 + 4, x0 + 4, y0 + 4);
+      gb.display.drawLine(x0, y0 + w, x0 + w, y0 + w);
       break;
     case Direction::Left:
-      gb.display.drawLine(x0, y0, x0, y0 + 4);
+      gb.display.drawLine(x0, y0, x0, y0 + w);
       break;
     case Direction::Right:
-      gb.display.drawLine(x0 + 4, y0, x0 + 4, y0 + 4);
+      gb.display.drawLine(x0 + w, y0, x0 + w, y0 + w);
       break;
   }
 }
