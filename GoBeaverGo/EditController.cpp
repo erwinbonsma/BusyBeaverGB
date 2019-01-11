@@ -61,6 +61,7 @@ void EditController::editMenu() {
       break;
     case 2:
       loadProgram(computer);
+      _y = -1; // Select run
       break;
     case 3:
       reset();
@@ -118,8 +119,7 @@ void EditController::drawAvailable(Instruction instruction, int y) {
 }
 
 void EditController::reset() {
-  _x = 0;
-  _y = 0;
+  _x = _y = 0;
   computer.clear();
   _numAvailable[0] = 99; // Always "infinite" NOOPs
 
@@ -137,8 +137,7 @@ void EditController::reset() {
 }
 
 void EditController::activate() {
-  _x = 0;
-  _y = 0;
+  _x = _y = 0;
 }
 
 void EditController::update() {
