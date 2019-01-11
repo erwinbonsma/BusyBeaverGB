@@ -179,19 +179,19 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 8,
     .numData = 10
   },{
+    .name = "Seven Ate Nine",
+    .goal = new SequenceGoal(7, sequenceSevenAteNine),
+    .numFixed = 4,
+    .fixed = fixedSevenAteNine,
+    .numTurn = 0,
+    .numData = 26
+  },{
     .name = "Fog bank",
     .goal = new ExitGoal(-1, 7),
     .numFixed = 9,
     .fixed = fixedFogBank,
     .numTurn = 5,
     .numData = 1
-  },{
-    .name = "Dotted line",
-    .goal = new ExitGoal(-1, 7),
-    .numFixed = 9,
-    .fixed = fixedDottedLine,
-    .numTurn = 6,
-    .numData = 2
   },{
     .name = "One to Five",
     .goal = new SequenceGoal(5, sequenceOneToFive),
@@ -200,12 +200,12 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 99,
     .numData = 99
   },{
-    .name = "Seven Ate Nine",
-    .goal = new SequenceGoal(7, sequenceSevenAteNine),
-    .numFixed = 4,
-    .fixed = fixedSevenAteNine,
-    .numTurn = 0,
-    .numData = 26
+    .name = "Dotted line",
+    .goal = new ExitGoal(-1, 7),
+    .numFixed = 9,
+    .fixed = fixedDottedLine,
+    .numTurn = 6,
+    .numData = 2
   },{
     .name = "Busy Beaver 100",
     .goal = new RunLengthGoal(100, Comparison::GreaterThan),
