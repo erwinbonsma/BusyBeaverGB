@@ -4,6 +4,8 @@
  * Copyright 2019, Erwin Bonsma
  */
 
+#include "Store.h"
+
 #include "Computer.h"
 
 /* Block layout
@@ -29,7 +31,7 @@
  */
 #define BLOCK_FIRST_PROGRAM  16
 
-#define SAVE_FILE_VERSION  1
+#define SAVE_FILE_VERSION  2
 
 const int programStorageSize = 8;
 const int maxProgramNameLength = 20; // Includes terminating \0
@@ -37,7 +39,7 @@ const int storedProgramSize = 17;
 const int programIndexSize = programStorageSize * maxProgramNameLength;
 
 const SaveDefault savefileDefaults[5] = {
-  { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, 0, 0},
+  { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, SAVE_FILE_VERSION, 0},
   { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
   { BLOCK_PROGRAM_AUTO_NUM, SAVETYPE_INT, 1, 0},
   { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 },
@@ -56,10 +58,20 @@ const char* programNames[programStorageSize + 1];
 
 void initSaveFileDefaults() {
   gb.save.config(savefileDefaults);
-  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 0) {
-    // Version not set. Set it to current version to enable detecting future incompatibilities
-    gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
+
+  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == SAVE_FILE_VERSION) {
+    return;
   }
+
+  // Save file in old format. Upgrade.
+  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 1) {
+    int maxCompleted = getMaxCompletedChallenge();
+    if (maxCompleted > 0) {
+      // Decrease to reflect removal of first challenge
+      setMaxCompletedChallenge(maxCompleted - 1);
+    }
+  }
+  gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
 }
 
 int getMaxCompletedChallenge() {
