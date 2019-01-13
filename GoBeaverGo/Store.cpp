@@ -109,17 +109,24 @@ int selectProgramSlot(bool store) {
   return slot == (numEntries - 1) ? -1 : slot;
 }
 
-char* enterName() {
-  // Set default name
-  int autoNum = gb.save.get(BLOCK_PROGRAM_AUTO_NUM);
-  snprintf(autoNameBuffer, maxProgramNameLength, "Program %d", autoNum);
-  strncpy(programNameBuffer, autoNameBuffer, maxProgramNameLength);
+char* enterName(int slot) {
+  int numPrograms = gb.save.get(BLOCK_NUM_STORED_PROGRAMS);
+  bool overwrite = slot < numPrograms;
+  if (overwrite) {
+    // Select name of program to be overwritten (to facilitate repeated saving of a program)
+    strncpy(programNameBuffer, programNames[slot], maxProgramNameLength);
+  } else {
+    // Set default name
+    int autoNum = gb.save.get(BLOCK_PROGRAM_AUTO_NUM);
+    snprintf(autoNameBuffer, maxProgramNameLength, "Program %d", autoNum);
+    strncpy(programNameBuffer, autoNameBuffer, maxProgramNameLength);
+  }
 
   gb.gui.keyboard("Enter name", programNameBuffer, maxProgramNameLength - 1);
 
-  if (strncmp(programNameBuffer, autoNameBuffer, maxProgramNameLength) == 0) {
+  if (!overwrite && strncmp(programNameBuffer, autoNameBuffer, maxProgramNameLength) == 0) {
     // Auto name was used so bump index to make next name unique
-    gb.save.set(BLOCK_PROGRAM_AUTO_NUM, autoNum + 1);
+    gb.save.set(BLOCK_PROGRAM_AUTO_NUM, gb.save.get(BLOCK_PROGRAM_AUTO_NUM) + 1);
   }
 
   return programNameBuffer;
@@ -210,7 +217,7 @@ bool saveProgram(Computer& computer) {
     return false;
   }
 
-  char* name = enterName();
+  char* name = enterName(slot);
 
   if (!saveProgram(slot, name, computer)) {
     gb.gui.popup("Save failed!", 40);
