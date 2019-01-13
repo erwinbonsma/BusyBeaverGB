@@ -11,6 +11,7 @@ EditController editController;
 MainMenuController mainMenuController;
 IntroController introController;
 HelpController helpController;
+AboutController aboutController;
 
 Controller *activeController;
 

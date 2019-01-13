@@ -54,7 +54,7 @@ void Computer::setSize(int size) {
 }
 
 bool Computer::step() {
-  if (_status==Status::Done || _status==Status::Error) {
+  if (hasTerminated()) {
     return true;
   }
   _status = Status::Running;

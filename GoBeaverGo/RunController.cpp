@@ -63,14 +63,6 @@ const char* runMenuEntries[] = {
   "Back to main menu"
 };
 
-void signalChallengeCompleted() {
-  if (activeChallengeSet == &challengesSet) {
-    int activeIndex = challengesSet.indexOfChallenge(activeChallenge);
-
-    setMaxCompletedChallenge(max(getMaxCompletedChallenge(), activeIndex + 1));
-  }
-}
-
 void nextChallenge() {
   activeChallenge = activeChallengeSet->nextChallenge(activeChallenge);
   if (activeChallenge != nullptr) {
@@ -137,6 +129,32 @@ void RunController::setRunSpeed(int speed) {
   }
 }
 
+char popupBuf[20];
+
+void RunController::handleProgramTermination() {
+  if (computer.getStatus() == Status::Error) {
+    return;
+  }
+
+  if (activeChallenge != nullptr) {
+    if (activeChallenge->isAchieved(computer)) {
+      recordChallengeCompleted(
+        activeChallengeSet->indexOfChallenge(activeChallenge),
+        activeChallengeSet == &tutorialsSet
+      );
+      _challengeCompleted = true;
+
+      snprintf(popupBuf, sizeof(popupBuf), "%s done!", activeChallengeSet->challengeType());
+    } else {
+      snprintf(popupBuf, sizeof(popupBuf), "%s failed", activeChallengeSet->challengeType());
+    }
+    gb.gui.popup(popupBuf, 40);
+  } else {
+    recordExperimentDone(computer);
+  }
+}
+
+
 RunController::RunController() {
   setRunSpeed(4); // Set default speed
 }
@@ -144,18 +162,12 @@ RunController::RunController() {
 void RunController::reset() {
   computer.reset();
   _paused = false;
-  _challengeStatus = (
-    activeChallenge != nullptr ?
-    ChallengeStatus::Undecided :
-    ChallengeStatus::None
-  );
+  _challengeCompleted = false;
 }
 
 void RunController::activate() {
   reset();
 }
-
-char popupBuf[20];
 
 void RunController::update() {
   if (gb.buttons.pressed(BUTTON_MENU)) {
@@ -194,7 +206,8 @@ void RunController::update() {
     setController(&editController);
   }
 
-  if (computer.getStatus() != Status::Done) {
+  bool hasTerminated = computer.hasTerminated();
+  if (!hasTerminated) {
     if (_runSpeed > 0 && !_paused) {
       if (++_ticksSinceLastStep >= _stepPeriod) {
         for (int i = 0; i < _stepsPerTick; i++) {
@@ -204,30 +217,16 @@ void RunController::update() {
       }
     }
   } else {
-    if (_challengeStatus == ChallengeStatus::Completed) {
+    if (_challengeCompleted) {
       if (++_ticksSinceLastStep > 50) {
         nextChallenge();
       }
     }
   }
 
-  if (
-    computer.getStatus() == Status::Done &&
-    _challengeStatus == ChallengeStatus::Undecided
-  ) {
-    if (activeChallenge->isAchieved(computer)) {
-      _challengeStatus = ChallengeStatus::Completed;
-
-      snprintf(popupBuf, sizeof(popupBuf), "%s done!", activeChallengeSet->challengeType());
-      gb.gui.popup(popupBuf, 40);
-
-      signalChallengeCompleted();
-    } else {
-      _challengeStatus = ChallengeStatus::Failed;
-
-      snprintf(popupBuf, sizeof(popupBuf), "%s failed", activeChallengeSet->challengeType());
-      gb.gui.popup(popupBuf, 40);
-    }
+  if (!hasTerminated && computer.hasTerminated()) {
+    // Program just terminated
+    handleProgramTermination();
   }
 }
 

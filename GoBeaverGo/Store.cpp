@@ -25,25 +25,35 @@
 #define BLOCK_PROGRAM_AUTO_NUM     2
 #define BLOCK_PROGRAM_NAMES        3
 #define BLOCK_CHALLENGE_TRACKER    4
+#define BLOCK_TUTORIAL_TRACKER     5
+#define BLOCK_LONGEST_RUN          6
+#define BLOCK_LOWEST_OUTPUT        7
+#define BLOCK_HIGHEST_OUTPUT       8
+#define BLOCK_LONGEST_SEQUENCE     9
 
 /* Note: The number of program blocks may vary. Therefore it is best to add other blocks before
  * them. By leaving a gap in the indexing we reserve some room for future usage.
  */
 #define BLOCK_FIRST_PROGRAM  16
 
-#define SAVE_FILE_VERSION  2
+#define SAVE_FILE_VERSION  3
 
 const int programStorageSize = 16;
 const int maxProgramNameLength = 20; // Includes terminating \0
 const int storedProgramSize = 17;
 const int programIndexSize = programStorageSize * maxProgramNameLength;
 
-const SaveDefault savefileDefaults[5] = {
+const SaveDefault savefileDefaults[10] = {
   { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, SAVE_FILE_VERSION, 0},
   { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
   { BLOCK_PROGRAM_AUTO_NUM, SAVETYPE_INT, 1, 0},
   { BLOCK_PROGRAM_NAMES, SAVETYPE_BLOB, programIndexSize, 0 },
   { BLOCK_CHALLENGE_TRACKER, SAVETYPE_INT, 0, 0},
+  { BLOCK_TUTORIAL_TRACKER, SAVETYPE_INT, 0, 0},
+  { BLOCK_LONGEST_RUN, SAVETYPE_INT, 0, 0},
+  { BLOCK_LOWEST_OUTPUT, SAVETYPE_INT, 0, 0},
+  { BLOCK_HIGHEST_OUTPUT, SAVETYPE_INT, 0, 0},
+  { BLOCK_LONGEST_SEQUENCE, SAVETYPE_INT, 0, 0}
 
   // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
 };
@@ -63,23 +73,100 @@ void initSaveFileDefaults() {
     return;
   }
 
-  // Save file in old format. Upgrade.
+  // Update old save file data
   if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 1) {
-    int maxCompleted = getMaxCompletedChallenge();
+    int maxCompleted = gb.save.get(BLOCK_CHALLENGE_TRACKER);
     if (maxCompleted > 0) {
       // Decrease to reflect removal of first challenge
-      setMaxCompletedChallenge(maxCompleted - 1);
+      gb.save.set(BLOCK_CHALLENGE_TRACKER, maxCompleted - 1);
     }
+    gb.save.set(BLOCK_SAVE_FILE_VERSION, 2);
   }
+  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 2) {
+    // Convert number of challenges to bitmask of challenges completed
+    int numCompleted = gb.save.get(BLOCK_CHALLENGE_TRACKER);
+    int bitMask = 0;
+    while (numCompleted-- > 0) {
+      bitMask <<= 1;
+      bitMask |= 1;
+    }
+    gb.save.set(BLOCK_CHALLENGE_TRACKER, bitMask);
+  }
+
   gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
 }
 
-int getMaxCompletedChallenge() {
-  return gb.save.get(BLOCK_CHALLENGE_TRACKER);
+int getNumCompletedChallenges(bool isTutorial) {
+  int blockIndex = isTutorial ? BLOCK_TUTORIAL_TRACKER : BLOCK_CHALLENGE_TRACKER;
+  int bitMask = gb.save.get(blockIndex);
+
+  int num = 0;
+  while (bitMask != 0) {
+    if ((bitMask & 1) != 0) {
+      num++;
+    }
+    bitMask >>= 1;
+  }
+
+  return num;
 }
 
-void setMaxCompletedChallenge(int index) {
-  gb.save.set(BLOCK_CHALLENGE_TRACKER, index);
+void recordChallengeCompleted(int index, bool isTutorial) {
+  int blockIndex = isTutorial ? BLOCK_TUTORIAL_TRACKER : BLOCK_CHALLENGE_TRACKER;
+  int bitMask = gb.save.get(blockIndex);
+
+  bitMask |= 1 << index;
+
+  gb.save.set(blockIndex, bitMask);
+}
+
+void recordExperimentDone(Computer& computer) {
+  if (computer.getNumSteps() > getLongestRun()) {
+    gb.save.set(BLOCK_LONGEST_RUN, computer.getNumSteps());
+  }
+
+  int dp = computer.getDataPointer();
+  if (computer.isDataAddressValid(dp)) {
+    int output = computer.getData(dp);
+
+    if (output < getLowestOutput()) {
+      gb.save.set(BLOCK_LOWEST_OUTPUT, output);
+    }
+    else if (output > getHighestOutput()) {
+      gb.save.set(BLOCK_HIGHEST_OUTPUT, output);
+    }
+  }
+
+  // Find first non-zero value
+  int low = 0;
+  while (low < dataSize && computer.getData(low) == 0) {
+    low++;
+  }
+
+  // Find last non-zero value
+  int hi = dataSize;
+  while (--hi >= 0 && computer.getData(hi) == 0);
+
+  int len = hi - low + 1;
+  if (len > getLongestSequence()) {
+    gb.save.set(BLOCK_LONGEST_SEQUENCE, len);
+  }
+}
+
+int getLongestRun() {
+  return gb.save.get(BLOCK_LONGEST_RUN);
+}
+
+int getLowestOutput() {
+  return gb.save.get(BLOCK_LOWEST_OUTPUT);
+}
+
+int getHighestOutput() {
+  return gb.save.get(BLOCK_HIGHEST_OUTPUT);
+}
+
+int getLongestSequence() {
+  return gb.save.get(BLOCK_LONGEST_SEQUENCE);
 }
 
 int selectProgramSlot(bool store) {

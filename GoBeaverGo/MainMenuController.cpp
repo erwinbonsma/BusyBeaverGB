@@ -11,12 +11,13 @@
 #include "Drawing.h"
 #include "Store.h"
 
-const int numMainMenuEntries = 4;
+const int numMainMenuEntries = 5;
 const char* mainMenuEntries[numMainMenuEntries] = {
   "Tutorial",
   "Challenges",
   "Experiment",
-  "Help"
+  "Help",
+  "About"
 };
 
 const int maxChallengeMenuEntries = 32;
@@ -75,7 +76,7 @@ void selectChallenge() {
   int numOptions;
 
   if (activeChallengeSet == &challengesSet) {
-    numOptions = getMaxCompletedChallenge() + 1;
+    numOptions = getNumCompletedChallenges(false) + 1;
   } else {
     numOptions = activeChallengeSet->size();
   }
@@ -134,6 +135,9 @@ void MainMenuController::update() {
         break;
       case 3:
         setController(&helpController);
+        break;
+      case 4:
+        setController(&aboutController);
         break;
       default:
         break;

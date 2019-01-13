@@ -100,6 +100,7 @@ public:
   // Executes one instruction. Returns "true" if the program is still running.
   bool step();
 
+  bool hasTerminated() { return _status==Status::Done || _status==Status::Error; }
   Status getStatus() { return _status; }
   int getNumSteps() { return _numSteps; }
 };
