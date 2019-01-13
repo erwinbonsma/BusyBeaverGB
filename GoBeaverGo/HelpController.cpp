@@ -67,7 +67,7 @@ Image instructionsImage = Image(instructionsData);
 void showPage1() {
   gb.display.setColor(BLUE);
 
-  gb.display.drawImage(10, 0, goBeaverGoImage);
+  gb.display.drawImage(8, 0, goBeaverGoImage);
 
   gb.display.setCursor(0, 11);
   gb.display.print("Edit: Use A and B to");

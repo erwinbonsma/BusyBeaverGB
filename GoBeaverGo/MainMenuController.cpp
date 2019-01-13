@@ -146,11 +146,11 @@ void MainMenuController::update() {
 }
 
 void MainMenuController::draw() {
-  gb.display.drawImage(10, 0, goBeaverGoImage);
+  gb.display.drawImage(8, 0, goBeaverGoImage);
 
   for (int i = 0; i < numMainMenuEntries; i++) {
     gb.display.setColor(i == _selectedEntry ? LIGHTBLUE : BLUE);
-    gb.display.setCursor(22, 9 + i * 8);
+    gb.display.setCursor(20, 9 + i * 8);
     gb.display.print(mainMenuEntries[i]);
   }
 

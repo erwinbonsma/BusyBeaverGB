@@ -32,8 +32,8 @@ void AboutController::draw() {
   gb.display.drawImage(8, 0, goBeaverGoImage);
 
   gb.display.setColor(DARKBLUE);
-  gb.display.setCursor(2, 6);
-  gb.display.print("a program by Eriban");
+  gb.display.setCursor(22, 6);
+  gb.display.print("by Eriban");
 
   gb.display.setColor(DARKBLUE);
   gb.display.fillRect(0, 30, 80, 34);
