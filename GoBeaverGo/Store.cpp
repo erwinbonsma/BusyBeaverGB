@@ -33,7 +33,7 @@
 
 #define SAVE_FILE_VERSION  2
 
-const int programStorageSize = 8;
+const int programStorageSize = 16;
 const int maxProgramNameLength = 20; // Includes terminating \0
 const int storedProgramSize = 17;
 const int programIndexSize = programStorageSize * maxProgramNameLength;
