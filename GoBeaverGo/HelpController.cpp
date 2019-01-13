@@ -106,7 +106,7 @@ void showPage1() {
 }
 
 void showPage2() {
-  gb.display.drawImage(10, 0, goBeaverGoImage);
+  gb.display.drawImage(8, 0, goBeaverGoImage);
 
   gb.display.drawImage(24, 12, instructionsImage);
   gb.display.setColor(DARKBLUE);
