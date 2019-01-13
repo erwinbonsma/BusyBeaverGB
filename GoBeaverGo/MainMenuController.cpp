@@ -76,7 +76,10 @@ void selectChallenge() {
   int numOptions;
 
   if (activeChallengeSet == &challengesSet) {
-    numOptions = getNumCompletedChallenges(false) + 1;
+    numOptions = min(
+      getNumCompletedChallenges(false) + 1,
+      activeChallengeSet->size()
+    );
   } else {
     numOptions = activeChallengeSet->size();
   }

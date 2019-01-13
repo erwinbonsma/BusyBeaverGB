@@ -120,7 +120,7 @@ const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
-const int numChallenges = 16;
+const int numChallenges = 15;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -227,13 +227,6 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = nullptr,
     .numTurn = 99,
     .numData = 99
-  },{
-    .name = "Busy Beaver 10k",
-    .goal = new RunLengthGoal(10000, Comparison::GreaterThan),
-    .numFixed = 0,
-    .fixed = nullptr,
-    .numTurn = 99,
-    .numData = 99
   }
 };
 
@@ -253,7 +246,6 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[12]),
   Challenge(challengeSpecs[13]),
   Challenge(challengeSpecs[14]),
-  Challenge(challengeSpecs[15]),
 };
 
 const ChallengeSet challengesSet("Challenge", 9, challenges, numChallenges);
