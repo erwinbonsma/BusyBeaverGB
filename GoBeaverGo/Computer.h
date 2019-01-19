@@ -44,7 +44,7 @@ const int maxProgramSize = 9;
  * The size should be chosen such that a well-written (terminating) program never exceeds the
  * data boundaries.
  */
-const int dataSize = 64;
+const int dataSize = 256;
 
 /* Put explicit bounds on data values.
  *
@@ -65,11 +65,15 @@ class Computer {
   // Program pointer
   ProgramPointer _pp;
 
-  // The data
+  // The data (a cyclic buffer)
   int _data[dataSize];
 
   // Data pointer
   int _dp;
+
+  // Bounds of the cyclic buffer
+  int _dp_min;
+  int _dp_max;
 
   Status _status;
   int _numSteps;
@@ -93,9 +97,11 @@ public:
   // Resets the execution state
   void reset();
 
-  bool isDataAddressValid(int address) { return address >= 0 && address < dataSize; }
+  int getMinDataAddress() { return _dp_min; }
+  int getMaxDataAddress() { return _dp_max; }
   int getDataPointer() { return _dp; }
-  int getData(int address) { return _data[address]; }
+  int getData(int address) { return _data[(address + dataSize) % dataSize]; }
+  int getOutput() { return getData(getDataPointer()); }
 
   // Executes one instruction. Returns "true" if the program is still running.
   bool step();

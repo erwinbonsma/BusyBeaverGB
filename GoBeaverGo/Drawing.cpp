@@ -78,11 +78,11 @@ void drawProgramPointer(Computer& computer) {
 }
 
 void drawData(Computer& computer) {
-  int p = 0;
+  int p = computer.getMinDataAddress();
 
   // Move to part of the tape containing non-zero data and/or data pointer
   while (
-    p < dataSize &&
+    p < computer.getMaxDataAddress() &&
     p < computer.getDataPointer() &&
     computer.getData(p) == 0
   ) {
@@ -99,11 +99,16 @@ void drawData(Computer& computer) {
     gb.display.setCursorX(x);
     gb.display.setColor(p == computer.getDataPointer() ? LIGHTGREEN : GREEN);
 
-    if (p >= 0 && p < dataSize) {
+    if (p <= computer.getMaxDataAddress()) {
       int val = computer.getData(p);
       x += gb.display.print(val, DEC) * 4;
     }
+    else if (p - computer.getMinDataAddress() < dataSize) {
+      // Data not yet reached, but it can still be used
+      x += gb.display.print("0") * 4;
+    }
     else {
+      // Out of bounds
       x += gb.display.print("*") * 4;
     }
 

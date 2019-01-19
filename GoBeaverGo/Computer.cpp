@@ -28,7 +28,9 @@ void Computer::reset() {
   _pp.x = 0;
   _pp.y = -1;
   _pp.dir = Direction::Up;
-  _dp = dataSize / 2;
+  _dp = 0;
+  _dp_min = 0;
+  _dp_max = 0;
 
   _numSteps = 0;
   _status = Status::Ready;
@@ -78,37 +80,33 @@ bool Computer::step() {
       case Instruction::Data:
         switch (pp.dir) {
           case Direction::Up:
-            if (isDataAddressValid(_dp) && _data[_dp] < maxDataValue) {
-              _data[_dp]++;
-            } else {
-              _status = Status::Error;
-            }
+            _data[(_dp + dataSize) % dataSize]++;
             break;
           case Direction::Down:
-            if (isDataAddressValid(_dp) && _data[_dp] > minDataValue) {
-              _data[_dp]--;
-            } else {
-              _status = Status::Error;
-            }
+            _data[(_dp + dataSize) % dataSize]--;
             break;
           case Direction::Right:
             _dp++;
+            _dp_max = max(_dp_max, _dp);
+            if ((_dp_max - _dp_min + 1) >= dataSize) {
+              _status = Status::Error;
+            }
             break;
           case Direction::Left:
             _dp--;
+            _dp_min = min(_dp_min, _dp);
+            if ((_dp_max - _dp_min + 1) >= dataSize) {
+              _status = Status::Error;
+            }
             break;
         }
         break;
 
       case Instruction::Turn:
-        if (isDataAddressValid(_dp)) {
-          if (_data[_dp] != 0) {
-            pp.dir = (Direction)(((int)pp.dir + 1) % 4);
-          } else {
-            pp.dir = (Direction)(((int)pp.dir + 3) % 4);
-          }
+        if (_data[(_dp + dataSize) % dataSize] != 0) {
+          pp.dir = (Direction)(((int)pp.dir + 1) % 4);
         } else {
-          _status = Status::Error;
+          pp.dir = (Direction)(((int)pp.dir + 3) % 4);
         }
         break;
 

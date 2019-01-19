@@ -398,14 +398,7 @@ void OutputValueGoal::draw() {
 }
 
 bool OutputValueGoal::isAchieved(Computer& computer) {
-  int dp = computer.getDataPointer();
-
-  if (!computer.isDataAddressValid(dp)) {
-    return false;
-  }
-  else {
-    return ComparisonBasedGoal::isAchieved(computer.getData(dp));
-  }
+  return ComparisonBasedGoal::isAchieved(computer.getOutput());
 }
 
 //--------------------------------------------------------------------------------------------------

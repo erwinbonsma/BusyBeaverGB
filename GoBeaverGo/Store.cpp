@@ -125,27 +125,25 @@ void recordExperimentDone(Computer& computer) {
     gb.save.set(BLOCK_LONGEST_RUN, computer.getNumSteps());
   }
 
-  int dp = computer.getDataPointer();
-  if (computer.isDataAddressValid(dp)) {
-    int output = computer.getData(dp);
-
-    if (output < getLowestOutput()) {
-      gb.save.set(BLOCK_LOWEST_OUTPUT, output);
-    }
-    else if (output > getHighestOutput()) {
-      gb.save.set(BLOCK_HIGHEST_OUTPUT, output);
-    }
+  int output = computer.getOutput();
+  if (output < getLowestOutput()) {
+    gb.save.set(BLOCK_LOWEST_OUTPUT, output);
+  }
+  else if (output > getHighestOutput()) {
+    gb.save.set(BLOCK_HIGHEST_OUTPUT, output);
   }
 
   // Find first non-zero value
-  int low = 0;
-  while (low < dataSize && computer.getData(low) == 0) {
+  int low = computer.getMinDataAddress();
+  while (low <= computer.getMaxDataAddress() && computer.getData(low) == 0) {
     low++;
   }
 
   // Find last non-zero value
-  int hi = dataSize;
-  while (--hi >= 0 && computer.getData(hi) == 0);
+  int hi = computer.getMaxDataAddress();
+  while (hi >= computer.getMinDataAddress() && computer.getData(hi) == 0) {
+    hi--;
+  }
 
   int len = hi - low + 1;
   if (len > getLongestSequence()) {
