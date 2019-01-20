@@ -452,25 +452,25 @@ void SequenceGoal::draw() {
 }
 
 bool SequenceGoal::isAchieved(Computer& computer) {
-  int p = 0, q = 0;
+  int p = computer.getMinDataAddress(), q = 0;
 
   // Find first non-zero cell
-  while (p < dataSize && computer.getData(p) == 0) {
+  while (p <= computer.getMaxDataAddress() && computer.getData(p) == 0) {
     p++;
   }
 
   // Try to match with sequence
-  while (p < dataSize && q < _len && computer.getData(p) == _sequence[q]) {
+  while (p <= computer.getMaxDataAddress() && q < _len && computer.getData(p) == _sequence[q]) {
     p++;
     q++;
   }
 
   // Check remaining zeros
-  while (p < dataSize && computer.getData(p) == 0) {
+  while (p <= computer.getMaxDataAddress() && computer.getData(p) == 0) {
     p++;
   }
 
-  return (p == dataSize) && (q == _len);
+  return (p > computer.getMaxDataAddress()) && (q == _len);
 }
 
 //--------------------------------------------------------------------------------------------------
