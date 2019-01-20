@@ -77,45 +77,68 @@ void drawProgramPointer(Computer& computer) {
   }
 }
 
-void drawData(Computer& computer) {
-  int p = computer.getMinDataAddress();
+int getNumDigits(int val) {
+  int numDigits = 0;
+  val = abs(val);
 
-  // Move to part of the tape containing non-zero data and/or data pointer
-  while (
-    p < computer.getMaxDataAddress() &&
-    p < computer.getDataPointer() &&
-    computer.getData(p) == 0
-  ) {
-    p++;
+  do {
+    val -= (val % 10);
+    val /= 10;
+    numDigits++;
+  } while (val != 0);
+
+  return numDigits;
+}
+
+void drawData(Computer& computer, int centerAddress) {
+  int address = centerAddress;
+  int x = 40 - getNumDigits(computer.getData(address)) * 2;
+
+  // Find left-most data cell that fits on the screen
+  bool done = false;
+  while (!done) {
+    int val = (address > computer.getMinDataAddress()) ? computer.getData(address - 1) : 0;
+    int w = getNumDigits(val) * 4 + 2;
+    if (x - w < 0) {
+      done = true;
+    } else {
+      x -= w;
+      address--;
+    }
   }
 
-  if (computer.getDataPointer() - p > 8) {
-    p = computer.getDataPointer() - 8;
-  }
-
-  int x = 0;
+  gb.display.setCursor(0, 50);
+  gb.display.printf("%d, %d, %d", computer.getMinDataAddress(), address, computer.getDataPointer());
   gb.display.setCursorY(59);
   while (x < 80) {
+    int w;
     gb.display.setCursorX(x);
-    gb.display.setColor(p == computer.getDataPointer() ? LIGHTGREEN : GREEN);
+    gb.display.setColor(address == computer.getDataPointer() ? LIGHTGREEN : GREEN);
 
-    if (p <= computer.getMaxDataAddress()) {
-      int val = computer.getData(p);
-      x += gb.display.print(val, DEC) * 4;
+    if (address < computer.getMinDataAddress()) {
+      char ch = (computer.getMaxDataAddress() - address < dataSize) ? '0' : '*';
+      w = 4;
+      if (x + w < 80) {
+        gb.display.print(ch);
+      }
     }
-    else if (p - computer.getMinDataAddress() < dataSize) {
-      // Data not yet reached, but it can still be used
-      x += gb.display.print("0") * 4;
+    else if (address > computer.getMaxDataAddress()) {
+      char ch = (address - computer.getMinDataAddress() < dataSize) ? '0' : '*';
+      w = 4;
+      if (x + w < 80) {
+        gb.display.print(ch);
+      }
     }
     else {
-      // Out of bounds
-      x += gb.display.print("*") * 4;
+      int val = computer.getData(address);
+      int w = getNumDigits(val) * 4;
+      if (x + w < 80) {
+        gb.display.print(val, DEC);
+      }
     }
 
-    p++;
-    // Using intermediate x variable instead of setCursorX to avoid termination
-    // problems (due to auto-carriage return?).
-    x += 1;
+    x += w + 2;
+    address++;
   }
 }
 

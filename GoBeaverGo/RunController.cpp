@@ -235,7 +235,7 @@ void RunController::draw() {
   drawVisitCounts(computer);
   drawProgram(computer);
 
-  drawData(computer);
+  drawData(computer, computer.getDataPointer());
 
   if (activeChallenge != nullptr) {
     activeChallenge->draw();
