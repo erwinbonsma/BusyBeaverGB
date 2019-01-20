@@ -163,6 +163,7 @@ void RunController::reset() {
   computer.reset();
   _paused = false;
   _challengeCompleted = false;
+  resetDrawing();
 }
 
 void RunController::activate() {

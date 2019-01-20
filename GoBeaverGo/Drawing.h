@@ -13,7 +13,7 @@ int getDisplayY(int addressY);
 
 void drawInstruction(int displayX, int displayY, Instruction instruction);
 
-void programSizeChanged();
+void resetDrawing();
 
 void drawProgramSpace();
 void drawProgram(Computer& computer);

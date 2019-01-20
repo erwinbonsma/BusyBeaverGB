@@ -15,10 +15,16 @@
 int board_x0;
 int board_y0;
 
-void programSizeChanged() {
+// Used by drawData to move data tape with a certain inertia
+float lastCenterAddress = 0;
+float dataTapeInertia = 0.8f;
+
+void resetDrawing() {
   int pixelSize = computer.getSize() * 5;
   board_x0 = (80 - pixelSize) / 2;
   board_y0 = (64 - pixelSize) / 2 - 2;
+
+  lastCenterAddress = 0;
 }
 
 int getDisplayX(int addressX) {
@@ -77,38 +83,57 @@ void drawProgramPointer(Computer& computer) {
   }
 }
 
-int getNumDigits(int val) {
-  int numDigits = 0;
-  val = abs(val);
+int getWidthOfValue(int val) {
+  int numChars = 0;
+  if (val < 0) {
+    val = -val;
+    numChars++; // Also count minus sign
+  }
 
   do {
     val -= (val % 10);
     val /= 10;
-    numDigits++;
+    numChars++;
   } while (val != 0);
 
-  return numDigits;
+  return numChars * 4;
 }
 
-void drawData(Computer& computer, int centerAddress) {
-  int address = centerAddress;
-  int x = 40 - getNumDigits(computer.getData(address)) * 2;
+int getWidthOfAddress(int address) {
+  if (
+    address < computer.getMinDataAddress() ||
+    address > computer.getMaxDataAddress()
+  ) {
+    return 4;
+  } else {
+    return getWidthOfValue(computer.getData(address));
+  }
+}
+
+void drawData(Computer& computer, int desiredCenterAddress) {
+  lastCenterAddress = (1 - dataTapeInertia) * desiredCenterAddress + dataTapeInertia * lastCenterAddress;
+  int lowAddress = (int)floorf(lastCenterAddress);
+  int highAddress = lowAddress + 1;
+
+  int address = lowAddress;
+  int x = 40 - getWidthOfAddress(lowAddress) / 2;
+  x -= (int)(
+    (lastCenterAddress - lowAddress) *
+    (2 + (getWidthOfAddress(lowAddress) + getWidthOfAddress(highAddress)) / 2)
+  );
 
   // Find left-most data cell that fits on the screen
   bool done = false;
   while (!done) {
-    int val = (address > computer.getMinDataAddress()) ? computer.getData(address - 1) : 0;
-    int w = getNumDigits(val) * 4 + 2;
-    if (x - w < 0) {
+    int delta = getWidthOfAddress(address) + 2;
+    if (x - delta < 0) {
       done = true;
     } else {
-      x -= w;
+      x -= delta;
       address--;
     }
   }
 
-  gb.display.setCursor(0, 50);
-  gb.display.printf("%d, %d, %d", computer.getMinDataAddress(), address, computer.getDataPointer());
   gb.display.setCursorY(59);
   while (x < 80) {
     int w;
@@ -131,7 +156,7 @@ void drawData(Computer& computer, int centerAddress) {
     }
     else {
       int val = computer.getData(address);
-      int w = getNumDigits(val) * 4;
+      w = getWidthOfValue(val);
       if (x + w < 80) {
         gb.display.print(val, DEC);
       }

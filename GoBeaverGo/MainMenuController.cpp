@@ -103,7 +103,7 @@ void updateProgramSize() {
     activeChallengeSet->programSize() :
     challengesSet.programSize()
   );
-  programSizeChanged();
+  resetDrawing();
 }
 
 void MainMenuController::update() {
