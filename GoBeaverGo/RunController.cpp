@@ -129,6 +129,13 @@ void RunController::setRunSpeed(int speed) {
   }
 }
 
+void RunController::tryChangeTapeShift(int delta) {
+  if (computer.getStatus() != Status::Running || _paused || _runSpeed == 0) {
+    // Only allow moving the tape when the program is not actively running
+    _tapeShift += delta;
+  }
+}
+
 char popupBuf[20];
 
 void RunController::handleProgramTermination() {
@@ -163,6 +170,7 @@ void RunController::reset() {
   computer.reset();
   _paused = false;
   _challengeCompleted = false;
+  _tapeShift = 0;
   resetDrawing();
 }
 
@@ -182,10 +190,17 @@ void RunController::update() {
   else if (gb.buttons.pressed(BUTTON_DOWN)) {
     changeRunSpeed(-1);
   }
+  else if (gb.buttons.pressed(BUTTON_RIGHT)) {
+    tryChangeTapeShift(+1);
+  }
+  else if (gb.buttons.pressed(BUTTON_LEFT)) {
+    tryChangeTapeShift(-1);
+  }
   else if (gb.buttons.pressed(BUTTON_A)) {
     switch (activeActionButtonA()) {
       case RunAction::Play:
         _paused = false;
+        _tapeShift = 0;
         break;
       case RunAction::Pause:
         _paused = true;
@@ -196,6 +211,7 @@ void RunController::update() {
         break;
       case RunAction::Step:
         computer.step();
+        _tapeShift = 0;
         _ticksSinceLastStep = 0;
         break;
       default:
@@ -236,7 +252,7 @@ void RunController::draw() {
   drawVisitCounts(computer);
   drawProgram(computer);
 
-  drawData(computer, computer.getDataPointer());
+  drawData(computer, computer.getDataPointer() + _tapeShift);
 
   if (activeChallenge != nullptr) {
     activeChallenge->draw();

@@ -26,10 +26,12 @@ class RunController : public Controller {
   int _ticksSinceLastStep = 0;
   bool _paused;
   bool _challengeCompleted;
+  int _tapeShift;
 
   void runMenu();
   RunAction activeActionButtonA();
   void changeRunSpeed(int delta);
+  void tryChangeTapeShift(int delta);
   void handleProgramTermination();
 
   void reset();
