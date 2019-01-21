@@ -16,15 +16,16 @@ int board_x0;
 int board_y0;
 
 // Used by drawData to move data tape with a certain inertia
-float lastCenterAddress = 0;
-float dataTapeInertia = 0.8f;
+int desiredCenterAddress = 0;
+int deltaToDesired = 0;
 
 void resetDrawing() {
   int pixelSize = computer.getSize() * 5;
   board_x0 = (80 - pixelSize) / 2;
   board_y0 = (64 - pixelSize) / 2 - 2;
 
-  lastCenterAddress = 0;
+  desiredCenterAddress = 0;
+  deltaToDesired = 0;
 }
 
 int getDisplayX(int addressX) {
@@ -110,22 +111,44 @@ int getWidthOfAddress(int address) {
   }
 }
 
-void drawData(Computer& computer, int desiredCenterAddress) {
-  lastCenterAddress = (1 - dataTapeInertia) * desiredCenterAddress + dataTapeInertia * lastCenterAddress;
-  int lowAddress = (int)floorf(lastCenterAddress);
-  int highAddress = lowAddress + 1;
+void adjustDeltaToDesired(int newDesiredCenterAddress) {
+  int delta = newDesiredCenterAddress > desiredCenterAddress ? 1 : -1;
 
-  int address = lowAddress;
-  int x = 40 - getWidthOfAddress(lowAddress) / 2;
-  x -= (int)(
-    (lastCenterAddress - lowAddress) *
-    (2 + (getWidthOfAddress(lowAddress) + getWidthOfAddress(highAddress)) / 2)
-  );
+  int shift = 0;
+  int p = desiredCenterAddress;
+  shift += getWidthOfAddress(p) / 2;
+  shift += 2;
+  p += delta;
+
+  // Although unlikely, we may skip several addresses
+  while (p != newDesiredCenterAddress) {
+    shift += getWidthOfAddress(p);
+    shift += 2;
+    p += delta;
+  }
+
+  shift += getWidthOfAddress(p) / 2;
+
+  deltaToDesired += delta * shift;
+  desiredCenterAddress = newDesiredCenterAddress;
+}
+
+void drawData(Computer& computer, int newDesiredCenterAddress) {
+  if (newDesiredCenterAddress != desiredCenterAddress) {
+    adjustDeltaToDesired(newDesiredCenterAddress);
+  }
+  else if (deltaToDesired != 0) {
+    deltaToDesired = (deltaToDesired * 4) / 5;
+  }
+
+  // Place the selected value in the middle of the screen
+  int x = 40 - getWidthOfAddress(desiredCenterAddress) / 2 + deltaToDesired;
 
   // Find left-most data cell that fits on the screen
+  int address = desiredCenterAddress;
   bool done = false;
   while (!done) {
-    int delta = getWidthOfAddress(address) + 2;
+    int delta = getWidthOfAddress(address - 1) + 2;
     if (x - delta < 0) {
       done = true;
     } else {
