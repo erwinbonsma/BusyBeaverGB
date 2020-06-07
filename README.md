@@ -1,11 +1,32 @@
-# Busy Beaver
+# Go Beaver Go
 
-This program for the [Gamebuino](https://gamebuino.com) lets you edit and run an esoteric programming language.
-The language is based on [2L](https://esolangs.org/wiki/2L) with some minor modifications.
+This program for the [Gamebuino][] lets you edit and run an esoteric programming language.
+The language is based on [2L][] with some minor modifications.
 
-## Language
+![Animated gif of a "Countdown" program](ExampleRun.gif)
 
-The language is two-dimensional.
+[Play or download][GoBeaverGoGB] the game.
+
+## Features
+
+* Ability to Edit programs
+* Ability to Run programs
+  * Actions: Play, Pause, and Step
+  * Variable run speed
+  * Intensity-based path tracking
+* Tutorial Mode featuring seven challenges
+* Challenges Mode featuring fifteen puzzles
+  * Four types of goals: Output Value, Reach Exit, Run Length, and Create Sequence
+  * Progress is stored
+* Experiment Mode
+  * Ability to Save and Load programs
+  * Four metrics: Longest Run, Highest Output Value, Lowest Output Value, and Longest Sequence
+  * Progress is stored
+* Basic help
+
+## Programming language details
+
+The programming language is two-dimensional.
 The instructions are put on a 2D grid, whose size is limited to 9x9.
 The directional program pointer (PP) moves across this grid, executing instructions as it encounters them.
 It starts just below the left-most cell at the bottom of the grid, moving upwards.
@@ -40,4 +61,12 @@ The program terminates when PP leaves the board.
 
 ## About the name
 
-The project has [Busy Beaver](https://en.wikipedia.org/wiki/Busy_beaver) as working name because the main challenge is to design a program that runs for as long as possible, yet terminates.
+The program is named "Go Beaver Go" as the program grid resembles the [Go][GoTerm] board game and
+a [Busy Beaver][BusyBeaverTerm] is a program that runs a long time but eventually terminates. The
+main challenge is to find such long-running programs in this 2L domain.
+
+[BusyBeaverTerm]: https://en.wikipedia.org/wiki/Busy_beaver
+[Gamebuino]: https://gamebuino.com
+[GoBeaverGoGB]: https://gamebuino.com/creations/go-beaver-go
+[GoTerm]: https://en.wikipedia.org/wiki/Go_(game)
+[2L]: https://esolangs.org/wiki/2L
