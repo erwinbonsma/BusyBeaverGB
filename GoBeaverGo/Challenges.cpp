@@ -163,7 +163,7 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numFixed = 9,
     .fixed = fixedExit4,
     .numTurn = 0,
-    .numData = 6
+    .numData = 5
   },{
     .name = "Count to 16",
     .goal = new OutputValueGoal(16, Comparison::Equals),
