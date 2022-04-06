@@ -12,15 +12,15 @@
 #include "Computer.h"
 #include "RunController.h"
 
-int board_x0;
-int board_y0;
+uint8_t board_x0;
+uint8_t board_y0;
 
 // Used by drawData to move data tape with a certain inertia
 int desiredCenterAddress = 0;
 int deltaToDesired = 0;
 
 void resetDrawing() {
-  int pixelSize = computer.getSize() * 5;
+  uint8_t pixelSize = computer.getSize() * 5;
   board_x0 = (80 - pixelSize) / 2;
   board_y0 = (64 - pixelSize) / 2 - 2;
 
@@ -257,7 +257,7 @@ uint8_t numBuckets = 0;
 uint8_t bucketListHeadIndex;
 CountBucket buckets[maxBuckets];
 
-void updateOrCreateBucketForVisit(int visits) {
+void updateOrCreateBucketForVisit(uint32_t visits) {
   int bucketIndex = 0;
 
   // Find bucket for this visit count
@@ -291,7 +291,7 @@ void updateOrCreateBucketForVisit(int visits) {
   }
 }
 
-int getVisitCount(Computer& computer, int x, int y, bool horizontal) {
+uint32_t getVisitCount(Computer& computer, int x, int y, bool horizontal) {
   if (horizontal) {
     return (
       computer.getExitCount(x, y, Direction::Right) +
@@ -354,7 +354,7 @@ void collapseVisitBuckets(int targetNum) {
 }
 
 const int numVisitColors = 5;
-Color visitColors[numVisitColors] = {
+Color const visitColors[numVisitColors] = {
   BLUE, GREEN, LIGHTBLUE, LIGHTGREEN, YELLOW
 };
 
@@ -424,4 +424,3 @@ void drawRunStatus(Computer& computer) {
     gb.display.printf("Error!");
   }
 }
-

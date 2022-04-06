@@ -9,3 +9,12 @@
 
 // Should match storedProgramSize in Store.cpp
 #define SAVECONF_DEFAULT_BLOBSIZE 17
+
+//#define SOUND_FREQ 11025
+
+#define SOUND_CHANNELS 0
+
+#define SOUND_ENABLE_MUSIC 0
+//#define SOUND_MUSIC_BUFFERSIZE 1024
+
+#define SOUND_ENABLE_FX 0

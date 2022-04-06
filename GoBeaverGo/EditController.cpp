@@ -15,14 +15,14 @@
 #include "Challenges.h"
 
 const int maxEditMenuEntries = 5;
-const char* availableEditMenuEntries[maxEditMenuEntries] = {
+char const* const availableEditMenuEntries[maxEditMenuEntries] = {
   "Run",
   "Save",
   "Load",
   "Clear",
   "Back to main menu"
 };
-const char* editMenuEntries[maxEditMenuEntries];
+char const* editMenuEntries[maxEditMenuEntries];
 
 int populateEditMenu() {
   int entry = 0;
@@ -187,4 +187,3 @@ void EditController::draw() {
     drawAvailable(Instruction::Data, _numAvailable[1] ? 17 : 9);
   }
 }
-

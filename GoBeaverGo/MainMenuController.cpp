@@ -12,7 +12,7 @@
 #include "Store.h"
 
 const int numMainMenuEntries = 5;
-const char* mainMenuEntries[numMainMenuEntries] = {
+char const* const mainMenuEntries[numMainMenuEntries] = {
   "Tutorial",
   "Challenges",
   "Experiment",
@@ -162,4 +162,3 @@ void MainMenuController::draw() {
   gb.display.drawLine(77, 51, 70, 51);
   gb.display.drawLine(0, 59, 42, 59);
 }
-

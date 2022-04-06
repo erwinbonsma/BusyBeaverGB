@@ -10,21 +10,21 @@
 #include <Gamebuino-Meta.h>
 
 const int numInstructions = 3;
-enum class Instruction : int {
+enum class Instruction : uint8_t {
   Noop = 0,
   Turn = 1,
   Data = 2
 };
 
 const int numDirections = 4;
-enum class Direction : int {
+enum class Direction : uint8_t {
   Up = 0,
   Right = 1,
   Down = 2,
   Left = 3
 };
 
-enum class Status : int {
+enum class Status : uint8_t {
   Ready = 0,
   Running = 1,
   Done = 2,
@@ -44,52 +44,52 @@ const int maxProgramSize = 9;
  * The size should be chosen such that a well-written (terminating) program never exceeds the
  * data boundaries.
  */
-const int dataSize = 256;
+const int dataSize = 512;
 
 /* Put explicit bounds on data values.
  *
  * This is done to prevent data values from wrapping, which could cause simple non-terminating
  * programs to terminate after all.
  */
-const int minDataValue = SHRT_MIN;
-const int maxDataValue = SHRT_MAX;
+const int16_t minDataValue = SHRT_MIN;
+const int16_t maxDataValue = SHRT_MAX;
 
 class Computer {
   // The program
   Instruction _program[maxProgramSize][maxProgramSize];
-  int _size;
+  uint8_t _size;
 
   // Tracks how often the program pointer exited in the given direction
-  int _exitCount[maxProgramSize][maxProgramSize][numDirections];
+  uint32_t _exitCount[maxProgramSize][maxProgramSize][numDirections];
 
   // Program pointer
   ProgramPointer _pp;
 
   // The data (a cyclic buffer)
-  int _data[dataSize];
+  int16_t _data[dataSize];
 
   // Data pointer
-  int _dp;
+  int16_t _dp;
 
   // Bounds of the cyclic buffer
-  int _dp_min;
-  int _dp_max;
+  int16_t _dp_min;
+  int16_t _dp_max;
 
   Status _status;
-  int _numSteps;
+  uint32_t _numSteps;
 
 public:
   Computer();
 
-  void setSize(int size);
-  int getSize() { return _size; }
+  void setSize(uint8_t size);
+  uint8_t getSize() const { return _size; }
 
-  Instruction getInstruction(int x, int y) { return _program[x][y]; }
+  Instruction getInstruction(int x, int y) const { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
 
-  int getExitCount(int x, int y, Direction d) { return _exitCount[x][y][(int)d]; }
+  uint32_t getExitCount(int x, int y, Direction d) const { return _exitCount[x][y][(int)d]; }
 
-  ProgramPointer getProgramPointer() { return _pp; }
+  ProgramPointer getProgramPointer() const { return _pp; }
 
   // Clears the program
   void clear();
@@ -97,19 +97,18 @@ public:
   // Resets the execution state
   void reset();
 
-  int getMinDataAddress() { return _dp_min; }
-  int getMaxDataAddress() { return _dp_max; }
-  int getDataPointer() { return _dp; }
-  int getData(int address) { return _data[(address + dataSize) % dataSize]; }
-  int getOutput() { return getData(getDataPointer()); }
+  int getMinDataAddress() const { return _dp_min; }
+  int getMaxDataAddress() const { return _dp_max; }
+  int getDataPointer() const { return _dp; }
+  int getData(int address) const { return _data[(address + dataSize) % dataSize]; }
+  int getOutput() const { return getData(getDataPointer()); }
 
   // Executes one instruction. Returns "true" if the program is still running.
   bool step();
 
-  bool hasTerminated() { return _status==Status::Done || _status==Status::Error; }
-  Status getStatus() { return _status; }
-  int getNumSteps() { return _numSteps; }
+  bool hasTerminated() const { return _status==Status::Done || _status==Status::Error; }
+  Status getStatus() const { return _status; }
+  uint32_t getNumSteps() const { return _numSteps; }
 };
 
 #endif
-

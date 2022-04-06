@@ -6,8 +6,8 @@
 
 #include "Computer.h"
 
-int dx[numDirections] = { 0, 1, 0, -1 };
-int dy[numDirections] = { 1, 0, -1, 0 };
+const int8_t dx[numDirections] = { 0, 1, 0, -1 };
+const int8_t dy[numDirections] = { 1, 0, -1, 0 };
 
 Computer::Computer() {
   _size = maxProgramSize; // Default
@@ -48,7 +48,7 @@ void Computer::reset() {
   }
 }
 
-void Computer::setSize(int size) {
+void Computer::setSize(uint8_t size) {
   _size = size;
 
   clear();
@@ -123,4 +123,3 @@ bool Computer::step() {
 
   return (_status == Status::Running);
 }
-

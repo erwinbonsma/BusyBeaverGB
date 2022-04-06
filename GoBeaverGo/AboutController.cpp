@@ -19,7 +19,7 @@ void AboutController::update() {
   }
 }
 
-const char* labels[6] = {
+char const* const labels[6] = {
   "Tutorials",
   "Challenges",
   "Longest run",
@@ -69,4 +69,3 @@ void AboutController::draw() {
   gb.display.printf("%6d\n", getLongestSequence());
 
 }
-

@@ -12,7 +12,7 @@ class ChallengeGoal;
 
 struct ChallengeSpec {
   const char* name;
-  ChallengeGoal* goal;
+  const ChallengeGoal* goal;
 
   uint8_t numFixed;
   const uint8_t* fixed;
@@ -64,4 +64,3 @@ extern const ChallengeSet challengesSet;
 
 extern const Challenge* activeChallenge;
 extern const ChallengeSet* activeChallengeSet;
-

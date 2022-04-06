@@ -15,7 +15,7 @@ enum class Comparison : int {
   LessThan = 2
 };
 
-char comparisonChars[3] = { '=', '>', '<' };
+char const comparisonChars[3] = { '=', '>', '<' };
 
 const Challenge* activeChallenge = nullptr;
 const ChallengeSet* activeChallengeSet = nullptr;
@@ -25,9 +25,9 @@ const ChallengeSet* activeChallengeSet = nullptr;
 
 class ChallengeGoal {
 public:
-  virtual const char* typeDescription() = 0;
-  virtual void draw() = 0;
-  virtual bool isAchieved(Computer& computer) = 0;
+  virtual const char* typeDescription() const = 0;
+  virtual void draw() const = 0;
+  virtual bool isAchieved(Computer& computer) const = 0;
 };
 
 class ExitGoal : public ChallengeGoal {
@@ -35,9 +35,9 @@ class ExitGoal : public ChallengeGoal {
 public:
   ExitGoal(int exitX, int exitY);
 
-  const char* typeDescription() { return "Reach the Exit"; }
-  void draw();
-  bool isAchieved(Computer& computer);
+  const char* typeDescription() const { return "Reach the Exit"; }
+  void draw() const;
+  bool isAchieved(Computer& computer) const;
 };
 
 class ComparisonBasedGoal : public ChallengeGoal {
@@ -46,45 +46,45 @@ class ComparisonBasedGoal : public ChallengeGoal {
   Comparison _comparison;
 
 protected:
-  bool isAchieved(int value);
+  bool isAchieved(int value) const;
 
 public:
   ComparisonBasedGoal(char targetVar, int targetVal, Comparison comparison);
 
-  void draw();
+  void draw() const;
 };
 
 class OutputValueGoal : public ComparisonBasedGoal {
 public:
   OutputValueGoal(int target, Comparison comparison);
 
-  const char* typeDescription()  { return "Output Value"; }
-  void draw();
-  bool isAchieved(Computer& computer);
+  const char* typeDescription() const { return "Output Value"; }
+  void draw() const;
+  bool isAchieved(Computer& computer) const;
 };
 
 class RunLengthGoal : public ComparisonBasedGoal {
 public:
   RunLengthGoal(int target, Comparison comparison);
 
-  const char* typeDescription() { return "Run Length"; }
-  void draw();
-  bool isAchieved(Computer& computer);
+  const char* typeDescription() const { return "Run Length"; }
+  void draw() const;
+  bool isAchieved(Computer& computer) const;
 };
 
 class SequenceGoal : public ChallengeGoal {
   int _len;
   const int8_t* _sequence;
 
-  int drawDots(int x);
-  int drawNumber(int num, int x);
+  int drawDots(int x) const;
+  int drawNumber(int num, int x) const;
 
 public:
   SequenceGoal(int len, const int8_t* sequence);
 
-  const char* typeDescription() { return "Create Sequence"; }
-  void draw();
-  bool isAchieved(Computer& computer);
+  const char* typeDescription() const { return "Create Sequence"; }
+  void draw() const;
+  bool isAchieved(Computer& computer) const;
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -120,109 +120,129 @@ const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
+const OutputValueGoal goalOutput0(0, Comparison::Equals);
+const OutputValueGoal goalOutput1(1, Comparison::Equals);
+const OutputValueGoal goalOutput12(12, Comparison::Equals);
+const OutputValueGoal goalOutput16(16, Comparison::Equals);
+const OutputValueGoal goalOutputMinus8(-8, Comparison::Equals);
+const OutputValueGoal goalOutput32(32, Comparison::Equals);
+const ExitGoal goalExit19(1, 9);
+const ExitGoal goalExit29(2, 9);
+const ExitGoal goalExit49(4, 9);
+const ExitGoal goalExit53(5, 3);
+const ExitGoal goalExitMinus17(-1, 7);
+const ExitGoal goalExitMinus13(-1, 3);
+const SequenceGoal goalSequenceLadder(8, sequenceLadder);
+const SequenceGoal goalSequenceSevenAteNine(7, sequenceSevenAteNine);
+const SequenceGoal goalSequenceOneToFive(5, sequenceOneToFive);
+const SequenceGoal goalSequenceTwoOnes(2, sequenceTwoOnes);
+const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
+const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
+const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
+
 const int numChallenges = 15;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
-    .goal = new OutputValueGoal(12, Comparison::Equals),
+    .goal = &goalOutput12,
     .numFixed = 4,
     .fixed = fixedCountTo12,
     .numTurn = 0,
     .numData = 12
   },{
     .name = "Exit 1",
-    .goal = new ExitGoal(4, 9),
+    .goal = &goalExit49,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 4,
     .numData = 1
   },{
     .name = "Exit 2",
-    .goal = new ExitGoal(1, 9),
+    .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 6,
     .numData = 1
   },{
     .name = "Ladder",
-    .goal = new SequenceGoal(8, sequenceLadder),
+    .goal = &goalSequenceLadder,
     .numFixed = 4,
     .fixed = fixedLadder,
     .numTurn = 13,
     .numData = 13
   },{
     .name = "Exit 3",
-    .goal = new ExitGoal(1, 9),
+    .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 2,
     .numData = 2
   },{
     .name = "Exit 4",
-    .goal = new ExitGoal(2, 9),
+    .goal = &goalExit29,
     .numFixed = 9,
     .fixed = fixedExit4,
     .numTurn = 0,
     .numData = 5
   },{
     .name = "Count to 16",
-    .goal = new OutputValueGoal(16, Comparison::Equals),
+    .goal = &goalOutput16,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
     .numData = 16
   },{
     .name = "Countdown to -8",
-    .goal = new OutputValueGoal(-8, Comparison::Equals),
+    .goal = &goalOutputMinus8,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
     .numData = 10
   },{
     .name = "Seven Ate Nine",
-    .goal = new SequenceGoal(7, sequenceSevenAteNine),
+    .goal = &goalSequenceSevenAteNine,
     .numFixed = 4,
     .fixed = fixedSevenAteNine,
     .numTurn = 0,
     .numData = 26
   },{
     .name = "Fog bank",
-    .goal = new ExitGoal(-1, 7),
+    .goal = &goalExitMinus17,
     .numFixed = 9,
     .fixed = fixedFogBank,
     .numTurn = 5,
     .numData = 1
   },{
     .name = "One to Five",
-    .goal = new SequenceGoal(5, sequenceOneToFive),
+    .goal = &goalSequenceOneToFive,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
     .numData = 99
   },{
     .name = "Dotted line",
-    .goal = new ExitGoal(-1, 7),
+    .goal = &goalExitMinus17,
     .numFixed = 9,
     .fixed = fixedDottedLine,
     .numTurn = 6,
     .numData = 2
   },{
     .name = "Busy Beaver 100",
-    .goal = new RunLengthGoal(100, Comparison::GreaterThan),
+    .goal = &goalRunLength100,
     .numFixed = 6,
     .fixed = fixedRun100,
     .numTurn = 0,
     .numData = 6
   },{
     .name = "Count to 32",
-    .goal = new OutputValueGoal(32, Comparison::Equals),
+    .goal = &goalOutput32,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
     .numData = 99
   },{
     .name = "Busy Beaver 1000",
-    .goal = new RunLengthGoal(1000, Comparison::GreaterThan),
+    .goal = &goalRunLength1000,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
@@ -254,49 +274,49 @@ const int numTutorials = 7;
 const ChallengeSpec tutorialSpecs[numTutorials] = {
   {
     .name = "Increment",
-    .goal = new OutputValueGoal(1, Comparison::Equals),
+    .goal = &goalOutput1,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 0,
     .numData = 1
   },{
     .name = "Turn Left",
-    .goal = new ExitGoal(-1, 3),
+    .goal = &goalExitMinus13,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 1,
     .numData = 0
   },{
     .name = "Turn Right",
-    .goal = new ExitGoal(5, 3),
+    .goal = &goalExit53,
     .numFixed = 1,
     .fixed = fixedTurnRight,
     .numTurn = 0,
     .numData = 1
   },{
     .name = "Sharp Turn",
-    .goal = new OutputValueGoal(1, Comparison::Equals),
+    .goal = &goalOutput1,
     .numFixed = 2,
     .fixed = fixedSharpTurn,
     .numTurn = 0,
     .numData = 1
   },{
     .name = "Shift Right",
-    .goal = new SequenceGoal(2, sequenceTwoOnes),
+    .goal = &goalSequenceTwoOnes,
     .numFixed = 4,
     .fixed = fixedShiftRight,
     .numTurn = 0,
     .numData = 1
   },{
     .name = "Decrement",
-    .goal = new OutputValueGoal(0, Comparison::Equals),
+    .goal = &goalOutput0,
     .numFixed = 4,
     .fixed = fixedDecrement,
     .numTurn = 0,
     .numData = 1
   },{
     .name = "Shift Left",
-    .goal = new SequenceGoal(2, sequenceShiftLeft),
+    .goal = &goalSequenceShiftLeft,
     .numFixed = 6,
     .fixed = fixedShiftLeft,
     .numTurn = 0,
@@ -325,7 +345,7 @@ ExitGoal::ExitGoal(int exitX, int exitY) {
   _exitY = exitY;
 }
 
-void ExitGoal::draw() {
+void ExitGoal::draw() const {
   int x = getDisplayX(_exitX);
   int y = getDisplayY(_exitY);
 
@@ -353,7 +373,7 @@ void ExitGoal::draw() {
   }
 }
 
-bool ExitGoal::isAchieved(Computer& computer) {
+bool ExitGoal::isAchieved(Computer& computer) const {
   ProgramPointer pp = computer.getProgramPointer();
 
   return (pp.x == _exitX && pp.y == _exitY);
@@ -368,12 +388,12 @@ ComparisonBasedGoal::ComparisonBasedGoal(char targetVar, int targetVal, Comparis
   _comparison = comparison;
 }
 
-void ComparisonBasedGoal::draw() {
+void ComparisonBasedGoal::draw() const {
   gb.display.setCursor(0, 0);
   gb.display.printf("%c%c%d", _targetVar, comparisonChars[(int)_comparison], _targetVal);
 }
 
-bool ComparisonBasedGoal::isAchieved(int value) {
+bool ComparisonBasedGoal::isAchieved(int value) const {
   switch (_comparison) {
     case Comparison::Equals:
       return value == _targetVal;
@@ -392,12 +412,12 @@ bool ComparisonBasedGoal::isAchieved(int value) {
 OutputValueGoal::OutputValueGoal(int target, Comparison comparison)
   : ComparisonBasedGoal('X', target, comparison) {}
 
-void OutputValueGoal::draw() {
+void OutputValueGoal::draw() const {
   gb.display.setColor(LIGHTGREEN);
   ComparisonBasedGoal::draw();
 }
 
-bool OutputValueGoal::isAchieved(Computer& computer) {
+bool OutputValueGoal::isAchieved(Computer& computer) const {
   return ComparisonBasedGoal::isAchieved(computer.getOutput());
 }
 
@@ -407,12 +427,12 @@ bool OutputValueGoal::isAchieved(Computer& computer) {
 RunLengthGoal::RunLengthGoal(int target, Comparison comparison)
   : ComparisonBasedGoal('R', target, comparison) {}
 
-void RunLengthGoal::draw() {
+void RunLengthGoal::draw() const {
   gb.display.setColor(BLUE);
   ComparisonBasedGoal::draw();
 }
 
-bool RunLengthGoal::isAchieved(Computer& computer) {
+bool RunLengthGoal::isAchieved(Computer& computer) const {
   return ComparisonBasedGoal::isAchieved(computer.getNumSteps());
 }
 
@@ -424,19 +444,19 @@ SequenceGoal::SequenceGoal(int len, const int8_t* sequence) {
   _sequence = sequence;
 }
 
-int SequenceGoal::drawDots(int x) {
+int SequenceGoal::drawDots(int x) const {
   for (int i = 0; i < 2; i++) {
     gb.display.drawPixel(x + i * 2, 4);
   }
   return 4;
 }
 
-int SequenceGoal::drawNumber(int num, int x) {
+int SequenceGoal::drawNumber(int num, int x) const {
   gb.display.setCursor(x, 0);
   return gb.display.print(num, DEC) * 4;
 }
 
-void SequenceGoal::draw() {
+void SequenceGoal::draw() const {
   gb.display.setColor(GREEN);
   gb.display.setCursor(0,0);
   gb.display.print("S=");
@@ -451,7 +471,7 @@ void SequenceGoal::draw() {
   drawDots(x);
 }
 
-bool SequenceGoal::isAchieved(Computer& computer) {
+bool SequenceGoal::isAchieved(Computer& computer) const {
   int p = computer.getMinDataAddress(), q = 0;
 
   // Find first non-zero cell
@@ -549,4 +569,3 @@ const Challenge* ChallengeSet::nextChallenge(const Challenge* challenge) const {
   int index = indexOfChallenge(challenge) + 1;
   return (index < _numChallenges) ? &_challenges[index] : nullptr;
 }
-
