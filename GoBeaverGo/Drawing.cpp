@@ -244,8 +244,8 @@ void drawButton(const char* label, bool selected) {
 }
 
 struct CountBucket {
-  int minRange;
-  int maxRange;
+  uint8_t minRange;
+  uint8_t maxRange;
   uint8_t count;
   uint8_t next;
 };
@@ -257,7 +257,7 @@ uint8_t numBuckets = 0;
 uint8_t bucketListHeadIndex;
 CountBucket buckets[maxBuckets];
 
-void updateOrCreateBucketForVisit(uint32_t visits) {
+void updateOrCreateBucketForVisit(uint8_t visits) {
   int bucketIndex = 0;
 
   // Find bucket for this visit count
@@ -291,17 +291,18 @@ void updateOrCreateBucketForVisit(uint32_t visits) {
   }
 }
 
-uint32_t getVisitCount(Computer& computer, int x, int y, bool horizontal) {
+uint8_t getVisitCount(Computer& computer, int x, int y, bool horizontal) {
+  // Calculation such that sum fits in uint8_t and non-zero values remain non-zero
   if (horizontal) {
-    return (
-      computer.getExitCount(x, y, Direction::Right) +
-      computer.getExitCount(x + 1, y, Direction::Left)
-    );
+    return (uint8_t)((
+      (int)computer.getExitCount(x, y, Direction::Right) +
+      (int)computer.getExitCount(x + 1, y, Direction::Left) + 1
+    ) / 2);
   } else {
-    return (
-      computer.getExitCount(x, y, Direction::Up) +
-      computer.getExitCount(x, y + 1, Direction::Down)
-    );
+    return (uint8_t)((
+      (int)computer.getExitCount(x, y, Direction::Up) +
+      (int)computer.getExitCount(x, y + 1, Direction::Down) + 1
+    ) / 2);
   }
 }
 
@@ -313,7 +314,7 @@ void emptyBuckets() {
 void fillVisitBuckets(Computer& computer, bool horizontal) {
   for (int x = 0; x < computer.getSize() - 1; x++) {
     for (int y = 0; y < computer.getSize() - 1; y++) {
-      int visits = getVisitCount(computer, x, y, horizontal);
+      uint8_t visits = getVisitCount(computer, x, y, horizontal);
       if (visits > 0) {
         updateOrCreateBucketForVisit(visits);
       }
@@ -324,16 +325,13 @@ void fillVisitBuckets(Computer& computer, bool horizontal) {
 void collapseVisitBuckets(int targetNum) {
   while (numBuckets > targetNum) {
     uint8_t bucketIndex = bucketListHeadIndex;
-    uint32_t minArea = 0;
+    uint8_t minArea = 0;
     uint8_t minBucketIndex = 0;
 
     // Find bucket to collapse
     while (buckets[bucketIndex].next != EOL) {
       uint8_t nextBucketIndex = buckets[bucketIndex].next;
-      uint32_t collapsedArea = (
-        buckets[bucketIndex].count +
-        buckets[nextBucketIndex].count
-      ) * 0 + (
+      uint8_t collapsedArea = (
         buckets[nextBucketIndex].maxRange -
         buckets[bucketIndex].minRange
       );
@@ -358,7 +356,7 @@ Color const visitColors[numVisitColors] = {
   BLUE, GREEN, LIGHTBLUE, LIGHTGREEN, YELLOW
 };
 
-Color getColorForVisitCount(int count) {
+Color getColorForVisitCount(uint8_t count) {
   uint8_t nextBucketIndex = buckets[bucketListHeadIndex].next;
   uint8_t colorIndex = 0;
   while (nextBucketIndex != EOL && buckets[nextBucketIndex].minRange <= count) {
@@ -380,7 +378,7 @@ void dumpBuckets() {
 void drawVisitCounts(Computer& computer, bool horizontal) {
   for (int x = 0; x < computer.getSize() - 1; x++) {
     for (int y = 0; y < computer.getSize() - 1; y++) {
-      int visits = getVisitCount(computer, x, y, horizontal);
+      uint8_t visits = getVisitCount(computer, x, y, horizontal);
       if (visits > 0) {
         int x0 = getDisplayX(x);
         int y0 = getDisplayY(y);

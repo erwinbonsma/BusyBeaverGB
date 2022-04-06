@@ -60,7 +60,7 @@ class Computer {
   uint8_t _size;
 
   // Tracks how often the program pointer exited in the given direction
-  uint32_t _exitCount[maxProgramSize][maxProgramSize][numDirections];
+  uint8_t _exitCount[maxProgramSize][maxProgramSize][numDirections];
 
   // Program pointer
   ProgramPointer _pp;
@@ -78,6 +78,8 @@ class Computer {
   Status _status;
   uint32_t _numSteps;
 
+  void shiftExitCounts();
+
 public:
   Computer();
 
@@ -87,7 +89,7 @@ public:
   Instruction getInstruction(int x, int y) const { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
 
-  uint32_t getExitCount(int x, int y, Direction d) const { return _exitCount[x][y][(int)d]; }
+  uint8_t getExitCount(int x, int y, Direction d) const { return _exitCount[x][y][(int)d]; }
 
   ProgramPointer getProgramPointer() const { return _pp; }
 

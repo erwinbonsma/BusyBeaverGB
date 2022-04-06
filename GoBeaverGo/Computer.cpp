@@ -9,6 +9,23 @@
 const int8_t dx[numDirections] = { 0, 1, 0, -1 };
 const int8_t dy[numDirections] = { 1, 0, -1, 0 };
 
+/* Rescale exit counts to avoid overflows. This obviously loses accuracy, but
+ * that's fine as they are only used for drawing program activity.
+ */
+void Computer::shiftExitCounts() {
+  for (int x = 0; x < _size; x++) {
+    for (int y = 0; y < _size; y++) {
+      for (int d = 0; d < numDirections; d++) {
+        uint8_t &exitCount = _exitCount[x][y][d];
+        // Ensure that exit count one remains non-zero.
+        if (exitCount > 1) {
+          exitCount >>= 1;
+        }
+      }
+    }
+  }
+}
+
 Computer::Computer() {
   _size = maxProgramSize; // Default
 
@@ -116,7 +133,11 @@ bool Computer::step() {
   } while (_status == Status::Running && instruction == Instruction::Turn);
 
   if (_numSteps++ > 0) {
-    _exitCount[_pp.x][_pp.y][(int)pp.dir]++;
+    uint8_t &exitCount = _exitCount[_pp.x][_pp.y][(int)pp.dir];
+    exitCount++;
+    if (exitCount == 255) {
+      shiftExitCounts();
+    }
   }
 
   _pp = pp;
