@@ -11,7 +11,7 @@
 #include "Drawing.h"
 #include "Store.h"
 
-const int numMainMenuEntries = 5;
+constexpr int numMainMenuEntries = 5;
 char const* const mainMenuEntries[numMainMenuEntries] = {
   "Tutorial",
   "Challenges",
@@ -20,7 +20,7 @@ char const* const mainMenuEntries[numMainMenuEntries] = {
   "About"
 };
 
-const int maxChallengeMenuEntries = 32;
+constexpr int maxChallengeMenuEntries = 32;
 const char* challengeMenuEntries[maxChallengeMenuEntries];
 
 const uint8_t goBeaverGoData[] = {

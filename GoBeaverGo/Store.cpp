@@ -7,6 +7,7 @@
 #include "Store.h"
 
 #include "Computer.h"
+#include "SharedMemory.h"
 
 /* Block layout
  *
@@ -38,11 +39,6 @@
 
 #define SAVE_FILE_VERSION  3
 
-const int programStorageSize = 16;
-const int maxProgramNameLength = 20; // Includes terminating \0
-const int storedProgramSize = 17;
-const int programIndexSize = programStorageSize * maxProgramNameLength;
-
 const SaveDefault savefileDefaults[10] = {
   { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, SAVE_FILE_VERSION, 0},
   { BLOCK_NUM_STORED_PROGRAMS, SAVETYPE_INT, 0, 0},
@@ -57,14 +53,6 @@ const SaveDefault savefileDefaults[10] = {
 
   // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
 };
-
-char programIndexBuffer[programIndexSize];
-uint8_t programBuffer[storedProgramSize];
-
-char programNameBuffer[maxProgramNameLength];
-char autoNameBuffer[maxProgramNameLength];
-
-const char* programNames[programStorageSize + 1];
 
 void initSaveFileDefaults() {
   gb.save.config(savefileDefaults);
@@ -174,6 +162,9 @@ int selectProgramSlot(bool store) {
     return 0;
   }
 
+  auto &programIndexBuffer = shared_mem.storage.programIndexBuffer;
+  auto &programNames = shared_mem.storage.programNames;
+
   // Fill menu entries
   gb.save.get(BLOCK_PROGRAM_NAMES, (void*)programIndexBuffer, programIndexSize);
   int numEntries = 0;
@@ -195,6 +186,10 @@ int selectProgramSlot(bool store) {
 }
 
 char* enterName(int slot) {
+  auto &programNames = shared_mem.storage.programNames;
+  auto &programNameBuffer = shared_mem.storage.programNameBuffer;
+  auto &autoNameBuffer = shared_mem.storage.autoNameBuffer;
+
   int numPrograms = gb.save.get(BLOCK_NUM_STORED_PROGRAMS);
   bool overwrite = slot < numPrograms;
   if (overwrite) {
@@ -223,18 +218,22 @@ void updateIndex(int slot, char* name) {
     gb.save.set(BLOCK_NUM_STORED_PROGRAMS, slot + 1);
   }
 
+  auto &programIndexBuffer = shared_mem.storage.programIndexBuffer;
+
   // Copy name (assuming that programIndexBuffer is already filled by selectSlot)
   char* dst = &programIndexBuffer[slot * maxProgramNameLength];
   char* src = name;
   do {
-    *(dst++) = *(src);
-  } while (*(src++));
+    *dst++ = *src;
+  } while (*src++);
 
   gb.save.set(BLOCK_PROGRAM_NAMES, (void*)programIndexBuffer, programIndexSize);
 }
 
 bool saveProgram(int slot, char* name, Computer& computer) {
   updateIndex(slot, name);
+
+  auto &programBuffer = shared_mem.storage.programBuffer;
 
   int p_out = 0;
   int shifts = 0;
@@ -268,6 +267,8 @@ bool saveProgram(int slot, char* name, Computer& computer) {
 }
 
 bool loadProgram(int slot, Computer& computer) {
+  auto &programBuffer = shared_mem.storage.programBuffer;
+
   gb.save.get(BLOCK_FIRST_PROGRAM + slot, (void*)programBuffer, storedProgramSize);
 
   int p_out = 0;
@@ -327,4 +328,3 @@ bool loadProgram(Computer& computer) {
 
   return true;
 }
-

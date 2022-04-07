@@ -7,9 +7,12 @@
 #ifndef __RUN_CONTROLLER_INCLUDED
 #define __RUN_CONTROLLER_INCLUDED
 
+#include <Gamebuino-Meta.h>
+
 #include "Controller.h"
 
-const int maxRunSpeed = 20;
+constexpr uint8_t unitRunSpeed = 6;
+constexpr uint8_t maxRunSpeed = 20;
 
 enum class RunAction : int {
   Play = 0,
@@ -20,13 +23,13 @@ enum class RunAction : int {
 };
 
 class RunController : public Controller {
-  int _runSpeed = 0;
-  int _stepPeriod;
-  int _stepsPerTick;
-  int _ticksSinceLastStep = 0;
+  int _tapeShift;
+  uint16_t _stepsPerTick;
+  uint8_t _runSpeed = 0;
+  uint8_t _stepPeriod;
+  uint8_t _ticksSinceLastStep = 0;
   bool _paused;
   bool _challengeCompleted;
-  int _tapeShift;
 
   void runMenu();
   RunAction activeActionButtonA();

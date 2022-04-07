@@ -89,8 +89,8 @@ public:
 
 //--------------------------------------------------------------------------------------------------
 
-#define TURN 0
-#define DATA 128
+constexpr uint8_t TURN = 0;
+constexpr uint8_t DATA = 128;
 
 const uint8_t fixedTurnRight[1] = { 20|TURN };
 const uint8_t fixedSharpTurn[2] = { 16|TURN, 20|TURN };
@@ -140,7 +140,7 @@ const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
 const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
 
-const int numChallenges = 15;
+constexpr int numChallenges = 15;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -270,7 +270,7 @@ const Challenge challenges[numChallenges] = {
 
 const ChallengeSet challengesSet("Challenge", 9, challenges, numChallenges);
 
-const int numTutorials = 7;
+constexpr int numTutorials = 7;
 const ChallengeSpec tutorialSpecs[numTutorials] = {
   {
     .name = "Increment",

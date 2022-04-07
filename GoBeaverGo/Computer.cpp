@@ -6,6 +6,8 @@
 
 #include "Computer.h"
 
+#include "SharedMemory.h"
+
 const int8_t dx[numDirections] = { 0, 1, 0, -1 };
 const int8_t dy[numDirections] = { 1, 0, -1, 0 };
 
@@ -26,7 +28,8 @@ void Computer::shiftExitCounts() {
   }
 }
 
-Computer::Computer() {
+Computer::Computer() :
+  _data(shared_mem.execution.data) {
   _size = maxProgramSize; // Default
 
   clear();

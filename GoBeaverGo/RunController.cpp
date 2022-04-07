@@ -14,8 +14,6 @@
 #include "Challenges.h"
 #include "Store.h"
 
-const int unitRunSpeed = 6;
-
 const uint8_t buttonData[] = {
   7, 7, 4, 0, 1, 0xFF, 1,
   // Play
@@ -57,7 +55,8 @@ const uint8_t buttonData[] = {
 
 Image buttons(buttonData);
 
-const char* runMenuEntries[] = {
+constexpr int numRunMenuEntries = 3;
+char const* const runMenuEntries[numRunMenuEntries] = {
   "Edit",
   "Reset",
   "Back to main menu"
@@ -75,7 +74,7 @@ void nextChallenge() {
 }
 
 void RunController::runMenu() {
-  int entry = gb.gui.menu("Run menu", runMenuEntries);
+  int entry = gb.gui.menu("Run menu", (const char**)runMenuEntries, numRunMenuEntries);
 
   switch (entry) {
     case 0:
@@ -268,4 +267,3 @@ void RunController::draw() {
   buttons.setFrame((int)activeActionButtonA());
   gb.display.drawImage(73, 33, buttons);
 }
-

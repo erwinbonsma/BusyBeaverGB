@@ -14,7 +14,7 @@
 #include "Store.h"
 #include "Challenges.h"
 
-const int maxEditMenuEntries = 5;
+constexpr int maxEditMenuEntries = 5;
 char const* const availableEditMenuEntries[maxEditMenuEntries] = {
   "Run",
   "Save",

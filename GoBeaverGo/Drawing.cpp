@@ -250,8 +250,8 @@ struct CountBucket {
   uint8_t next;
 };
 
-const uint8_t maxBuckets = (maxProgramSize - 1) * (maxProgramSize - 1);
-const uint8_t EOL = maxBuckets; // Signals End of List
+constexpr uint8_t maxBuckets = (maxProgramSize - 1) * (maxProgramSize - 1);
+constexpr uint8_t EOL = maxBuckets; // Signals End of List
 
 uint8_t numBuckets = 0;
 uint8_t bucketListHeadIndex;

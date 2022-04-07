@@ -67,5 +67,4 @@ void AboutController::draw() {
   gb.display.printf("%6d\n", getHighestOutput());
   gb.display.setCursorX(55);
   gb.display.printf("%6d\n", getLongestSequence());
-
 }

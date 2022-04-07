@@ -9,14 +9,14 @@
 
 #include <Gamebuino-Meta.h>
 
-const int numInstructions = 3;
+constexpr int numInstructions = 3;
 enum class Instruction : uint8_t {
   Noop = 0,
   Turn = 1,
   Data = 2
 };
 
-const int numDirections = 4;
+constexpr int numDirections = 4;
 enum class Direction : uint8_t {
   Up = 0,
   Right = 1,
@@ -37,22 +37,22 @@ struct ProgramPointer {
   Direction dir;
 };
 
-const int maxProgramSize = 9;
+constexpr int maxProgramSize = 9;
 
 /* The size of the data tape.
  *
  * The size should be chosen such that a well-written (terminating) program never exceeds the
  * data boundaries.
  */
-const int dataSize = 512;
+constexpr int dataSize = 1024;
 
 /* Put explicit bounds on data values.
  *
  * This is done to prevent data values from wrapping, which could cause simple non-terminating
  * programs to terminate after all.
  */
-const int16_t minDataValue = SHRT_MIN;
-const int16_t maxDataValue = SHRT_MAX;
+constexpr int16_t minDataValue = SHRT_MIN;
+constexpr int16_t maxDataValue = SHRT_MAX;
 
 class Computer {
   // The program
@@ -66,7 +66,7 @@ class Computer {
   ProgramPointer _pp;
 
   // The data (a cyclic buffer)
-  int16_t _data[dataSize];
+  int16_t (&_data)[dataSize];
 
   // Data pointer
   int16_t _dp;
