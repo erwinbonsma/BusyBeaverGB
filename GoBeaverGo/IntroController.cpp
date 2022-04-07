@@ -24,7 +24,7 @@ void IntroController::activate() {
 void IntroController::update() {
   _updateCount++;
 
-  if (gb.buttons.pressed(BUTTON_A)) {
+  if (gb.buttons.released(BUTTON_A)) {
     setController(&editController);
     editController.reset();
   }
@@ -60,4 +60,3 @@ void IntroController::draw() {
     printCenter("Press A", 54);
   }
 }
-

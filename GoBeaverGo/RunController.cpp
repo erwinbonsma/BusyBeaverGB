@@ -195,7 +195,7 @@ void RunController::update() {
   else if (gb.buttons.pressed(BUTTON_LEFT)) {
     tryChangeTapeShift(-1);
   }
-  else if (gb.buttons.pressed(BUTTON_A)) {
+  else if (gb.buttons.released(BUTTON_A)) {
     switch (activeActionButtonA()) {
       case RunAction::Play:
         _paused = false;
@@ -218,7 +218,7 @@ void RunController::update() {
         break;
     }
   }
-  else if (gb.buttons.pressed(BUTTON_B)) {
+  else if (gb.buttons.released(BUTTON_B)) {
     setController(&editController);
   }
 

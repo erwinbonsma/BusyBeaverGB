@@ -14,7 +14,7 @@
 #include "Store.h"
 
 void AboutController::update() {
-  if (gb.buttons.pressed(BUTTON_A)) {
+  if (gb.buttons.released(BUTTON_A)) {
     setController(&mainMenuController);
   }
 }

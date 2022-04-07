@@ -158,14 +158,14 @@ void EditController::update() {
   else if (gb.buttons.pressed(BUTTON_UP)) {
     _y = (_y + 2) % (computer.getSize() + 1) - 1;
   }
-  else if (gb.buttons.pressed(BUTTON_A)) {
+  else if (gb.buttons.released(BUTTON_A)) {
     if (_y >= 0) {
       trySetInstruction(nextAvailableInstruction());
     } else {
       setController(&runController);
     }
   }
-  else if (gb.buttons.pressed(BUTTON_B)) {
+  else if (gb.buttons.released(BUTTON_B)) {
     if (_y >= 0) {
       trySetInstruction(Instruction::Noop);
     }
