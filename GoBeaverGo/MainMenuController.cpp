@@ -9,6 +9,7 @@
 #include "Globals.h"
 #include "Challenges.h"
 #include "Drawing.h"
+#include "SharedMemory.h"
 #include "Store.h"
 
 constexpr int numMainMenuEntries = 5;
@@ -19,9 +20,6 @@ char const* const mainMenuEntries[numMainMenuEntries] = {
   "Help",
   "About"
 };
-
-constexpr int maxChallengeMenuEntries = 32;
-const char* challengeMenuEntries[maxChallengeMenuEntries];
 
 const uint8_t goBeaverGoData[] = {
   64, 5, 1, 0, 1, 0xFF, 1,
@@ -70,9 +68,10 @@ const uint8_t iconData[] = {
 };
 Image iconImage = Image(iconData);
 
-char challengesMenuTitleBuf[20];
-
 void selectChallenge() {
+  auto& challengeMenuEntries = shared_mem.main_menu.challengeMenuEntries;
+  auto& challengesMenuTitleBuf = shared_mem.main_menu.challengesMenuTitleBuf;
+
   int numOptions;
 
   if (activeChallengeSet == &challengesSet) {

@@ -11,6 +11,13 @@
 
 #include "Controller.h"
 
+constexpr int maxChallengeMenuEntries = 32;
+
+struct MainMenuMemory {
+  const char* challengeMenuEntries[maxChallengeMenuEntries];
+  char challengesMenuTitleBuf[20];
+};
+
 class MainMenuController : public Controller {
   int _selectedEntry = 0;
 

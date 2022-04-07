@@ -8,6 +8,7 @@
 #define __SHARED_MEMORY_INCLUDED
 
 #include "Computer.h"
+#include "MainMenuController.h"
 #include "Store.h"
 
 struct ExecutionMemory {
@@ -16,6 +17,7 @@ struct ExecutionMemory {
 
 union SharedMemory {
   ExecutionMemory execution;
+  MainMenuMemory main_menu;
   StorageManagement storage;
 };
 
