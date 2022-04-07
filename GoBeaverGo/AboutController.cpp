@@ -59,12 +59,12 @@ void AboutController::draw() {
   gb.display.setCursorX(59);
   gb.display.printf("%2d/%2d\n", getNumCompletedChallenges(false), challengesSet.size());
 
-  gb.display.setCursor(55, 38);
-  gb.display.printf("%6d\n", getLongestRun());
-  gb.display.setCursorX(55);
-  gb.display.printf("%6d\n", getLowestOutput());
-  gb.display.setCursorX(55);
-  gb.display.printf("%6d\n", getHighestOutput());
-  gb.display.setCursorX(55);
-  gb.display.printf("%6d\n", getLongestSequence());
+  gb.display.setCursor(47, 38);
+  gb.display.printf("%8d\n", getLongestRun());
+  gb.display.setCursorX(47);
+  gb.display.printf("%8d\n", getLowestOutput());
+  gb.display.setCursorX(47);
+  gb.display.printf("%8d\n", getHighestOutput());
+  gb.display.setCursorX(47);
+  gb.display.printf("%8d\n", getLongestSequence());
 }
