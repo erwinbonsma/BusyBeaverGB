@@ -112,7 +112,9 @@ void MainMenuController::update() {
   else if (gb.buttons.pressed(BUTTON_UP)) {
     _selectedEntry = (_selectedEntry + numMainMenuEntries - 1) % numMainMenuEntries;
   }
-  else if (gb.buttons.pressed(BUTTON_A)) {
+  // Need to check for release as that is also the trigger inside gb.gui.menu.
+  // This avoids that the same button press also triggers menu selection there.
+  else if (gb.buttons.released(BUTTON_A)) {
     switch (_selectedEntry) {
       case 0:
         activeChallengeSet = &tutorialsSet;
