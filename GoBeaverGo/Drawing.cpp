@@ -43,8 +43,10 @@ void drawSpeedBar(int speed) {
     gb.display.fillRect(1, 9, 3, emptyLen);
   }
 
-  gb.display.setColor(BLUE);
-  gb.display.fillRect(1, 9 + emptyLen, 3, (speed + 1) * 2);
+  if (speed > 0) {
+    gb.display.setColor(BLUE);
+    gb.display.fillRect(1, 9 + emptyLen, 3, speed * 2);
+  }
 }
 
 void drawCursor(int x, int y) {
