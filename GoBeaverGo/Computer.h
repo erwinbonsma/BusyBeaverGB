@@ -44,7 +44,7 @@ constexpr int maxProgramSize = 9;
  * The size should be chosen such that a well-written (terminating) program never exceeds the
  * data boundaries.
  */
-constexpr int dataSize = 1024;
+constexpr int dataSize = 4400;
 
 /* Put explicit bounds on data values.
  *
