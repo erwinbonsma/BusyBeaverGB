@@ -96,15 +96,6 @@ void selectChallenge() {
   activeChallenge = activeChallengeSet->challengeAt(selected);
 }
 
-void updateProgramSize() {
-  computer.setSize(
-    activeChallengeSet != nullptr ?
-    activeChallengeSet->programSize() :
-    challengesSet.programSize()
-  );
-  resetDrawing();
-}
-
 void MainMenuController::update() {
   if (gb.buttons.pressed(BUTTON_DOWN)) {
     _selectedEntry = (_selectedEntry + 1) % numMainMenuEntries;
@@ -120,20 +111,17 @@ void MainMenuController::update() {
         activeChallengeSet = &tutorialsSet;
         runController.setRunSpeed(2);
         selectChallenge();
-        updateProgramSize();
         setController(&introController);
         break;
       case 1:
         activeChallengeSet = &challengesSet;
         runController.setRunSpeed(4);
         selectChallenge();
-        updateProgramSize();
         setController(&introController);
         break;
       case 2:
         activeChallengeSet = nullptr;
         activeChallenge = nullptr;
-        updateProgramSize();
         setController(&editController);
         editController.reset();
         break;

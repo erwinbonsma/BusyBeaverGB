@@ -120,8 +120,14 @@ void EditController::drawAvailable(Instruction instruction, int y) {
 
 void EditController::reset() {
   _x = _y = 0;
-  computer.clear();
+  computer.setSize(
+    activeChallenge != nullptr ?
+    activeChallenge->programSize() :
+    maxProgramSize
+  );
   _numAvailable[0] = 99; // Always "infinite" NOOPs
+
+  resetDrawing();
 
   if (activeChallenge == nullptr) {
     for (int i = 1; i < numInstructions; i++) {

@@ -170,6 +170,7 @@ void RunController::reset() {
   _paused = false;
   _challengeCompleted = false;
   _tapeShift = 0;
+
   resetDrawing();
 }
 

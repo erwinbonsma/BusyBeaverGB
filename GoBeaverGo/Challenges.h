@@ -19,6 +19,7 @@ struct ChallengeSpec {
 
   uint8_t numTurn;
   uint8_t numData;
+  uint8_t programSize;
 };
 
 
@@ -30,6 +31,7 @@ public:
 
   const char* name() const { return _spec.name; }
   const char* typeDescription() const;
+  uint8_t programSize() const { return _spec.programSize; }
 
   void setFixedInstructions(Computer& computer) const;
   bool isFixed(int x, int y, int programSize) const;
@@ -41,17 +43,14 @@ public:
 };
 
 class ChallengeSet {
-  int _programSize;
   int _numChallenges;
   const Challenge* _challenges;
   const char* _challengeType;
 
 public:
-  ChallengeSet(const char* type, int programSize, const Challenge* challenges, int num);
+  ChallengeSet(const char* type, const Challenge* challenges, int num);
 
   const char* challengeType() const { return _challengeType; }
-
-  int programSize() const { return _programSize; }
 
   int size() const { return _numChallenges; }
   int indexOfChallenge(const Challenge* challenge) const;

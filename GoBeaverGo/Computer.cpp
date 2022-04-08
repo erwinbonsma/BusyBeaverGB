@@ -72,7 +72,6 @@ void Computer::setSize(uint8_t size) {
   _size = size;
 
   clear();
-  reset();
 }
 
 bool Computer::step() {

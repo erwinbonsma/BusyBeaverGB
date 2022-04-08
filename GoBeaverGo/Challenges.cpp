@@ -113,6 +113,16 @@ const uint8_t fixedSevenAteNine[4] = {
   7|TURN, 9|TURN, 71|TURN, 78|TURN
 };
 const uint8_t fixedRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
+const uint8_t fixedRun10M[25] = {
+   43|TURN, 45|TURN, 46|TURN,
+   35|TURN, /*36|DATA,*/ 38|DATA, 40|TURN,
+   29|TURN, 30|TURN, 31|DATA, 32|DATA, 34|TURN,
+   23|DATA, 24|DATA, 25|TURN,
+   14|TURN, 17|DATA, 18|DATA, 19|DATA, 20|TURN,
+    7|TURN, 10|TURN,
+    0|DATA,  3|DATA,  4|DATA,  5|TURN
+};
+
 
 const int8_t sequenceTwoOnes[2] = { 1, 1 };
 const int8_t sequenceShiftLeft[2] = { -1, 1 };
@@ -139,8 +149,9 @@ const SequenceGoal goalSequenceTwoOnes(2, sequenceTwoOnes);
 const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
 const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
+const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 
-constexpr int numChallenges = 15;
+constexpr int numChallenges = 16;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -148,105 +159,128 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numFixed = 4,
     .fixed = fixedCountTo12,
     .numTurn = 0,
-    .numData = 12
+    .numData = 12,
+    .programSize = 9
   },{
     .name = "Exit 1",
     .goal = &goalExit49,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 4,
-    .numData = 1
+    .numData = 1,
+    .programSize = 9
   },{
     .name = "Exit 2",
     .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 6,
-    .numData = 1
+    .numData = 1,
+    .programSize = 9
   },{
     .name = "Ladder",
     .goal = &goalSequenceLadder,
     .numFixed = 4,
     .fixed = fixedLadder,
     .numTurn = 13,
-    .numData = 13
+    .numData = 13,
+    .programSize = 9
   },{
     .name = "Exit 3",
     .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 2,
-    .numData = 2
+    .numData = 2,
+    .programSize = 9
   },{
     .name = "Exit 4",
     .goal = &goalExit29,
     .numFixed = 9,
     .fixed = fixedExit4,
     .numTurn = 0,
-    .numData = 5
+    .numData = 5,
+    .programSize = 9
   },{
     .name = "Count to 16",
     .goal = &goalOutput16,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
-    .numData = 16
+    .numData = 16,
+    .programSize = 9
   },{
     .name = "Countdown to -8",
     .goal = &goalOutputMinus8,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 8,
-    .numData = 10
+    .numData = 10,
+    .programSize = 9
   },{
     .name = "Seven Ate Nine",
     .goal = &goalSequenceSevenAteNine,
     .numFixed = 4,
     .fixed = fixedSevenAteNine,
     .numTurn = 0,
-    .numData = 26
+    .numData = 26,
+    .programSize = 9
   },{
     .name = "Fog bank",
     .goal = &goalExitMinus17,
     .numFixed = 9,
     .fixed = fixedFogBank,
     .numTurn = 5,
-    .numData = 1
+    .numData = 1,
+    .programSize = 9
   },{
     .name = "One to Five",
     .goal = &goalSequenceOneToFive,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
-    .numData = 99
+    .numData = 99,
+    .programSize = 9
   },{
     .name = "Dotted line",
     .goal = &goalExitMinus17,
     .numFixed = 9,
     .fixed = fixedDottedLine,
     .numTurn = 6,
-    .numData = 2
+    .numData = 2,
+    .programSize = 9
   },{
     .name = "Busy Beaver 100",
     .goal = &goalRunLength100,
     .numFixed = 6,
     .fixed = fixedRun100,
     .numTurn = 0,
-    .numData = 6
+    .numData = 6,
+    .programSize = 9
   },{
     .name = "Count to 32",
     .goal = &goalOutput32,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
-    .numData = 99
+    .numData = 99,
+    .programSize = 9
   },{
     .name = "Busy Beaver 1000",
     .goal = &goalRunLength1000,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 99,
-    .numData = 99
+    .numData = 99,
+    .programSize = 9
+  },{
+    .name = "Busy Beaver 10M",
+    .goal = &goalRunLength10M,
+    .numFixed = 25,
+    .fixed = fixedRun10M,
+    .numTurn = 0,
+    .numData = 1,
+    .programSize = 7
   }
 };
 
@@ -266,9 +300,10 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[12]),
   Challenge(challengeSpecs[13]),
   Challenge(challengeSpecs[14]),
+  Challenge(challengeSpecs[15]),
 };
 
-const ChallengeSet challengesSet("Challenge", 9, challenges, numChallenges);
+const ChallengeSet challengesSet("Challenge", challenges, numChallenges);
 
 constexpr int numTutorials = 7;
 const ChallengeSpec tutorialSpecs[numTutorials] = {
@@ -278,49 +313,56 @@ const ChallengeSpec tutorialSpecs[numTutorials] = {
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   },{
     .name = "Turn Left",
     .goal = &goalExitMinus13,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 1,
-    .numData = 0
+    .numData = 0,
+    .programSize = 5
   },{
     .name = "Turn Right",
     .goal = &goalExit53,
     .numFixed = 1,
     .fixed = fixedTurnRight,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   },{
     .name = "Sharp Turn",
     .goal = &goalOutput1,
     .numFixed = 2,
     .fixed = fixedSharpTurn,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   },{
     .name = "Shift Right",
     .goal = &goalSequenceTwoOnes,
     .numFixed = 4,
     .fixed = fixedShiftRight,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   },{
     .name = "Decrement",
     .goal = &goalOutput0,
     .numFixed = 4,
     .fixed = fixedDecrement,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   },{
     .name = "Shift Left",
     .goal = &goalSequenceShiftLeft,
     .numFixed = 6,
     .fixed = fixedShiftLeft,
     .numTurn = 0,
-    .numData = 1
+    .numData = 1,
+    .programSize = 5
   }
 };
 
@@ -334,7 +376,7 @@ const Challenge tutorials[numTutorials] = {
   Challenge(tutorialSpecs[ 6]),
 };
 
-const ChallengeSet tutorialsSet("Tutorial", 5, tutorials, numTutorials);
+const ChallengeSet tutorialsSet("Tutorial", tutorials, numTutorials);
 
 
 //--------------------------------------------------------------------------------------------------
@@ -547,11 +589,10 @@ bool Challenge::isAchieved(Computer& computer) const {
 //--------------------------------------------------------------------------------------------------
 // ChallengeSet implementation
 
-ChallengeSet::ChallengeSet(const char* type, int programSize, const Challenge* challenges, int num) {
-  _challengeType = type;
-  _programSize = programSize;
-  _challenges = challenges;
-  _numChallenges = num;
+ChallengeSet::ChallengeSet(const char* type, const Challenge* challenges, int num) :
+  _challengeType(type),
+  _challenges(challenges),
+  _numChallenges(num) {
 }
 
 int ChallengeSet::indexOfChallenge(const Challenge* challenge) const {
