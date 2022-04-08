@@ -189,6 +189,7 @@ void RunController::update() {
 
   if (gb.buttons.pressed(BUTTON_UP)) {
     changeRunSpeed(+1);
+    _tapeShift = 0;
   }
   else if (gb.buttons.pressed(BUTTON_DOWN)) {
     changeRunSpeed(-1);

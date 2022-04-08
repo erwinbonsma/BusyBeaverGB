@@ -138,7 +138,7 @@ void drawData(Computer& computer, int newDesiredCenterAddress) {
     adjustDeltaToDesired(newDesiredCenterAddress);
   }
   else if (deltaToDesired != 0) {
-    deltaToDesired = (deltaToDesired * 4) / 5;
+    deltaToDesired = (deltaToDesired * 31) / 32;
   }
 
   // Place the selected value in the middle of the screen
