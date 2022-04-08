@@ -15,16 +15,14 @@ const int8_t dy[numDirections] = { 1, 0, -1, 0 };
  * that's fine as they are only used for drawing program activity.
  */
 void Computer::shiftExitCounts() {
-  for (int x = 0; x < _size; x++) {
-    for (int y = 0; y < _size; y++) {
-      for (int d = 0; d < numDirections; d++) {
-        uint8_t &exitCount = _exitCount[x][y][d];
-        // Ensure that exit count one remains non-zero.
-        if (exitCount > 1) {
-          exitCount >>= 1;
-        }
-      }
+  uint8_t* p = _exitCount;
+  uint8_t* q = p + numExitCounts;
+
+  while (p != q) {
+    if (*p > 1) {
+      *p >>= 1;
     }
+    ++p;
   }
 }
 
@@ -59,11 +57,12 @@ void Computer::reset() {
     _data[i] = 0;
   }
 
-  for (int x = 0; x < _size; x++) {
-    for (int y = 0; y < _size; y++) {
-      for (int d = 0; d < numDirections; d++) {
-        _exitCount[x][y][d] = 0;
-      }
+  {
+    uint8_t* p = _exitCount;
+    uint8_t* q = p + numExitCounts;
+    while (p != q) {
+      *p = 0;
+      p++;
     }
   }
 }
@@ -90,8 +89,7 @@ bool Computer::step() {
     if (pp.x < 0 || pp.y < 0 || pp.x >= _size || pp.y >= _size) {
       instruction = Instruction::Noop;
       _status = Status::Done;
-    }
-    else {
+    } else {
       instruction = _program[pp.x][pp.y];
     }
 
@@ -146,8 +144,10 @@ bool Computer::step() {
     }
   } while (_status == Status::Running && instruction == Instruction::Turn);
 
-  if (_numSteps++ > 0) {
-    uint8_t &exitCount = _exitCount[_pp.x][_pp.y][(int)pp.dir];
+  if (_numSteps++ > 0 && _status == Status::Running) {
+    uint8_t &exitCount = _exitCount[
+      (_pp.x * maxProgramSize + _pp.y) * numDirections + (int)pp.dir
+    ];
     exitCount++;
     if (exitCount == 255) {
       shiftExitCounts();

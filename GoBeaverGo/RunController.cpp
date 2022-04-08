@@ -229,8 +229,8 @@ void RunController::update() {
       if (++_ticksSinceLastStep >= _stepPeriod) {
         for (int i = 0; i < _stepsPerTick; i++) {
           computer.step();
-          _ticksSinceLastStep = 0;
         }
+        _ticksSinceLastStep = 0;
       }
     }
   } else {

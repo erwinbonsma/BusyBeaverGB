@@ -54,13 +54,15 @@ constexpr int dataSize = 4400;
 constexpr int16_t minDataValue = SHRT_MIN;
 constexpr int16_t maxDataValue = SHRT_MAX;
 
+constexpr int numExitCounts = maxProgramSize * maxProgramSize * numDirections;
+
 class Computer {
   // The program
   Instruction _program[maxProgramSize][maxProgramSize];
   uint8_t _size;
 
   // Tracks how often the program pointer exited in the given direction
-  uint8_t _exitCount[maxProgramSize][maxProgramSize][numDirections];
+  uint8_t _exitCount[numExitCounts];
 
   // Program pointer
   ProgramPointer _pp;
@@ -89,7 +91,9 @@ public:
   Instruction getInstruction(int x, int y) const { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
 
-  uint8_t getExitCount(int x, int y, Direction d) const { return _exitCount[x][y][(int)d]; }
+  uint8_t getExitCount(int x, int y, Direction d) const {
+    return _exitCount[(x * maxProgramSize + y) * numDirections + (int)d];
+  }
 
   ProgramPointer getProgramPointer() const { return _pp; }
 
