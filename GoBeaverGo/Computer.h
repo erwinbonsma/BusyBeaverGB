@@ -54,15 +54,16 @@ constexpr int dataSize = 4400;
 constexpr int16_t minDataValue = SHRT_MIN;
 constexpr int16_t maxDataValue = SHRT_MAX;
 
-constexpr int numExitCounts = maxProgramSize * maxProgramSize * numDirections;
+constexpr int visitCountDim = maxProgramSize - 1;
+constexpr int numVisitCounts = visitCountDim * visitCountDim * 2;
 
 class Computer {
   // The program
   Instruction _program[maxProgramSize][maxProgramSize];
   uint8_t _size;
 
-  // Tracks how often the program pointer exited in the given direction
-  uint8_t _exitCount[numExitCounts];
+  // Tracks how often the program pointer visited each path
+  uint8_t _visitCount[numVisitCounts];
 
   // Program pointer
   ProgramPointer _pp;
@@ -80,7 +81,7 @@ class Computer {
   Status _status;
   uint32_t _numSteps;
 
-  void shiftExitCounts();
+  void shiftVisitCounts();
 
 public:
   Computer();
@@ -91,8 +92,8 @@ public:
   Instruction getInstruction(int x, int y) const { return _program[x][y]; }
   void setInstruction(int x, int y, Instruction i) { _program[x][y] = i; }
 
-  uint8_t getExitCount(int x, int y, Direction d) const {
-    return _exitCount[(x * maxProgramSize + y) * numDirections + (int)d];
+  uint8_t getVisitCount(int x, int y, bool horizontal) const {
+    return _visitCount[(y * visitCountDim + x) * 2 + horizontal];
   }
 
   ProgramPointer getProgramPointer() const { return _pp; }

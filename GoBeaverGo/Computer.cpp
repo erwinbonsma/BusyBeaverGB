@@ -11,12 +11,12 @@
 const int8_t dx[numDirections] = { 0, 1, 0, -1 };
 const int8_t dy[numDirections] = { 1, 0, -1, 0 };
 
-/* Rescale exit counts to avoid overflows. This obviously loses accuracy, but
+/* Rescale visit counts to avoid overflows. This obviously loses accuracy, but
  * that's fine as they are only used for drawing program activity.
  */
-void Computer::shiftExitCounts() {
-  uint8_t* p = _exitCount;
-  uint8_t* q = p + numExitCounts;
+void Computer::shiftVisitCounts() {
+  uint8_t* p = _visitCount;
+  uint8_t* q = p + numVisitCounts;
 
   while (p != q) {
     if (*p > 1) {
@@ -58,8 +58,8 @@ void Computer::reset() {
   }
 
   {
-    uint8_t* p = _exitCount;
-    uint8_t* q = p + numExitCounts;
+    uint8_t* p = _visitCount;
+    uint8_t* q = p + numVisitCounts;
     while (p != q) {
       *p = 0;
       p++;
@@ -72,6 +72,10 @@ void Computer::setSize(uint8_t size) {
 
   clear();
 }
+
+const int dirToVisitCountOffset[4] = {
+  0, 1, -2 * visitCountDim, -1
+};
 
 bool Computer::step() {
   if (hasTerminated()) {
@@ -145,12 +149,12 @@ bool Computer::step() {
   } while (_status == Status::Running && instruction == Instruction::Turn);
 
   if (_numSteps++ > 0 && _status == Status::Running) {
-    uint8_t &exitCount = _exitCount[
-      (_pp.x * maxProgramSize + _pp.y) * numDirections + (int)pp.dir
+    uint8_t &visitCount = _visitCount[
+      (_pp.y * visitCountDim + _pp.x) * 2 + dirToVisitCountOffset[(int)pp.dir]
     ];
-    exitCount++;
-    if (exitCount == 255) {
-      shiftExitCounts();
+    visitCount++;
+    if (visitCount == 255) {
+      shiftVisitCounts();
     }
   }
 

@@ -291,21 +291,6 @@ void updateOrCreateBucketForVisit(uint8_t visits) {
   }
 }
 
-uint8_t getVisitCount(Computer& computer, int x, int y, bool horizontal) {
-  // Calculation such that sum fits in uint8_t and non-zero values remain non-zero
-  if (horizontal) {
-    return (uint8_t)((
-      (int)computer.getExitCount(x, y, Direction::Right) +
-      (int)computer.getExitCount(x + 1, y, Direction::Left) + 1
-    ) / 2);
-  } else {
-    return (uint8_t)((
-      (int)computer.getExitCount(x, y, Direction::Up) +
-      (int)computer.getExitCount(x, y + 1, Direction::Down) + 1
-    ) / 2);
-  }
-}
-
 void emptyBuckets() {
   numBuckets = 0;
   bucketListHeadIndex = EOL;
@@ -314,7 +299,7 @@ void emptyBuckets() {
 void fillVisitBuckets(Computer& computer, bool horizontal) {
   for (int x = 0; x < computer.getSize() - 1; x++) {
     for (int y = 0; y < computer.getSize() - 1; y++) {
-      uint8_t visits = getVisitCount(computer, x, y, horizontal);
+      uint8_t visits = computer.getVisitCount(x, y, horizontal);
       if (visits > 0) {
         updateOrCreateBucketForVisit(visits);
       }
@@ -378,7 +363,7 @@ void dumpBuckets() {
 void drawVisitCounts(Computer& computer, bool horizontal) {
   for (int x = 0; x < computer.getSize() - 1; x++) {
     for (int y = 0; y < computer.getSize() - 1; y++) {
-      uint8_t visits = getVisitCount(computer, x, y, horizontal);
+      uint8_t visits = computer.getVisitCount(x, y, horizontal);
       if (visits > 0) {
         int x0 = getDisplayX(x);
         int y0 = getDisplayY(y);
