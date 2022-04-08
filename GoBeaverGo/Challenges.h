@@ -56,6 +56,7 @@ public:
   int indexOfChallenge(const Challenge* challenge) const;
   const Challenge* nextChallenge(const Challenge* challenge) const;
   const Challenge* challengeAt(int index) const { return &_challenges[index]; }
+  const Challenge* lastChallenge() const { return &_challenges[_numChallenges - 1]; }
 };
 
 extern const ChallengeSet tutorialsSet;

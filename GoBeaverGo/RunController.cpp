@@ -237,12 +237,12 @@ void RunController::update() {
         _ticksSinceLastStep = 0;
       }
     }
-  } else {
-    if (_challengeCompleted) {
-      if (++_ticksSinceLastStep > 50) {
-        nextChallenge();
-      }
-    }
+  } else if (
+    _challengeCompleted
+    && activeChallenge != challengesSet.lastChallenge()
+    && ++_ticksSinceLastStep > 50
+  ) {
+    nextChallenge();
   }
 
   if (!hasTerminated && computer.hasTerminated()) {
