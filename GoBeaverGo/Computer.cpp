@@ -99,12 +99,24 @@ bool Computer::step() {
     switch (instruction) {
       case Instruction::Data:
         switch (pp.dir) {
-          case Direction::Up:
-            _data[(_dp + dataSize) % dataSize]++;
+          case Direction::Up: {
+            auto& val = _data[(_dp + dataSize) % dataSize];
+            if (val == maxDataValue) {
+              _status = Status::Error;
+            } else {
+              ++val;
+            }
             break;
-          case Direction::Down:
-            _data[(_dp + dataSize) % dataSize]--;
+          }
+          case Direction::Down: {
+            auto& val = _data[(_dp + dataSize) % dataSize];
+            if (val == minDataValue) {
+              _status = Status::Error;
+            } else {
+              --val;
+            }
             break;
+          }
           case Direction::Right:
             _dp++;
             _dp_max = max(_dp_max, _dp);
