@@ -14,13 +14,14 @@
 #include "Store.h"
 #include "Challenges.h"
 
-constexpr int maxEditMenuEntries = 5;
+constexpr int maxEditMenuEntries = 6;
 char const* const availableEditMenuEntries[maxEditMenuEntries] = {
   "Run",
   "Save",
   "Load",
   "Clear",
-  "Back to main menu"
+  "Back to main menu",
+  "Cancel"
 };
 char const* editMenuEntries[maxEditMenuEntries];
 
@@ -36,6 +37,7 @@ int populateEditMenu() {
 
   editMenuEntries[entry++] = availableEditMenuEntries[3];
   editMenuEntries[entry++] = availableEditMenuEntries[4];
+  editMenuEntries[entry++] = availableEditMenuEntries[5];
 
   return entry; // Returns number of entries
 }
@@ -68,6 +70,8 @@ void EditController::editMenu() {
       break;
     case 4:
       setController(&mainMenuController);
+      break;
+    case 5:
       break;
   }
 }

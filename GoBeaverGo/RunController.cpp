@@ -55,11 +55,12 @@ const uint8_t buttonData[] = {
 
 Image buttons(buttonData);
 
-constexpr int numRunMenuEntries = 3;
+constexpr int numRunMenuEntries = 4;
 char const* const runMenuEntries[numRunMenuEntries] = {
   "Edit",
   "Reset",
-  "Back to main menu"
+  "Back to main menu",
+  "Cancel"
 };
 
 void nextChallenge() {
@@ -86,6 +87,8 @@ void RunController::runMenu() {
       break;
     case 2:
       setController(&mainMenuController);
+      break;
+    case 3:
       break;
   }
 }
