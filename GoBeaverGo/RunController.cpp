@@ -193,10 +193,10 @@ void RunController::update() {
   else if (gb.buttons.pressed(BUTTON_DOWN)) {
     changeRunSpeed(-1);
   }
-  else if (gb.buttons.pressed(BUTTON_RIGHT)) {
+  else if (gb.buttons.repeat(BUTTON_RIGHT, 4)) {
     tryChangeTapeShift(+1);
   }
-  else if (gb.buttons.pressed(BUTTON_LEFT)) {
+  else if (gb.buttons.repeat(BUTTON_LEFT, 4)) {
     tryChangeTapeShift(-1);
   }
   else if (gb.buttons.released(BUTTON_A)) {
