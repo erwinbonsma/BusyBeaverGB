@@ -114,45 +114,51 @@ int getWidthOfAddress(int address) {
 }
 
 void adjustDeltaToDesired(int newDesiredCenterAddress) {
-  int delta = newDesiredCenterAddress > desiredCenterAddress ? 1 : -1;
+  int8_t delta = newDesiredCenterAddress > desiredCenterAddress ? 1 : -1;
 
-  int shift = 0;
-  int p = desiredCenterAddress;
-  shift += getWidthOfAddress(p) / 2;
-  shift += 2;
-  p += delta;
+  if (abs(deltaToDesired + 6 * (newDesiredCenterAddress - desiredCenterAddress)) > 64) {
+    // The delta is big and the desired address will not be visible.
+    // A quick and rough approximation suffices.
 
-  // Although unlikely, we may skip several addresses
-  while (p != newDesiredCenterAddress) {
-    shift += getWidthOfAddress(p);
+    // Adjust desired to current "center" address. This mitigates impact of inaccuracies
+    // when part of the delta is still based on (larger) actual value widths.
+    desiredCenterAddress -= deltaToDesired / 6;
+    deltaToDesired %= 6;
+
+    deltaToDesired += 6 * (newDesiredCenterAddress - desiredCenterAddress);
+  } else {
+    // Fine-grain calculation, based on actual value widths
+    int shift = 0;
+    int p = desiredCenterAddress;
+
+    shift = getWidthOfAddress(p) / 2;
     shift += 2;
     p += delta;
+  
+    while (p != newDesiredCenterAddress && shift < 32) {
+      shift += getWidthOfAddress(p);
+      shift += 2;
+      p += delta;
+    }
+
+    shift += getWidthOfAddress(p) / 2;
+    deltaToDesired += delta * shift;
   }
 
-  shift += getWidthOfAddress(p) / 2;
-
-  deltaToDesired += delta * shift;
   desiredCenterAddress = newDesiredCenterAddress;
 }
 
-void drawData(Computer& computer, int newDesiredCenterAddress) {
-  if (newDesiredCenterAddress != desiredCenterAddress) {
-    adjustDeltaToDesired(newDesiredCenterAddress);
-  }
-  else if (deltaToDesired != 0) {
-    deltaToDesired = (deltaToDesired * 31) / 32;
-  }
-
-  // Place the selected value in the middle of the screen
-  int x = 40 - getWidthOfAddress(desiredCenterAddress) / 2 + deltaToDesired;
+void drawData(int refAddress, int shift) { 
+  // Calculate the position of the selected value
+  int x = 40 - getWidthOfAddress(refAddress) / 2 + shift;
 
   // Find left-most data cell that fits on the screen
-  int address = desiredCenterAddress;
+  int address = refAddress;
   bool done = false;
-  while (!done) {
+  while (x > 0) {
     int delta = getWidthOfAddress(address - 1) + 2;
     if (x - delta < 0) {
-      done = true;
+      break;
     } else {
       x -= delta;
       address--;
@@ -168,27 +174,42 @@ void drawData(Computer& computer, int newDesiredCenterAddress) {
     if (address < computer.getMinDataAddress()) {
       char ch = (computer.getMaxDataAddress() - address < dataSize) ? '0' : '*';
       w = 4;
-      if (x + w < 80) {
+      if (x >= 0 && x + w < 80) {
         gb.display.print(ch);
       }
     }
     else if (address > computer.getMaxDataAddress()) {
       char ch = (address - computer.getMinDataAddress() < dataSize) ? '0' : '*';
       w = 4;
-      if (x + w < 80) {
+      if (x >= 0 && x + w < 80) {
         gb.display.print(ch);
       }
     }
     else {
       int val = computer.getData(address);
       w = getWidthOfValue(val);
-      if (x + w < 80) {
+      if (x >= 0 && x + w < 80) {
         gb.display.print(val, DEC);
       }
     }
 
     x += w + 2;
     address++;
+  }
+}
+
+void drawData(Computer& computer, int newDesiredCenterAddress) {
+  if (newDesiredCenterAddress != desiredCenterAddress) {
+    adjustDeltaToDesired(newDesiredCenterAddress);
+  }
+  if (deltaToDesired != 0) {
+    deltaToDesired = (deltaToDesired * 15) / 16;
+  }
+
+  if (abs(deltaToDesired) < 64) {
+    drawData(desiredCenterAddress, deltaToDesired);
+  } else {
+    drawData(desiredCenterAddress - deltaToDesired / 6, deltaToDesired % 6);
   }
 }
 
