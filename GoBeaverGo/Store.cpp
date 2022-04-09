@@ -37,7 +37,7 @@
  */
 #define BLOCK_FIRST_PROGRAM  16
 
-#define SAVE_FILE_VERSION  3
+#define SAVE_FILE_VERSION  4
 
 const SaveDefault savefileDefaults[10] = {
   { BLOCK_SAVE_FILE_VERSION, SAVETYPE_INT, SAVE_FILE_VERSION, 0},
@@ -54,34 +54,20 @@ const SaveDefault savefileDefaults[10] = {
   // Note: The size of the program BLOBS is specified using SAVECONF_DEFAULT_BLOBSIZE
 };
 
-void initSaveFileDefaults() {
-  gb.save.config(savefileDefaults);
+bool initSaveFileDefaults() {
+  gb.save.config(16 + programStorageSize, savefileDefaults);
 
   if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == SAVE_FILE_VERSION) {
-    return;
+    return false;
   }
 
-  // Update old save file data
-  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 1) {
-    int maxCompleted = gb.save.get(BLOCK_CHALLENGE_TRACKER);
-    if (maxCompleted > 0) {
-      // Decrease to reflect removal of first challenge
-      gb.save.set(BLOCK_CHALLENGE_TRACKER, maxCompleted - 1);
-    }
-    gb.save.set(BLOCK_SAVE_FILE_VERSION, 2);
-  }
-  if (gb.save.get(BLOCK_SAVE_FILE_VERSION) == 2) {
-    // Convert number of challenges to bitmask of challenges completed
-    int numCompleted = gb.save.get(BLOCK_CHALLENGE_TRACKER);
-    int bitMask = 0;
-    while (numCompleted-- > 0) {
-      bitMask <<= 1;
-      bitMask |= 1;
-    }
-    gb.save.set(BLOCK_CHALLENGE_TRACKER, bitMask);
-  }
+  // Wipe all challenge progress data as in Version 4 big changes were made to
+  // challenges (new ones added, old ones updated, order changed, etc).
+  gb.save.set(BLOCK_CHALLENGE_TRACKER, (int)0);
 
   gb.save.set(BLOCK_SAVE_FILE_VERSION, SAVE_FILE_VERSION);
+
+  return true;
 }
 
 int getNumCompletedChallenges(bool isTutorial) {

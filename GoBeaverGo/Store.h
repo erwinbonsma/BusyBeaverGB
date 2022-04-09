@@ -36,7 +36,7 @@ struct StorageManagement {
   const char* programNames[programStorageSize + 1];
 };
 
-void initSaveFileDefaults();
+bool initSaveFileDefaults();
 
 // Signals that the given challenge has been completed.
 void recordChallengeCompleted(int index, bool isTutorial);

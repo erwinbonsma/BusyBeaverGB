@@ -14,7 +14,9 @@ Computer computer;
 void setup() {
   gb.begin();
 
-  initSaveFileDefaults();
+  if ( initSaveFileDefaults()) {
+    gb.gui.popup("Save file patched", 40);
+  }
 
   setController(&mainMenuController);
 }
@@ -26,4 +28,3 @@ void loop() {
   activeController->update();
   activeController->draw();
 }
-
