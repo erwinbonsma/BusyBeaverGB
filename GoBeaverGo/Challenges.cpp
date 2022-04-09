@@ -221,6 +221,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 26,
     .programSize = 9
   },{
+    .name = "Dotted line",
+    .goal = &goalExitMinus17,
+    .numFixed = 9,
+    .fixed = fixedDottedLine,
+    .numTurn = 3,
+    .numData = 2,
+    .programSize = 9
+  },{
     .name = "Fog bank",
     .goal = &goalExitMinus17,
     .numFixed = 9,
@@ -243,14 +251,6 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = fixedFiveOnes,
     .numTurn = 10,
     .numData = 0,
-    .programSize = 9
-  },{
-    .name = "Dotted line",
-    .goal = &goalExitMinus17,
-    .numFixed = 9,
-    .fixed = fixedDottedLine,
-    .numTurn = 6,
-    .numData = 2,
     .programSize = 9
   },{
     .name = "Busy Beaver 100",
