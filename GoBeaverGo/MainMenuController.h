@@ -20,8 +20,10 @@ struct MainMenuMemory {
 
 class MainMenuController : public Controller {
   int _selectedEntry = 0;
+  bool _ignoreButtonRelease;
 
 public:
+  void activate();
   void update();
   void draw();
 };
