@@ -10,8 +10,7 @@ RunController runController;
 EditController editController;
 MainMenuController mainMenuController;
 IntroController introController;
+StatsController statsController;
 HelpController helpController;
-AboutController aboutController;
 
 Controller *activeController;
-

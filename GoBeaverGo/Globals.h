@@ -12,7 +12,7 @@
 #include "MainMenuController.h"
 #include "IntroController.h"
 #include "HelpController.h"
-#include "AboutController.h"
+#include "StatsController.h"
 
 class Computer;
 extern Computer computer;
@@ -21,10 +21,9 @@ extern RunController runController;
 extern EditController editController;
 extern MainMenuController mainMenuController;
 extern IntroController introController;
+extern StatsController statsController;
 extern HelpController helpController;
-extern AboutController aboutController;
 
 extern Controller* activeController;
 
 #endif
-

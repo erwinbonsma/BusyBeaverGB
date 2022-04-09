@@ -17,8 +17,8 @@ char const* const mainMenuEntries[numMainMenuEntries] = {
   "Tutorial",
   "Challenges",
   "Experiment",
-  "Help",
-  "About"
+  "Stats",
+  "Help"
 };
 
 const uint8_t goBeaverGoData[] = {
@@ -126,10 +126,10 @@ void MainMenuController::update() {
         editController.reset();
         break;
       case 3:
-        setController(&helpController);
+        setController(&statsController);
         break;
       case 4:
-        setController(&aboutController);
+        setController(&helpController);
         break;
       default:
         break;

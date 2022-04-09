@@ -4,7 +4,7 @@
  * Copyright 2019, Erwin Bonsma
  */
 
-#include "AboutController.h"
+#include "StatsController.h"
 
 #include <Gamebuino-Meta.h>
 
@@ -13,7 +13,7 @@
 #include "Drawing.h"
 #include "Store.h"
 
-void AboutController::update() {
+void StatsController::update() {
   if (gb.buttons.released(BUTTON_A)) {
     setController(&mainMenuController);
   }
@@ -22,13 +22,13 @@ void AboutController::update() {
 char const* const labels[6] = {
   "Tutorials",
   "Challenges",
-  "Longest run",
-  "Lowest output",
-  "Highest output",
-  "Longest sequence"
+  "Min output",
+  "Max output",
+  "Max run len",
+  "Max seq len"
 };
 
-void AboutController::draw() {
+void StatsController::draw() {
   gb.display.drawImage(8, 0, goBeaverGoImage);
 
   gb.display.setColor(DARKBLUE);
@@ -60,11 +60,11 @@ void AboutController::draw() {
   gb.display.printf("%2d/%2d\n", getNumCompletedChallenges(false), challengesSet.size());
 
   gb.display.setCursor(47, 38);
-  gb.display.printf("%8d\n", getLongestRun());
-  gb.display.setCursorX(47);
   gb.display.printf("%8d\n", getLowestOutput());
   gb.display.setCursorX(47);
   gb.display.printf("%8d\n", getHighestOutput());
+  gb.display.setCursorX(47);
+  gb.display.printf("%8d\n", getLongestRun());
   gb.display.setCursorX(47);
   gb.display.printf("%8d\n", getLongestSequence());
 }

@@ -9,8 +9,7 @@
 
 #include "Controller.h"
 
-class AboutController : public Controller {
-
+class StatsController : public Controller {
 public:
   void update();
   void draw();
