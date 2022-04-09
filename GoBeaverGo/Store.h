@@ -11,7 +11,7 @@
 
 class Computer;
 
-constexpr int programStorageSize = 16;
+constexpr int programStorageSize = 64;
 constexpr int maxProgramNameLength = 20; // Includes terminating \0
 
 // 5 instructions per byte (as 5 * 3 = 243 < 255)
