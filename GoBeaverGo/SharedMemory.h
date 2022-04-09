@@ -9,6 +9,7 @@
 
 #include "Computer.h"
 #include "MainMenuController.h"
+#include "StatsController.h"
 #include "Store.h"
 
 struct ExecutionMemory {
@@ -18,6 +19,7 @@ struct ExecutionMemory {
 union SharedMemory {
   ExecutionMemory execution;
   MainMenuMemory main_menu;
+  StatsMemory stats;
   StorageManagement storage;
 };
 

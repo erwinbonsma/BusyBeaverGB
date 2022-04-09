@@ -11,6 +11,7 @@
 #include "Globals.h"
 #include "Challenges.h"
 #include "Drawing.h"
+#include "SharedMemory.h"
 #include "Store.h"
 
 void StatsController::update() {
@@ -24,9 +25,18 @@ char const* const labels[6] = {
   "Challenges",
   "Min output",
   "Max output",
-  "Max run len",
-  "Max seq len"
+  "Max runlen",
+  "Max seqlen"
 };
+
+void StatsController::activate() {
+  shared_mem.stats.min_value = getLowestOutput();
+  shared_mem.stats.max_value = getHighestOutput();
+  shared_mem.stats.max_run_len = getLongestRun();
+  shared_mem.stats.max_seq_len = getLongestSequence();
+  shared_mem.stats.num_completed_tutorials = getNumCompletedChallenges(true);
+  shared_mem.stats.num_completed_challenges = getNumCompletedChallenges(false);
+}
 
 void StatsController::draw() {
   gb.display.drawImage(8, 0, goBeaverGoImage);
@@ -55,16 +65,16 @@ void StatsController::draw() {
 
   gb.display.setColor(LIGHTBLUE);
   gb.display.setCursor(59, 16);
-  gb.display.printf("%2d/%2d\n", getNumCompletedChallenges(true), tutorialsSet.size());
+  gb.display.printf("%2d/%2d\n", shared_mem.stats.num_completed_tutorials, tutorialsSet.size());
   gb.display.setCursorX(59);
-  gb.display.printf("%2d/%2d\n", getNumCompletedChallenges(false), challengesSet.size());
+  gb.display.printf("%2d/%2d\n", shared_mem.stats.num_completed_challenges, challengesSet.size());
 
   gb.display.setCursor(47, 38);
-  gb.display.printf("%8d\n", getLowestOutput());
+  gb.display.printf("%8d\n", shared_mem.stats.min_value);
   gb.display.setCursorX(47);
-  gb.display.printf("%8d\n", getHighestOutput());
+  gb.display.printf("%8d\n", shared_mem.stats.max_value);
   gb.display.setCursorX(47);
-  gb.display.printf("%8d\n", getLongestRun());
+  gb.display.printf("%8d\n", shared_mem.stats.max_run_len);
   gb.display.setCursorX(47);
-  gb.display.printf("%8d\n", getLongestSequence());
+  gb.display.printf("%8d\n", shared_mem.stats.max_seq_len);
 }
