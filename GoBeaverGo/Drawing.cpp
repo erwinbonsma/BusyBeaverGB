@@ -116,9 +116,8 @@ int getWidthOfAddress(int address) {
 void adjustDeltaToDesired(int newDesiredCenterAddress) {
   int8_t delta = newDesiredCenterAddress > desiredCenterAddress ? 1 : -1;
 
-  if (abs(deltaToDesired + 6 * (newDesiredCenterAddress - desiredCenterAddress)) > 64) {
-    // The delta is big and the desired address will not be visible.
-    // A quick and rough approximation suffices.
+  if (abs(deltaToDesired) + 6 * abs(newDesiredCenterAddress - desiredCenterAddress) > 64) {
+    // The delta is big. A quick and rough approximation suffices.
 
     // Adjust desired to current "center" address. This mitigates impact of inaccuracies
     // when part of the delta is still based on (larger) actual value widths.
