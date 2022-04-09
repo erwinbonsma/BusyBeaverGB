@@ -118,6 +118,15 @@ const uint8_t fixedDottedLine[9] = {
 const uint8_t fixedSevenAteNine[4] = {
   7|TURN, 9|TURN, 71|TURN, 78|TURN
 };
+const uint8_t fixedFigureEight[29] = {
+   0|DATA,  9|DATA, 27|DATA, 36|DATA, 54|DATA, 63|DATA,
+   8|DATA, 17|DATA, 35|DATA, 44|DATA, 62|DATA, 71|DATA,
+  20|DATA, 29|DATA, 47|DATA, 56|DATA,
+  24|DATA, 33|DATA, 51|DATA, 60|DATA,
+  12|DATA, 13|DATA, 14|DATA,
+  39|DATA, 40|DATA, 41|DATA,
+  66|DATA, 67|DATA, 68|DATA
+};
 const uint8_t fixedRun100[5] = { 0|DATA, 9|DATA, 18|DATA, 27|DATA, 36|DATA };
 const uint8_t fixedRun10M[25] = {
    43|TURN, 45|TURN, 46|TURN,
@@ -137,6 +146,7 @@ const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
 const OutputValueGoal goalOutput0(0, Comparison::Equals);
 const OutputValueGoal goalOutput1(1, Comparison::Equals);
+const OutputValueGoal goalOutput8(8, Comparison::Equals);
 const OutputValueGoal goalOutput12(12, Comparison::Equals);
 const OutputValueGoal goalOutput16(16, Comparison::Equals);
 const OutputValueGoal goalOutputMinus8(-8, Comparison::Equals);
@@ -157,7 +167,7 @@ const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 
-constexpr int numChallenges = 17;
+constexpr int numChallenges = 18;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -208,7 +218,7 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 16,
     .programSize = 9
   },{
-    .name = "Countdown to -8",
+    .name = "Countdown",
     .goal = &goalOutputMinus8,
     .numFixed = 0,
     .fixed = nullptr,
@@ -246,6 +256,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = fixedFogBank,
     .numTurn = 5,
     .numData = 1,
+    .programSize = 9
+  },{
+    .name = "Eight",
+    .goal = &goalOutput8,
+    .numFixed = 29,
+    .fixed = fixedFigureEight,
+    .numTurn = 6,
+    .numData = 0,
     .programSize = 9
   },{
     .name = "One to Five",
@@ -316,6 +334,7 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[14]),
   Challenge(challengeSpecs[15]),
   Challenge(challengeSpecs[16]),
+  Challenge(challengeSpecs[17]),
 };
 
 const ChallengeSet challengesSet("Challenge", challenges, numChallenges);
