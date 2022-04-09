@@ -112,7 +112,7 @@ const uint8_t fixedDottedLine[9] = {
 const uint8_t fixedSevenAteNine[4] = {
   7|TURN, 9|TURN, 71|TURN, 78|TURN
 };
-const uint8_t fixedRun100[6] = { 7|TURN, 10|TURN, 44|TURN, 45|TURN, 71|TURN, 74|TURN };
+const uint8_t fixedRun100[5] = { 0|DATA, 9|DATA, 18|DATA, 27|DATA, 36|DATA };
 const uint8_t fixedRun10M[25] = {
    43|TURN, 45|TURN, 46|TURN,
    35|TURN, /*36|DATA,*/ 38|DATA, 40|TURN,
@@ -252,10 +252,10 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
   },{
     .name = "Busy Beaver 100",
     .goal = &goalRunLength100,
-    .numFixed = 6,
+    .numFixed = 5,
     .fixed = fixedRun100,
-    .numTurn = 0,
-    .numData = 6,
+    .numTurn = 5,
+    .numData = 1,
     .programSize = 9
   },{
     .name = "Count to 32",
