@@ -102,6 +102,9 @@ const uint8_t fixedCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
 const uint8_t fixedExit4[9] = {
   3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
 };
+const uint8_t fixedDiagonal[9] = {
+  0|DATA, 10|DATA, 20|DATA, 30|DATA, 40|DATA, 50|DATA, 60|DATA, 70|DATA, 80|DATA,
+};
 const uint8_t fixedFiveOnes[16] = {
   0|DATA, 2|DATA, 8|DATA, 11|DATA, 21|DATA, 24|DATA, 28|DATA, 30|DATA,
   37|DATA, 40|DATA, 50|DATA, 56|DATA, 60|DATA, 70|DATA, 72|DATA, 80|DATA
@@ -127,9 +130,8 @@ const uint8_t fixedRun10M[25] = {
 };
 
 
-const int8_t sequenceTwoOnes[2] = { 1, 1 };
 const int8_t sequenceShiftLeft[2] = { -1, 1 };
-const int8_t sequenceFiveOnes[5] = { 1, 1, 1, 1, 1 };
+const int8_t sequenceOnes[5] = { 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
@@ -147,14 +149,15 @@ const ExitGoal goalExitMinus17(-1, 7);
 const ExitGoal goalExitMinus13(-1, 3);
 const SequenceGoal goalSequenceSevenAteNine(7, sequenceSevenAteNine);
 const SequenceGoal goalSequenceOneToFive(5, sequenceOneToFive);
-const SequenceGoal goalSequenceTwoOnes(2, sequenceTwoOnes);
-const SequenceGoal goalSequenceFiveOnes(5, sequenceFiveOnes);
+const SequenceGoal goalSequenceTwoOnes(2, sequenceOnes);
+const SequenceGoal goalSequenceFourOnes(4, sequenceOnes);
+const SequenceGoal goalSequenceFiveOnes(5, sequenceOnes);
 const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
 const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 
-constexpr int numChallenges = 16;
+constexpr int numChallenges = 17;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -211,6 +214,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = nullptr,
     .numTurn = 8,
     .numData = 10,
+    .programSize = 9
+  },{
+    .name = "Diagonal",
+    .goal = &goalSequenceFourOnes,
+    .numFixed = 9,
+    .fixed = fixedDiagonal,
+    .numTurn = 7,
+    .numData = 0,
     .programSize = 9
   },{
     .name = "Seven Ate Nine",
@@ -304,6 +315,7 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[13]),
   Challenge(challengeSpecs[14]),
   Challenge(challengeSpecs[15]),
+  Challenge(challengeSpecs[16]),
 };
 
 const ChallengeSet challengesSet("Challenge", challenges, numChallenges);
