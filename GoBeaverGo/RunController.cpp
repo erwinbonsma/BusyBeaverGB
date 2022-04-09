@@ -187,11 +187,11 @@ void RunController::update() {
     return;
   }
 
-  if (gb.buttons.pressed(BUTTON_UP)) {
+  if (gb.buttons.repeat(BUTTON_UP, 4)) {
     changeRunSpeed(+1);
     _tapeShift = 0;
   }
-  else if (gb.buttons.pressed(BUTTON_DOWN)) {
+  else if (gb.buttons.repeat(BUTTON_DOWN, 4)) {
     changeRunSpeed(-1);
   }
   else if (gb.buttons.repeat(BUTTON_RIGHT, 4)) {
