@@ -99,9 +99,12 @@ const uint8_t* fixedDecrement = fixedShiftRight;
 const uint8_t fixedShiftLeft[6] = { 2|DATA, 3|TURN, 6|TURN, 15|DATA, 19|TURN, 20|TURN };
 
 const uint8_t fixedCountTo12[4] = { 6|TURN, 10|TURN, 52|TURN, 54|TURN };
-const uint8_t fixedLadder[4] = { 0|DATA, 1|DATA, 2|TURN, 9|TURN };
 const uint8_t fixedExit4[9] = {
   3|TURN, 17|TURN, 24|TURN, 29|TURN, 41|TURN, 45|TURN, 55|TURN, 70|TURN, 76|TURN
+};
+const uint8_t fixedFiveOnes[16] = {
+  0|DATA, 2|DATA, 8|DATA, 11|DATA, 21|DATA, 24|DATA, 28|DATA, 30|DATA,
+  37|DATA, 40|DATA, 50|DATA, 56|DATA, 60|DATA, 70|DATA, 72|DATA, 80|DATA
 };
 const uint8_t fixedFogBank[9] = {
   54|DATA, 55|DATA, 56|DATA, 57|DATA, 58|DATA, 59|DATA, 60|DATA, 61|DATA, 62|DATA
@@ -126,7 +129,7 @@ const uint8_t fixedRun10M[25] = {
 
 const int8_t sequenceTwoOnes[2] = { 1, 1 };
 const int8_t sequenceShiftLeft[2] = { -1, 1 };
-const int8_t sequenceLadder[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
+const int8_t sequenceFiveOnes[5] = { 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
@@ -142,10 +145,10 @@ const ExitGoal goalExit49(4, 9);
 const ExitGoal goalExit53(5, 3);
 const ExitGoal goalExitMinus17(-1, 7);
 const ExitGoal goalExitMinus13(-1, 3);
-const SequenceGoal goalSequenceLadder(8, sequenceLadder);
 const SequenceGoal goalSequenceSevenAteNine(7, sequenceSevenAteNine);
 const SequenceGoal goalSequenceOneToFive(5, sequenceOneToFive);
 const SequenceGoal goalSequenceTwoOnes(2, sequenceTwoOnes);
+const SequenceGoal goalSequenceFiveOnes(5, sequenceFiveOnes);
 const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
 const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
@@ -163,6 +166,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .programSize = 9
   },{
     .name = "Exit 1",
+    .goal = &goalExit19,
+    .numFixed = 0,
+    .fixed = nullptr,
+    .numTurn = 2,
+    .numData = 2,
+    .programSize = 9
+  },{
+    .name = "Exit 2",
     .goal = &goalExit49,
     .numFixed = 0,
     .fixed = nullptr,
@@ -170,28 +181,12 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 1,
     .programSize = 9
   },{
-    .name = "Exit 2",
+    .name = "Exit 3",
     .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 6,
     .numData = 1,
-    .programSize = 9
-  },{
-    .name = "Ladder",
-    .goal = &goalSequenceLadder,
-    .numFixed = 4,
-    .fixed = fixedLadder,
-    .numTurn = 13,
-    .numData = 13,
-    .programSize = 9
-  },{
-    .name = "Exit 3",
-    .goal = &goalExit19,
-    .numFixed = 0,
-    .fixed = nullptr,
-    .numTurn = 2,
-    .numData = 2,
     .programSize = 9
   },{
     .name = "Exit 4",
@@ -240,6 +235,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .fixed = nullptr,
     .numTurn = 99,
     .numData = 99,
+    .programSize = 9
+  },{
+    .name = "Five ones",
+    .goal = &goalSequenceFiveOnes,
+    .numFixed = 16,
+    .fixed = fixedFiveOnes,
+    .numTurn = 10,
+    .numData = 0,
     .programSize = 9
   },{
     .name = "Dotted line",
