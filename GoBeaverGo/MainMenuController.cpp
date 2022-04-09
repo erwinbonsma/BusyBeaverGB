@@ -68,7 +68,7 @@ const uint8_t iconData[] = {
 };
 Image iconImage = Image(iconData);
 
-void selectChallenge() {
+bool selectChallenge() {
   auto& challengeMenuEntries = shared_mem.main_menu.challengeMenuEntries;
   auto& challengesMenuTitleBuf = shared_mem.main_menu.challengesMenuTitleBuf;
 
@@ -86,14 +86,21 @@ void selectChallenge() {
   for (int i = 0; i < numOptions; i++) {
     challengeMenuEntries[i] = activeChallengeSet->challengeAt(i)->name();
   }
+  challengeMenuEntries[numOptions] = "Cancel";
 
   snprintf(
     challengesMenuTitleBuf, sizeof(challengesMenuTitleBuf),
     "Select %s", activeChallengeSet->challengeType()
   );
-  int selected = gb.gui.menu(challengesMenuTitleBuf, challengeMenuEntries, numOptions);
+  int selected = gb.gui.menu(challengesMenuTitleBuf, challengeMenuEntries, numOptions + 1);
 
-  activeChallenge = activeChallengeSet->challengeAt(selected);
+  if (selected == numOptions) {
+    // Cancel
+    return false;
+  } else {
+    activeChallenge = activeChallengeSet->challengeAt(selected);
+    return true;
+  }
 }
 
 void MainMenuController::activate() {
@@ -116,14 +123,16 @@ void MainMenuController::update() {
       case 0:
         activeChallengeSet = &tutorialsSet;
         runController.setRunSpeed(2);
-        selectChallenge();
-        setController(&introController);
+        if (selectChallenge()) {
+          setController(&introController);
+        }
         break;
       case 1:
         activeChallengeSet = &challengesSet;
         runController.setRunSpeed(4);
-        selectChallenge();
-        setController(&introController);
+        if (selectChallenge()) {
+          setController(&introController);
+        }
         break;
       case 2:
         activeChallengeSet = nullptr;
