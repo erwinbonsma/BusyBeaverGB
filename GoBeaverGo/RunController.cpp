@@ -138,6 +138,53 @@ void RunController::tryChangeTapeShift(int delta) {
   }
 }
 
+void RunController::decayLedActivation() {
+  _ledActivation.inc >>= 1;
+  _ledActivation.dec >>= 1;
+  _ledActivation.shr >>= 1;
+  _ledActivation.shl >>= 1;
+}
+
+void RunController::updateLedActivation() {
+  ExecutionStats stats = computer.getExecutionStats();
+
+  if (stats.inc != stats.dec) {
+    if (stats.inc > stats.dec) {
+      _ledActivation.inc |= (uint8_t)((uint32_t)255 * (stats.inc - stats.dec) / (stats.inc + stats.dec));
+    } else {
+      _ledActivation.dec |= (uint8_t)((uint32_t)255 * (stats.dec - stats.inc) / (stats.inc + stats.dec));
+    }
+  }
+  if (stats.shr != stats.shl) {
+    if (stats.shr > stats.shl) {
+      _ledActivation.shr |= (uint8_t)((uint32_t)255 * (stats.shr - stats.shl) / (stats.shr + stats.shl));
+    } else {
+      _ledActivation.shl |= (uint8_t)((uint32_t)255 * (stats.shl - stats.shr) / (stats.shr + stats.shl));
+    }
+  }
+
+  computer.resetExecutionStats();
+}
+
+void RunController::drawLeds() {
+  gb.lights.setColor(gb.createColor(_ledActivation.inc, 0, 0));
+  gb.lights.drawPixel(0, 0);
+  gb.lights.drawPixel(1, 0);
+
+  gb.lights.setColor(gb.createColor(0, 0, _ledActivation.dec));
+  gb.lights.drawPixel(0, 3);
+  gb.lights.drawPixel(1, 3);
+
+  gb.lights.setColor(gb.createColor(0, _ledActivation.shl, 0));
+  gb.lights.drawPixel(0, 1);
+  gb.lights.drawPixel(0, 2);
+
+  gb.lights.setColor(gb.createColor(0, _ledActivation.shr, 0));
+  gb.lights.drawPixel(1, 1);
+  gb.lights.drawPixel(1, 2);
+}
+
+
 char popupBuf[20];
 
 void RunController::handleProgramTermination() {
@@ -182,6 +229,13 @@ void RunController::activate() {
 }
 
 void RunController::update() {
+  {
+    int md = !_paused ? min(_stepPeriod, 4) : 4;
+    if (gb.frameCount % md == 0) {
+      decayLedActivation();
+    }
+  }
+
   if (gb.buttons.pressed(BUTTON_MENU)) {
     runMenu();
     return;
@@ -215,6 +269,7 @@ void RunController::update() {
         break;
       case RunAction::Step:
         computer.step();
+        updateLedActivation();
         _tapeShift = 0;
         _ticksSinceLastStep = 0;
         break;
@@ -234,6 +289,7 @@ void RunController::update() {
         for (int i = 0; i < _stepsPerTick; i++) {
           computer.step();
         }
+        updateLedActivation();
         _ticksSinceLastStep = 0;
       }
     }
@@ -269,6 +325,15 @@ void RunController::draw() {
 
   drawSpeedBar(_runSpeed);
 
+//  gb.display.setColor(WHITE);
+//  gb.display.setCursor(0, 52);
+//  gb.display.printf("%3d/%3d %3d/%3d",
+//    _ledActivation.shl, _ledActivation.shr,
+//    _ledActivation.dec, _ledActivation.inc
+//  );
+
   buttons.setFrame((int)activeActionButtonA());
   gb.display.drawImage(73, 33, buttons);
+
+  drawLeds();
 }

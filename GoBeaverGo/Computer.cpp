@@ -65,6 +65,8 @@ void Computer::reset() {
       p++;
     }
   }
+
+  resetExecutionStats();
 }
 
 void Computer::setSize(uint8_t size) {
@@ -79,7 +81,7 @@ const int dirToVisitCountOffset[4] = {
 
 bool Computer::step() {
   if (hasTerminated()) {
-    return true;
+    return false;
   }
   _status = Status::Running;
 
@@ -102,6 +104,7 @@ bool Computer::step() {
         switch (pp.dir) {
           case Direction::Up: {
             auto& val = _data[(_dp + dataSize) % dataSize];
+            ++_executionStats.inc;
             if (val == maxDataValue) {
               _status = Status::Error;
             } else {
@@ -111,6 +114,7 @@ bool Computer::step() {
           }
           case Direction::Down: {
             auto& val = _data[(_dp + dataSize) % dataSize];
+            ++_executionStats.dec;
             if (val == minDataValue) {
               _status = Status::Error;
             } else {
@@ -119,14 +123,16 @@ bool Computer::step() {
             break;
           }
           case Direction::Right:
-            _dp++;
+            ++_dp;
+            ++_executionStats.shr;
             _dp_max = max(_dp_max, _dp);
             if ((_dp_max - _dp_min + 1) >= dataSize) {
               _status = Status::Error;
             }
             break;
           case Direction::Left:
-            _dp--;
+            --_dp;
+            ++_executionStats.shl;
             _dp_min = min(_dp_min, _dp);
             if ((_dp_max - _dp_min + 1) >= dataSize) {
               _status = Status::Error;

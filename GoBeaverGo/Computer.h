@@ -37,6 +37,13 @@ struct ProgramPointer {
   Direction dir;
 };
 
+struct ExecutionStats {
+  uint16_t inc;
+  uint16_t dec;
+  uint16_t shr;
+  uint16_t shl;
+};
+
 constexpr int maxProgramSize = 9;
 
 /* The size of the data tape.
@@ -60,16 +67,24 @@ constexpr int numVisitCounts = visitCountDim * visitCountDim * 2;
 class Computer {
   // The program
   Instruction _program[maxProgramSize][maxProgramSize];
-  uint8_t _size;
 
   // Tracks how often the program pointer visited each path
   uint8_t _visitCount[numVisitCounts];
 
+  // The data (a cyclic buffer)
+  int16_t (&_data)[dataSize];
+
   // Program pointer
   ProgramPointer _pp;
 
-  // The data (a cyclic buffer)
-  int16_t (&_data)[dataSize];
+  // Execution stats
+  ExecutionStats _executionStats;
+
+  // The program's size
+  uint8_t _size;
+
+  // Execution status
+  Status _status;
 
   // Data pointer
   int16_t _dp;
@@ -78,7 +93,6 @@ class Computer {
   int16_t _dp_min;
   int16_t _dp_max;
 
-  Status _status;
   uint32_t _numSteps;
 
   void shiftVisitCounts();
@@ -103,6 +117,9 @@ public:
 
   // Resets the execution state
   void reset();
+
+  void resetExecutionStats() { _executionStats = ExecutionStats(); }
+  ExecutionStats getExecutionStats() const { return _executionStats; }
 
   int getMinDataAddress() const { return _dp_min; }
   int getMaxDataAddress() const { return _dp_max; }
