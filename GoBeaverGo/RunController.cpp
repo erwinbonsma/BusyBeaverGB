@@ -138,11 +138,11 @@ void RunController::tryChangeTapeShift(int delta) {
   }
 }
 
-void RunController::decayLedActivation() {
-  _ledActivation.inc >>= 1;
-  _ledActivation.dec >>= 1;
-  _ledActivation.shr >>= 1;
-  _ledActivation.shl >>= 1;
+void RunController::decayLedActivation(uint8_t amount) {
+  _ledActivation.inc -= min(_ledActivation.inc, amount);
+  _ledActivation.dec -= min(_ledActivation.dec, amount);
+  _ledActivation.shr -= min(_ledActivation.shr, amount);
+  _ledActivation.shl -= min(_ledActivation.shl, amount);
 }
 
 void RunController::updateLedActivation() {
@@ -150,16 +150,28 @@ void RunController::updateLedActivation() {
 
   if (stats.inc != stats.dec) {
     if (stats.inc > stats.dec) {
-      _ledActivation.inc |= (uint8_t)((uint32_t)255 * (stats.inc - stats.dec) / (stats.inc + stats.dec));
+      _ledActivation.inc = max(
+        (uint8_t)((uint32_t)255 * (stats.inc - stats.dec) / (stats.inc + stats.dec)),
+        _ledActivation.inc
+      );
     } else {
-      _ledActivation.dec |= (uint8_t)((uint32_t)255 * (stats.dec - stats.inc) / (stats.inc + stats.dec));
+      _ledActivation.dec = max(
+        (uint8_t)((uint32_t)255 * (stats.dec - stats.inc) / (stats.inc + stats.dec)),
+        _ledActivation.dec
+      );
     }
   }
   if (stats.shr != stats.shl) {
     if (stats.shr > stats.shl) {
-      _ledActivation.shr |= (uint8_t)((uint32_t)255 * (stats.shr - stats.shl) / (stats.shr + stats.shl));
+      _ledActivation.shr = max(
+        (uint8_t)((uint32_t)255 * (stats.shr - stats.shl) / (stats.shr + stats.shl)),
+        _ledActivation.shr
+      );
     } else {
-      _ledActivation.shl |= (uint8_t)((uint32_t)255 * (stats.shl - stats.shr) / (stats.shr + stats.shl));
+      _ledActivation.shl = max(
+        (uint8_t)((uint32_t)255 * (stats.shl - stats.shr) / (stats.shr + stats.shl)),
+        _ledActivation.shl
+      );
     }
   }
 
@@ -229,12 +241,7 @@ void RunController::activate() {
 }
 
 void RunController::update() {
-  {
-    int md = !_paused ? min(_stepPeriod, 4) : 4;
-    if (gb.frameCount % md == 0) {
-      decayLedActivation();
-    }
-  }
+  decayLedActivation(8);
 
   if (gb.buttons.pressed(BUTTON_MENU)) {
     runMenu();

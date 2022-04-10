@@ -47,7 +47,7 @@ class RunController : public Controller {
 
   void reset();
 
-  void decayLedActivation();
+  void decayLedActivation(uint8_t amount);
   void updateLedActivation();
   void drawLeds();
 
