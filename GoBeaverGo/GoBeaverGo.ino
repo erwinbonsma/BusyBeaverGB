@@ -24,6 +24,7 @@ void setup() {
 void loop() {
   while(!gb.update());
   gb.display.clear();
+  gb.lights.clear();
 
   activeController->update();
   activeController->draw();
