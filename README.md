@@ -15,13 +15,14 @@ The language is based on [2L][] with some minor modifications.
   * Variable run speed
   * Intensity-based path tracking
 * Tutorial Mode featuring seven challenges
-* Challenges Mode featuring fifteen puzzles
+* Challenges Mode featuring twenty puzzles
   * Four types of goals: Output Value, Reach Exit, Run Length, and Create Sequence
   * Progress is stored
 * Experiment Mode
   * Ability to Save and Load programs
   * Four metrics: Longest Run, Highest Output Value, Lowest Output Value, and Longest Sequence
   * Progress is stored
+* Light effects
 * Basic help
 
 ## Programming language details
