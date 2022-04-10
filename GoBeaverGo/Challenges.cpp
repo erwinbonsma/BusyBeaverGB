@@ -181,20 +181,20 @@ const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 constexpr int numChallenges = 19;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
-    .name = "Count to 12",
-    .goal = &goalOutput12,
-    .numFixed = 4,
-    .fixed = fixedCountTo12,
-    .numTurn = 0,
-    .numData = 12,
-    .programSize = 9
-  },{
     .name = "Exit 1",
     .goal = &goalExit19,
     .numFixed = 0,
     .fixed = nullptr,
     .numTurn = 2,
     .numData = 2,
+    .programSize = 9
+  },{
+    .name = "Count to 12",
+    .goal = &goalOutput12,
+    .numFixed = 4,
+    .fixed = fixedCountTo12,
+    .numTurn = 0,
+    .numData = 12,
     .programSize = 9
   },{
     .name = "Exit 2",
