@@ -138,6 +138,9 @@ const uint8_t fixedMazeNine[39] = {
    1|TURN,  2|TURN,  3|TURN,  4|TURN,  5|TURN,  6|TURN
 };
 const uint8_t fixedRun100[5] = { 0|DATA, 9|DATA, 18|DATA, 27|DATA, 36|DATA };
+const uint8_t fixedDataPillar[9] = {
+  0|DATA, 9|DATA, 18|DATA, 27|DATA, 36|DATA, 45|DATA, 54|DATA, 63|DATA, 72|TURN
+};
 const uint8_t fixedRun10M[25] = {
    43|TURN, 45|TURN, 46|TURN,
    35|TURN, /*36|DATA,*/ 38|DATA, 40|TURN,
@@ -150,7 +153,7 @@ const uint8_t fixedRun10M[25] = {
 
 
 const int8_t sequenceShiftLeft[2] = { -1, 1 };
-const int8_t sequenceOnes[5] = { 1, 1, 1, 1, 1 };
+const int8_t sequenceOnes[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 const int8_t sequenceSevenAteNine[7] = { 8, 0, 0, 0, 0, 0, 7 };
 const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 
@@ -173,12 +176,13 @@ const SequenceGoal goalSequenceOneToFive(5, sequenceOneToFive);
 const SequenceGoal goalSequenceTwoOnes(2, sequenceOnes);
 const SequenceGoal goalSequenceFourOnes(4, sequenceOnes);
 const SequenceGoal goalSequenceFiveOnes(5, sequenceOnes);
+const SequenceGoal goalSequenceEightOnes(8, sequenceOnes);
 const SequenceGoal goalSequenceShiftLeft(2, sequenceShiftLeft);
 const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 
-constexpr int numChallenges = 19;
+constexpr int numChallenges = 20;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Exit 1",
@@ -317,6 +321,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 3,
     .programSize = 8
   },{
+    .name = "Eight ones",
+    .goal = &goalSequenceEightOnes,
+    .numFixed = 9,
+    .fixed = fixedDataPillar,
+    .numTurn = 99,
+    .numData = 99,
+    .programSize = 9
+  },{
     .name = "Busy Beaver 1000",
     .goal = &goalRunLength1000,
     .numFixed = 0,
@@ -355,6 +367,7 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[16]),
   Challenge(challengeSpecs[17]),
   Challenge(challengeSpecs[18]),
+  Challenge(challengeSpecs[19]),
 };
 
 const ChallengeSet challengesSet("Challenge", challenges, numChallenges);
