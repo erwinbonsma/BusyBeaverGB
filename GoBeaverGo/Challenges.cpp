@@ -127,6 +127,16 @@ const uint8_t fixedFigureEight[29] = {
   39|DATA, 40|DATA, 41|DATA,
   66|DATA, 67|DATA, 68|DATA
 };
+const uint8_t fixedMazeNine[39] = {
+  57|TURN, 58|TURN, 59|TURN, 60|TURN, 61|TURN, 62|TURN,
+  55|TURN,
+  40|TURN, 41|TURN, 42|TURN, 43|TURN, 44|TURN, 45|TURN, 47|TURN,
+  32|TURN, 33|DATA, 34|DATA, 35|DATA, 37|TURN, 39|TURN,
+  24|TURN, 28|DATA, 29|TURN, 31|TURN,
+  16|DATA, 19|TURN, 20|DATA, 21|TURN, 23|TURN,
+   8|DATA,  9|TURN, 12|DATA, 15|TURN,
+   1|TURN,  2|TURN,  3|TURN,  4|TURN,  5|TURN,  6|TURN
+};
 const uint8_t fixedRun100[5] = { 0|DATA, 9|DATA, 18|DATA, 27|DATA, 36|DATA };
 const uint8_t fixedRun10M[25] = {
    43|TURN, 45|TURN, 46|TURN,
@@ -147,6 +157,7 @@ const int8_t sequenceOneToFive[5] = { 1, 2, 3, 4, 5 };
 const OutputValueGoal goalOutput0(0, Comparison::Equals);
 const OutputValueGoal goalOutput1(1, Comparison::Equals);
 const OutputValueGoal goalOutput8(8, Comparison::Equals);
+const OutputValueGoal goalOutput9(9, Comparison::Equals);
 const OutputValueGoal goalOutput12(12, Comparison::Equals);
 const OutputValueGoal goalOutput16(16, Comparison::Equals);
 const OutputValueGoal goalOutputMinus8(-8, Comparison::Equals);
@@ -167,7 +178,7 @@ const RunLengthGoal goalRunLength100(100, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength1000(1000, Comparison::GreaterThan);
 const RunLengthGoal goalRunLength10M(10000000, Comparison::GreaterThan);
 
-constexpr int numChallenges = 18;
+constexpr int numChallenges = 19;
 const ChallengeSpec challengeSpecs[numChallenges] = {
   {
     .name = "Count to 12",
@@ -266,6 +277,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 0,
     .programSize = 9
   },{
+    .name = "Busy Beaver 100",
+    .goal = &goalRunLength100,
+    .numFixed = 5,
+    .fixed = fixedRun100,
+    .numTurn = 5,
+    .numData = 1,
+    .programSize = 9
+  },{
     .name = "One to Five",
     .goal = &goalSequenceOneToFive,
     .numFixed = 0,
@@ -282,14 +301,6 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numData = 0,
     .programSize = 9
   },{
-    .name = "Busy Beaver 100",
-    .goal = &goalRunLength100,
-    .numFixed = 5,
-    .fixed = fixedRun100,
-    .numTurn = 5,
-    .numData = 1,
-    .programSize = 9
-  },{
     .name = "Count to 32",
     .goal = &goalOutput32,
     .numFixed = 0,
@@ -297,6 +308,14 @@ const ChallengeSpec challengeSpecs[numChallenges] = {
     .numTurn = 99,
     .numData = 99,
     .programSize = 9
+  },{
+    .name = "Nine",
+    .goal = &goalOutput9,
+    .numFixed = 39,
+    .fixed = fixedMazeNine,
+    .numTurn = 0,
+    .numData = 3,
+    .programSize = 8
   },{
     .name = "Busy Beaver 1000",
     .goal = &goalRunLength1000,
@@ -335,6 +354,7 @@ const Challenge challenges[numChallenges] = {
   Challenge(challengeSpecs[15]),
   Challenge(challengeSpecs[16]),
   Challenge(challengeSpecs[17]),
+  Challenge(challengeSpecs[18]),
 };
 
 const ChallengeSet challengesSet("Challenge", challenges, numChallenges);
